@@ -404,7 +404,7 @@ const toolGroups = [
   },
   {
     label: "Productivity",
-    tools: ["Google Workspace", "Microsoft 365", "Slack", "Discord", "Basecamp", "Monday.com", "Calendly"],
+    tools: ["Google Workspace", "Microsoft 365", "Slack", "Discord", "Basecamp", "Monday.com", "ClickUp", "Wrike", "Zoho", "Calendly"],
   },
   {
     label: "Design & Content",
