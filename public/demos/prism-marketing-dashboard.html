@@ -802,69 +802,6 @@
     </div>
   </div>
 
-  <!-- Colour tokens -->
-  <div class="token-row">
-    <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);padding-top:8px;flex-basis:100%">Theme Tokens</div>
-    <div class="token-swatch"><div class="swatch" style="background:#6366F1"></div><div class="swatch-lbl">--accent</div></div>
-    <div class="token-swatch"><div class="swatch" style="background:#8B5CF6"></div><div class="swatch-lbl">grad mid</div></div>
-    <div class="token-swatch"><div class="swatch" style="background:#06B6D4"></div><div class="swatch-lbl">bar end</div></div>
-    <div class="token-swatch"><div class="swatch" style="background:#FFFFFF"></div><div class="swatch-lbl">--surface</div></div>
-    <div class="token-swatch"><div class="swatch" style="background:#F4F6FB"></div><div class="swatch-lbl">--bg</div></div>
-    <div class="token-swatch"><div class="swatch" style="background:#EEF2F9"></div><div class="swatch-lbl">--surface-2</div></div>
-    <div class="token-swatch"><div class="swatch" style="background:#059669"></div><div class="swatch-lbl">success</div></div>
-    <div class="token-swatch"><div class="swatch" style="background:#0F172A"></div><div class="swatch-lbl">--text</div></div>
-    <div class="token-swatch"><div class="swatch" style="background:#475569"></div><div class="swatch-lbl">--text-sub</div></div>
-    <div class="token-swatch"><div class="swatch" style="background:#94A3B8"></div><div class="swatch-lbl">--text-muted</div></div>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- RC Analysis -->
-  <div class="section-head">
-    <div class="eyebrow">RC Marketing Dashboard Handoff</div>
-    <h2>What We Learned &amp; What's Worth Borrowing</h2>
-    <p>The RC dashboard (Ad Llama) is a Next.js 15 analytics tool for Ruskin Consulting. 187 Google Ads accounts, 146 BigQuery objects, 68 API routes, 25 per-account tabs. Here's what's relevant for Prism.</p>
-  </div>
-  <div class="stat-row">
-    <div class="stat-box"><div class="stat-n accent">187</div><div class="stat-l">Ad Accounts</div></div>
-    <div class="stat-box"><div class="stat-n">25</div><div class="stat-l">Tabs per Account</div></div>
-    <div class="stat-box"><div class="stat-n green">68</div><div class="stat-l">API Routes</div></div>
-    <div class="stat-box"><div class="stat-n amber">146</div><div class="stat-l">BigQuery Objects</div></div>
-  </div>
-  <div class="analysis-grid">
-    <div class="a-card">
-      <div class="a-card-head"><div class="a-icon icon-indigo">🎨</div><div><h3>Design Patterns Worth Copying</h3><p>UI and UX patterns RC uses that Prism should adopt or already has.</p></div></div>
-      <div class="a-item"><div class="a-label label-blue">Eyebrows</div><div class="a-desc"><strong>Uppercase 10px labels above sections.</strong> Prism has them via <code>.lbl</code> — expand to all section headers.</div></div>
-      <div class="a-item"><div class="a-label label-blue">Stats grid</div><div class="a-desc"><strong>Big number, letter-spaced label below.</strong> RC uses it on every major view. Now in Prism's Metrics and all 3 new tabs.</div></div>
-      <div class="a-item"><div class="a-label label-blue">Token CSS</div><div class="a-desc"><strong>Everything through <code>:root</code> vars.</strong> Prism now matches this. Makes future theming or white-labelling trivial.</div></div>
-      <div class="a-item"><div class="a-label label-blue">Data tables</div><div class="a-desc">RC's tabular data style — left-aligned text, right-aligned numbers, tabular-nums, subtle row hover. Now in Prism's Ads, Analytics, and Website tabs.</div></div>
-    </div>
-    <div class="a-card">
-      <div class="a-card-head"><div class="a-icon icon-green">✨</div><div><h3>Features Borrowed from RC</h3><p>Directly ported from the RC handoff into Prism's new tabs.</p></div></div>
-      <div class="a-item"><div class="a-label label-green">Neg. push</div><div class="a-desc"><strong>Push negative keywords directly to Google Ads.</strong> RC's SearchTermReviewTab does this. Prism's Analytics tab has the same pattern with a "Push All Negatives" button.</div></div>
-      <div class="a-item"><div class="a-label label-green">Budget pace</div><div class="a-desc"><strong>Spend vs target bars per platform.</strong> RC tracks this cross-client. Prism shows Google Ads and Meta pacing in the Ads tab.</div></div>
-      <div class="a-item"><div class="a-label label-green">Wasted spend</div><div class="a-desc">RC's /waste route surfaces low-intent spend. Prism shows the same breakdown by category with spend amounts.</div></div>
-      <div class="a-item"><div class="a-label label-green">SEO grade</div><div class="a-desc">RC's SEO vertical (GSC + Ahrefs + PageSpeed + GA4). Prism's Website Analysis tab follows the same structure.</div></div>
-    </div>
-    <div class="a-card">
-      <div class="a-card-head"><div class="a-icon icon-amber">🏗</div><div><h3>Architecture Lessons</h3><p>How RC is built and what it means for Prism.</p></div></div>
-      <div class="a-item"><div class="a-label label-amber">No live API</div><div class="a-desc"><strong>RC never calls ad platforms at render time.</strong> Everything pre-written to BigQuery by cron. Prism should cache ContentStudio and ad platform data server-side, not fetch on every page load.</div></div>
-      <div class="a-item"><div class="a-label label-amber">Row-level SQL</div><div class="a-desc">RC's client auth scoping prepends a CTE in SQL. Right security boundary if Prism ever goes multi-client.</div></div>
-      <div class="a-item"><div class="a-label label-amber">Service proxy</div><div class="a-desc">Both RC and Prism hold service keys server-side and expose allowlisted GET endpoints. Never leaks credentials to the browser.</div></div>
-      <div class="a-item"><div class="a-label label-amber">Naming</div><div class="a-desc">RC's "three Llamas" confusion cost time. Prism should keep ContentStudio, OpenAI, Supabase clearly separated in env var names from day one.</div></div>
-    </div>
-    <div class="a-card">
-      <div class="a-card-head"><div class="a-icon icon-red">⚠️</div><div><h3>Gotchas RC Got Burned By</h3><p>Specific bugs from the handoff. Don't repeat them.</p></div></div>
-      <div class="a-item"><div class="a-label label-red">Full-row writes</div><div class="a-desc"><strong>Supabase upserts replace the entire row.</strong> RC silently nulled fields for weeks. In Prism: always read, merge, then write.</div></div>
-      <div class="a-item"><div class="a-label label-red">Stale deploys</div><div class="a-desc"><strong>Railway env var changes can redeploy the old image.</strong> RC shipped stale for weeks. Always verify the build timestamp after deploy.</div></div>
-      <div class="a-item"><div class="a-label label-red">--ci flag</div><div class="a-desc"><code>railway up --ci</code> times out even when upload succeeds. Confirmed on Prism. Drop <code>--ci</code>, use <code>railway up --service marketing-dashboard</code>.</div></div>
-      <div class="a-item"><div class="a-label label-red">DATE params</div><div class="a-desc">Bound <code>DATE</code> params resolve to NULL in BigQuery multi-statement scripts. If SQL analytics are added: use <code>CURRENT_DATE()</code>, not bound params.</div></div>
-    </div>
-  </div>
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-top:20px;box-shadow:0 1px 3px rgba(15,23,42,.05)">
-    <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Bottom Line</div>
-    <div style="font-size:13px;color:var(--text-sub);line-height:1.7">RC and Prism share the same stack: Railway, Supabase, OpenAI, agency managing multiple clients. The most directly transferable things are the <strong style="color:var(--text)">CSS token system</strong> (done), the <strong style="color:var(--text)">service-proxy auth pattern</strong> (done), and the <strong style="color:var(--text)">scheduled-pull data architecture</strong>. The three new Prism tabs — Ads, Analytics, Website — are direct ports of RC's /budget, /waste, and /seo verticals adapted for a content/marketing agency context.</div>
-  </div>
 
 </div>
 
