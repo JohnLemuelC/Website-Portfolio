@@ -376,7 +376,7 @@ const toolGroups = [
   },
   {
     label: "CRM & Ops",
-    tools: ["GoHighLevel", "HubSpot", "Pipedrive", "Salesforce", "Respond.io", "LeadConnector"],
+    tools: ["GoHighLevel", "Pipedrive", "Salesforce", "Respond.io", "LeadConnector"],
   },
   {
     label: "Marketing & Ads",
