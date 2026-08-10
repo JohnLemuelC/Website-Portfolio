@@ -416,7 +416,7 @@ export default function Home() {
           <div className="hero-photo-wrap">
             <img
               className="hero-photo"
-              src={`${BASE}/images/avatar.png`}
+              src={`${BASE}/images/headshot/profile.png`}
               alt="John Lemuel Culinares"
             />
           </div>
@@ -459,7 +459,7 @@ export default function Home() {
               </div>
             </div>
             <div className="about-photo-wrap">
-              <img src={`${BASE}/images/avatar.png`} alt="John Lemuel Culinares" />
+              <img src={`${BASE}/images/headshot/profile.png`} alt="John Lemuel Culinares" />
             </div>
           </div>
         </div>

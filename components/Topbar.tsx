@@ -15,7 +15,7 @@ export default function Topbar() {
     <nav className="site-nav">
       <div className="nav-inner">
         <a className="nav-brand" href="#hero">
-          <img src={`${BASE}/images/avatar.png`} alt="John Lemuel" />
+          <img src={`${BASE}/images/headshot/profile.png`} alt="John Lemuel" />
           John Culinares
         </a>
 
