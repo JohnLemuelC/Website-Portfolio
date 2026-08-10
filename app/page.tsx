@@ -261,9 +261,9 @@ const projectSections = [
 const experiences = [
   {
     role: "AI & Automation Specialist",
-    company: "Contract / Project-Based",
-    period: "2025 - Present",
-    status: "current",
+    company: "Ruskin Consulting (Full-time)",
+    period: "2025",
+    status: "prev",
     highlights: [
       "Central KPI Datahub aggregating LinkedIn, Meta, and Bing ad performance",
       "MCP servers for Google Ads, GA4, and Search Console exposing live data to AI agents",
