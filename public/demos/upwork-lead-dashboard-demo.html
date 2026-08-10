@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Upwork Lead Dashboard — Live Demo</title>
+<meta name="description" content="Interactive sample of the Upwork Lead Dashboard — click around, filter jobs, draft a proposal, open a conversation." />
+<style>
+  :root {
+    --bg: #f6f7f5;
+    --panel: #ffffff;
+    --panel-2: #fbfbfa;
+    --line: #e2e5e0;
+    --text: #14181a;
+    --muted: #667066;
+    --muted-2: #97a097;
+    --accent: #0e7a5f;
+    --accent-ink: #ffffff;
+    --accent-soft: #e6f3ee;
+    --good: #1f8a52;
+    --good-bg: #e7f5ec;
+    --warn: #a5720c;
+    --warn-bg: #fbf1dd;
+    --bad: #c23a3a;
+    --bad-bg: #fbeaea;
+    --radius: 8px;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Liberation Mono", monospace;
+    --shadow: 0 1px 2px rgba(20,24,22,0.04), 0 1px 1px rgba(20,24,22,0.03);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12151a; --panel: #1a1e24; --panel-2: #15181d; --line: #2a2f37;
+      --text: #eceeec; --muted: #9aa39c; --muted-2: #626a63;
+      --accent: #35c793; --accent-ink: #06251b; --accent-soft: #17332a;
+      --good: #4fd18a; --good-bg: #14291f; --warn: #e3b34a; --warn-bg: #332a12; --bad: #ef6767; --bad-bg: #331a1a;
+      --shadow: 0 1px 2px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12151a; --panel: #1a1e24; --panel-2: #15181d; --line: #2a2f37;
+    --text: #eceeec; --muted: #9aa39c; --muted-2: #626a63;
+    --accent: #35c793; --accent-ink: #06251b; --accent-soft: #17332a;
+    --good: #4fd18a; --good-bg: #14291f; --warn: #e3b34a; --warn-bg: #332a12; --bad: #ef6767; --bad-bg: #331a1a;
+    --shadow: 0 1px 2px rgba(0,0,0,0.35);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.5; font-feature-settings: "tnum" 1; }
+  button, input { font-family: inherit; font-size: inherit; color: inherit; }
+  a { color: inherit; }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+  *:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  h1, h2, h3 { margin: 0; text-wrap: balance; }
+
+  /* ---------------- shell / nav ---------------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--panel); border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 22px; padding: 0 22px; height: 56px;
+  }
+  .brand { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 14px; white-space: nowrap; }
+  .brand .mark {
+    width: 24px; height: 24px; border-radius: 6px; background: var(--accent); color: var(--accent-ink);
+    display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; font-family: var(--mono);
+  }
+  .navlinks { display: flex; gap: 2px; flex: 1; overflow-x: auto; }
+  .navlink {
+    border: none; background: none; cursor: pointer; padding: 8px 13px; border-radius: 6px;
+    font-size: 13.5px; color: var(--muted); font-weight: 500; white-space: nowrap;
+  }
+  .navlink:hover { color: var(--text); background: var(--panel-2); }
+  .navlink.active { color: var(--accent); background: var(--accent-soft); }
+  .top-right { display: flex; align-items: center; gap: 10px; }
+  .chip {
+    font-family: var(--mono); font-size: 11.5px; padding: 5px 10px; border-radius: 20px;
+    background: var(--panel-2); border: 1px solid var(--line); color: var(--muted); white-space: nowrap;
+  }
+  .icon-btn {
+    border: 1px solid var(--line); background: var(--panel); width: 32px; height: 32px; border-radius: 7px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted);
+  }
+  .icon-btn:hover { color: var(--text); border-color: var(--muted-2); }
+  .demo-badge {
+    background: var(--warn-bg); color: var(--warn); font-family: var(--mono); font-size: 11px;
+    padding: 4px 9px; border-radius: 20px; white-space: nowrap; font-weight: 600; letter-spacing: 0.03em;
+  }
+
+  main { max-width: 1180px; margin: 0 auto; padding: 26px 22px 80px; }
+  .view { display: none; }
+  .view.active { display: block; animation: fade .18s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .view.active { animation: none; } }
+
+  h1.page-title { font-size: 19px; font-weight: 700; margin-bottom: 4px; }
+  .page-sub { color: var(--muted); font-size: 13.5px; margin-bottom: 22px; }
+
+  /* ---------------- stat cards ---------------- */
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media (max-width: 900px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 14px 16px; box-shadow: var(--shadow);
+  }
+  .stat .n { font-size: 23px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stat .n.good { color: var(--good); }
+  .stat .l { font-size: 12px; color: var(--muted); margin-top: 3px; display: flex; align-items: center; }
+  .stat .sub { font-size: 11.5px; color: var(--muted-2); margin-top: 2px; }
+
+  .infotip { position: relative; display: inline-flex; margin-left: 5px; }
+  .infotip summary {
+    list-style: none; cursor: pointer; width: 14px; height: 14px; border-radius: 50%;
+    border: 1px solid var(--muted-2); font-size: 9px; display: flex; align-items: center; justify-content: center; color: var(--muted-2);
+  }
+  .infotip summary::-webkit-details-marker { display: none; }
+  .infotip summary:hover { border-color: var(--accent); color: var(--accent); }
+  .infotip[open] summary { border-color: var(--accent); color: var(--accent); }
+  .infotip .pop {
+    position: absolute; top: 20px; left: 0; z-index: 30; width: 210px;
+    background: var(--text); color: var(--bg); font-size: 11.5px; padding: 9px 11px; border-radius: 6px; line-height: 1.4;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  }
+
+  section.block { margin-top: 26px; }
+  .block-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; gap: 10px; flex-wrap: wrap; }
+  .block-head h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 700; }
+  .block-head .hint { font-size: 12px; color: var(--muted-2); }
+
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 9px 14px; text-align: left; border-bottom: 1px solid var(--line); }
+  thead th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted-2); font-weight: 600; background: var(--panel-2); }
+  tbody tr:last-child td { border-bottom: none; }
+  td.num, th.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  td.rate { font-family: var(--mono); font-weight: 700; }
+  td.rate.good { color: var(--good); } td.rate.bad { color: var(--bad); } td.rate.warn { color: var(--warn); }
+
+  details.collapsible { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 10px; }
+  details.collapsible summary {
+    list-style: none; cursor: pointer; padding: 11px 16px; font-size: 12.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent); display: flex; align-items: center; gap: 8px;
+  }
+  details.collapsible summary::-webkit-details-marker { display: none; }
+  details.collapsible summary .car { transition: transform .15s ease; color: var(--muted-2); }
+  details.collapsible[open] summary .car { transform: rotate(90deg); }
+  details.collapsible .inner { border-top: 1px solid var(--line); overflow-x: auto; }
+  details.collapsible summary .sub { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted-2); }
+
+  /* ---------------- jobs ---------------- */
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+  .toolbar input[type="search"], .toolbar select {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 7px; padding: 8px 11px; color: var(--text);
+  }
+  .toolbar input[type="search"] { flex: 1; min-width: 200px; }
+  .toolbar .count { align-self: center; font-size: 12.5px; color: var(--muted); margin-left: auto; }
+
+  .jobcard { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 10px; overflow: hidden; }
+  .jobcard-head { padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; }
+  .jobcard-head:hover { background: var(--panel-2); }
+  .jobcard-title { font-size: 14px; font-weight: 600; }
+  .jobcard-meta { font-size: 12px; color: var(--muted); margin-top: 4px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .jobcard-right { display: flex; align-items: center; gap: 10px; flex: none; }
+  .verdict-pill { font-family: var(--mono); font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
+  .verdict-pill.apply { background: var(--good-bg); color: var(--good); }
+  .verdict-pill.maybe { background: var(--warn-bg); color: var(--warn); }
+  .verdict-pill.skip { background: var(--panel-2); color: var(--muted-2); }
+  .score-num { font-family: var(--mono); font-weight: 800; font-size: 15px; }
+  .car { color: var(--muted-2); transition: transform .15s ease; }
+  .jobcard.open .car { transform: rotate(90deg); }
+  .jobcard-body { display: none; border-top: 1px solid var(--line); padding: 16px; }
+  .jobcard.open .jobcard-body { display: block; }
+  .jobcard-desc { font-size: 13px; color: var(--muted); max-width: 68ch; }
+  .factor-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .factor { font-family: var(--mono); font-size: 11px; padding: 3px 8px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); }
+  .factor.plus { color: var(--good); border-color: color-mix(in srgb, var(--good) 35%, var(--line)); }
+  .factor.minus { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 35%, var(--line)); }
+  .jobcard-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+
+  button.btn {
+    border: 1px solid var(--line); background: var(--panel); border-radius: 7px; padding: 7px 13px;
+    font-size: 12.5px; font-weight: 600; cursor: pointer; color: var(--text);
+  }
+  button.btn:hover { border-color: var(--muted-2); }
+  button.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  button.btn.primary:hover { filter: brightness(1.06); }
+  button.btn.ghost { background: none; }
+  button.btn:disabled { opacity: 0.55; cursor: default; }
+
+  .draft-box { margin-top: 14px; }
+  .draft-box textarea {
+    width: 100%; min-height: 108px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 7px;
+    padding: 10px 12px; color: var(--text); font-family: var(--sans); font-size: 13px; line-height: 1.5; resize: vertical;
+  }
+  .thinking { font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+  .dotpulse { display: inline-flex; gap: 3px; }
+  .dotpulse span { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: bounce 1s infinite ease-in-out; }
+  .dotpulse span:nth-child(2) { animation-delay: .15s; } .dotpulse span:nth-child(3) { animation-delay: .3s; }
+  @keyframes bounce { 0%,80%,100% { opacity: .25; } 40% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .dotpulse span { animation: none; opacity: .7; } }
+
+  /* ---------------- messages ---------------- */
+  .msg-layout { display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 820px) { .msg-layout { grid-template-columns: 1fr; } }
+  .conv-list { display: flex; flex-direction: column; gap: 8px; }
+  .conv-item {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 11px 13px; cursor: pointer; box-shadow: var(--shadow);
+  }
+  .conv-item.active { border-color: var(--accent); background: var(--accent-soft); }
+  .conv-item .name { font-size: 13px; font-weight: 600; display: flex; justify-content: space-between; gap: 8px; }
+  .conv-item .snippet { font-size: 12px; color: var(--muted); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .unread-dot { background: var(--bad); color: #fff; font-size: 10px; font-weight: 700; border-radius: 10px; padding: 1px 6px; font-family: var(--mono); }
+
+  .thread-panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; min-height: 420px; display: flex; flex-direction: column; }
+  .thread-title { font-size: 14px; font-weight: 700; }
+  .thread-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .thread-body { flex: 1; margin-top: 14px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; max-height: 360px; padding-right: 2px; }
+  .bubble { max-width: 72%; padding: 9px 13px; border-radius: 12px; font-size: 13px; line-height: 1.45; }
+  .bubble.them { background: var(--panel-2); border: 1px solid var(--line); align-self: flex-start; border-bottom-left-radius: 3px; }
+  .bubble.me { background: var(--accent); color: var(--accent-ink); align-self: flex-end; border-bottom-right-radius: 3px; }
+  .bubble-meta { font-size: 10.5px; color: var(--muted-2); margin-top: 3px; font-family: var(--mono); }
+
+  /* ---------------- weekly ---------------- */
+  .wk-table-wrap { overflow-x: auto; }
+  table.wk { min-width: 720px; }
+  table.wk th.metric, table.wk td.metric { position: sticky; left: 0; background: var(--panel); min-width: 190px; z-index: 1; }
+  table.wk thead th.metric { background: var(--panel-2); }
+  table.wk input {
+    width: 58px; text-align: right; background: var(--panel-2); border: 1px solid var(--line); border-radius: 5px;
+    padding: 4px 6px; font-family: var(--mono); font-size: 12.5px; color: var(--text);
+  }
+  table.wk td.derived { color: var(--muted); font-family: var(--mono); font-style: italic; }
+  table.wk tr.derived-row td { background: color-mix(in srgb, var(--panel-2) 60%, transparent); }
+  table.wk td.total { font-weight: 700; font-family: var(--mono); }
+
+  footer.demo-footer { max-width: 1180px; margin: 0 auto; padding: 0 22px 50px; color: var(--muted-2); font-size: 12px; }
+  footer.demo-footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="mark">UL</span> Upwork Lead Dashboard</div>
+  <nav class="navlinks" id="navlinks">
+    <button class="navlink active" data-view="overview">Overview</button>
+    <button class="navlink" data-view="jobs">Jobs</button>
+    <button class="navlink" data-view="messages">Messages</button>
+    <button class="navlink" data-view="weekly">Weekly</button>
+  </nav>
+  <div class="top-right">
+    <span class="demo-badge">SAMPLE DATA · NOTHING SENDS</span>
+    <span class="chip">Connects: 145</span>
+    <button class="icon-btn" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">◐</button>
+  </div>
+</div>
+
+<main>
+
+  <!-- ============ OVERVIEW ============ -->
+  <section class="view active" id="view-overview">
+    <h1 class="page-title">Overview</h1>
+    <p class="page-sub">Live funnel, scoring accuracy, and outreach — click the <span style="border:1px solid var(--muted-2);border-radius:50%;padding:0 5px;font-size:10px;">i</span> on any stat for how it's computed.</p>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">1,240</div><div class="l">Jobs tracked <details class="infotip"><summary>i</summary><div class="pop">Every job the scanners have found this month, every status combined.</div></details></div></div>
+      <div class="stat"><div class="n">318</div><div class="l">Applied <details class="infotip"><summary>i</summary><div class="pop">Jobs marked Applied, Replied, Won, or Lost — anything followed through on.</div></details></div></div>
+      <div class="stat"><div class="n good">31%</div><div class="l">Reply rate <details class="infotip"><summary>i</summary><div class="pop">(Replied + Won) ÷ Applied — share of applications that got any response.</div></details></div><div class="sub">98 replies</div></div>
+      <div class="stat"><div class="n">57%</div><div class="l">Win rate <details class="infotip"><summary>i</summary><div class="pop">Won ÷ (Won + Lost), of jobs with a settled outcome.</div></details></div><div class="sub">21 won · 16 lost</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">Follow-ups due <details class="infotip"><summary>i</summary><div class="pop">Applied 2+ days ago with no update since — a live queue, not historical.</div></details></div></div>
+      <div class="stat"><div class="n">74</div><div class="l">Avg AI score <details class="infotip"><summary>i</summary><div class="pop">Average 0–100 fit score across every job ever recorded.</div></details></div></div>
+      <div class="stat"><div class="n">212</div><div class="l">High-fit (75+) <details class="infotip"><summary>i</summary><div class="pop">Count of jobs the AI scored 75 or above.</div></details></div></div>
+      <div class="stat"><div class="n">9</div><div class="l">To apply now <details class="infotip"><summary>i</summary><div class="pop">Jobs in the New queue with an Apply verdict — a live snapshot.</div></details></div><div class="sub">14 maybe · 41 skip</div></div>
+    </div>
+
+    <section class="block">
+      <div class="block-head"><h2>Funnel vs. benchmark</h2><span class="hint">low / high targets, live actuals</span></div>
+      <div class="panel">
+        <table>
+          <thead><tr><th>Stage</th><th class="num">Low</th><th class="num">High</th><th class="num">Actual</th></tr></thead>
+          <tbody>
+            <tr><td>Job Sent → Response</td><td class="num">10%</td><td class="num">25%</td><td class="num rate good">27%</td></tr>
+            <tr><td>Response → Booked</td><td class="num">50%</td><td class="num">75%</td><td class="num rate">61%</td></tr>
+            <tr><td>Booked → Showed Up</td><td class="num">50%</td><td class="num">80%</td><td class="num rate good">84%</td></tr>
+            <tr><td>Showed Up → Qualified</td><td class="num">30%</td><td class="num">60%</td><td class="num rate">52%</td></tr>
+            <tr><td>Qualified → Proposal</td><td class="num">50%</td><td class="num">80%</td><td class="num rate bad">41%</td></tr>
+            <tr><td>Proposal → Closed</td><td class="num">25%</td><td class="num">40%</td><td class="num rate good">46%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="block-head"><h2>Monthly</h2><span class="hint">same numbers, rolled up by month</span></div>
+      <details class="collapsible" open>
+        <summary><span class="car">▸</span> Sales <span class="sub">appointments → closed</span></summary>
+        <div class="inner">
+          <table>
+            <thead><tr><th>Metric</th><th class="num">May</th><th class="num">Jun</th><th class="num">Jul</th><th class="num">Aug</th></tr></thead>
+            <tbody>
+              <tr><td>Appointments Booked</td><td class="num">11</td><td class="num">14</td><td class="num">9</td><td class="num">6</td></tr>
+              <tr><td>Showed Up</td><td class="num">9</td><td class="num">12</td><td class="num">8</td><td class="num">5</td></tr>
+              <tr><td>Qualified (SQL)</td><td class="num">7</td><td class="num">9</td><td class="num">5</td><td class="num">3</td></tr>
+              <tr><td>Proposals Given</td><td class="num">5</td><td class="num">6</td><td class="num">3</td><td class="num">2</td></tr>
+              <tr><td>Closed</td><td class="num">3</td><td class="num">4</td><td class="num">2</td><td class="num">1</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+      <details class="collapsible">
+        <summary><span class="car">▸</span> Finances <span class="sub">won revenue vs. spend</span></summary>
+        <div class="inner">
+          <table>
+            <thead><tr><th>Metric</th><th class="num">May</th><th class="num">Jun</th><th class="num">Jul</th><th class="num">Aug</th></tr></thead>
+            <tbody>
+              <tr><td>Won revenue</td><td class="num">$9,200</td><td class="num">$12,400</td><td class="num">$6,100</td><td class="num">$3,000</td></tr>
+              <tr><td>Costs</td><td class="num">$7,800</td><td class="num">$8,100</td><td class="num">$7,400</td><td class="num">$2,600</td></tr>
+              <tr><td>ROI</td><td class="num rate good">+18%</td><td class="num rate good">+53%</td><td class="num rate bad">−18%</td><td class="num rate good">+15%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+  </section>
+
+  <!-- ============ JOBS ============ -->
+  <section class="view" id="view-jobs">
+    <h1 class="page-title">Jobs</h1>
+    <p class="page-sub">Ranked by AI fit score. Click a card to expand it, then draft a proposal.</p>
+
+    <div class="toolbar">
+      <input type="search" id="jobSearch" placeholder="Search title or client…" />
+      <select id="jobVerdict">
+        <option value="">All verdicts</option>
+        <option value="apply">Apply</option>
+        <option value="maybe">Maybe</option>
+        <option value="skip">Skip</option>
+      </select>
+      <select id="jobSort">
+        <option value="score">Sort: Score (high → low)</option>
+        <option value="budget">Sort: Budget (high → low)</option>
+        <option value="posted">Sort: Newest</option>
+      </select>
+      <span class="count" id="jobCount"></span>
+    </div>
+
+    <div id="jobList"></div>
+  </section>
+
+  <!-- ============ MESSAGES ============ -->
+  <section class="view" id="view-messages">
+    <h1 class="page-title">Messages</h1>
+    <p class="page-sub">Every conversation, pulled hourly. Click one, then draft a reply.</p>
+
+    <div class="msg-layout">
+      <div class="conv-list" id="convList"></div>
+      <div class="thread-panel" id="threadPanel"></div>
+    </div>
+  </section>
+
+  <!-- ============ WEEKLY ============ -->
+  <section class="view" id="view-weekly">
+    <h1 class="page-title">Weekly</h1>
+    <p class="page-sub">Type into any cell — derived rows (rates, CPA, ROI) recalculate live, just like the real thing.</p>
+
+    <details class="collapsible" open>
+      <summary><span class="car">▸</span> Sales</summary>
+      <div class="inner wk-table-wrap">
+        <table class="wk" id="wkSales"></table>
+      </div>
+    </details>
+    <details class="collapsible" open>
+      <summary><span class="car">▸</span> Funnel <span class="sub">(auto — derived from Sales)</span></summary>
+      <div class="inner wk-table-wrap">
+        <table class="wk" id="wkFunnel"></table>
+      </div>
+    </details>
+    <details class="collapsible">
+      <summary><span class="car">▸</span> Finances <span class="sub">(auto CPA / ROI)</span></summary>
+      <div class="inner wk-table-wrap">
+        <table class="wk" id="wkFinance"></table>
+      </div>
+    </details>
+  </section>
+
+</main>
+
+<footer class="demo-footer">
+  Interactive sample — all data below is illustrative. Nothing here is sent anywhere or persisted after you refresh.
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------------- theme ---------------- */
+  var themeBtn = document.getElementById("themeToggle");
+  themeBtn.addEventListener("click", function () {
+    var root = document.documentElement;
+    var current = root.getAttribute("data-theme");
+    var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var effectiveDark = current === "dark" || (!current && prefersDark);
+    root.setAttribute("data-theme", effectiveDark ? "light" : "dark");
+  });
+
+  /* ---------------- nav ---------------- */
+  var navlinks = document.querySelectorAll(".navlink");
+  navlinks.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      navlinks.forEach(function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      document.querySelectorAll(".view").forEach(function (v) { v.classList.remove("active"); });
+      document.getElementById("view-" + btn.dataset.view).classList.add("active");
+    });
+  });
+
+  /* ---------------- sample data ---------------- */
+  var JOBS = [
+    { id: 1, title: "Google Ads Manager for Lead Gen Campaign", client: "Meridian Roofing Co.", country: "United States", budget: 3000, verified: true, hires: 14, rating: 4.8, posted: "2h ago", score: 92, verdict: "apply",
+      desc: "We're a home services company looking for an experienced Google Ads manager to run and optimize our lead-gen campaigns across 3 service areas. Must have experience with call tracking and CPL optimization.",
+      factors: [["+", "Budget matches top-band clients"], ["+", "Client has hired 14x, avg 4.8★"], ["-", "High proposal count already"]] },
+    { id: 2, title: "PPC Specialist Needed for E-commerce Scaling", client: "Northline Apparel", country: "United States", budget: 2200, verified: true, hires: 6, rating: 4.6, posted: "5h ago", score: 88, verdict: "apply",
+      desc: "Scaling a Shopify store from $40k to $150k/mo in ad spend. Need someone who's managed six-figure Google Shopping + Meta budgets and knows ROAS optimization inside out.",
+      factors: [["+", "Category matches strongest scanner"], ["+", "Payment verified, 6 prior hires"]] },
+    { id: 3, title: "Full-funnel Paid Media Strategy for SaaS Startup", client: "Fielder Analytics", country: "Canada", budget: 4000, verified: true, hires: 2, rating: 5.0, posted: "1d ago", score: 85, verdict: "apply",
+      desc: "Series A SaaS company looking for a fractional paid media lead to build out our full-funnel strategy — LinkedIn, Google, and retargeting.",
+      factors: [["+", "High budget, recurring engagement likely"], ["-", "Only 2 prior hires on file"]] },
+    { id: 4, title: "Analytics Setup — GA4 + Conversion Tracking", client: "Bluegate Dental Group", country: "United States", budget: 800, verified: true, hires: 9, rating: 4.7, posted: "8h ago", score: 81, verdict: "apply",
+      desc: "Need GA4 and server-side conversion tracking set up correctly across 4 locations, tied into our existing Google Ads account.",
+      factors: [["+", "Quick-turnaround, high close rate historically"], ["+", "9 prior hires, verified payment"]] },
+    { id: 5, title: "Facebook + Google Ads for Local HVAC Company", client: "Coastal Air Solutions", country: "United States", budget: 1500, verified: true, hires: 1, rating: null, posted: "3h ago", score: 71, verdict: "maybe",
+      desc: "Small HVAC business looking to start running paid ads for the first time. Open to guidance on budget and channel mix.",
+      factors: [["+", "Underserved local-services niche"], ["-", "First-time advertiser, no rating history"]] },
+    { id: 6, title: "Google Ads Account Audit (One-time)", client: "Hartley & Voss Law", country: "United States", budget: 400, verified: true, hires: 22, rating: 4.9, posted: "11h ago", score: 62, verdict: "maybe",
+      desc: "One-time audit of an existing Google Ads account for a law firm — looking for a written report with recommendations.",
+      factors: [["+", "Highly reputable client, 22 hires"], ["-", "One-off, no recurring signal"]] },
+    { id: 7, title: "Part-time Marketing Consultant, Non-profit", client: "River City Youth Alliance", country: "United States", budget: 600, verified: false, hires: 0, rating: null, posted: "1d ago", score: 54, verdict: "maybe",
+      desc: "Non-profit seeking part-time marketing help — social media, light paid ads, and email campaigns for a youth mentorship program.",
+      factors: [["-", "Payment not verified"], ["-", "No hire history to gauge fit"]] },
+    { id: 8, title: "Social Media Ads Management, $500/mo", client: "Private Client", country: "Not specified", budget: 500, verified: false, hires: 0, rating: null, posted: "2d ago", score: 29, verdict: "skip",
+      desc: "Looking for someone to manage Instagram and Facebook ads for a small boutique. Budget is tight but open to long-term partnership.",
+      factors: [["-", "Below minimum viable budget"], ["-", "No payment verification or history"]] },
+    { id: 9, title: "One-off Landing Page Copy Review", client: "Private Client", country: "United Kingdom", budget: 150, verified: true, hires: 3, rating: 4.2, posted: "6h ago", score: 38, verdict: "skip",
+      desc: "Need a quick review and rewrite suggestions for one landing page. Not ongoing work.",
+      factors: [["-", "Outside core paid-media focus"], ["-", "Small one-off scope"]] },
+    { id: 10, title: "SEO Audit and Ongoing Optimization", client: "Union Street Realty", country: "United States", budget: 1800, verified: true, hires: 5, rating: 4.5, posted: "9h ago", score: 76, verdict: "apply",
+      desc: "Local real estate brokerage wants a full SEO audit followed by ongoing monthly optimization and content strategy.",
+      factors: [["+", "Recurring engagement, clear budget"], ["+", "5 prior hires, verified payment"]] }
+  ];
+
+  var DRAFTS = {
+    1: "Hi! I've managed Google Ads for two HVAC companies and a roofing contractor over the past three years, all with call tracking wired in and sub-$50 CPLs across 3+ service areas. Happy to walk through how I'd structure your campaigns by service area — when's a good time for a quick call?",
+    2: "Hi there — I've taken a Shopify store from $35k to $180k/mo in ad spend over 14 months, running Shopping, Meta, and retargeting in tandem. I'd start by auditing your current feed and account structure before touching budget. Can share the exact playbook on a quick call if useful.",
+    3: "Hi! I've been the fractional paid media lead for two Series A SaaS companies, building out LinkedIn + Google + retargeting from scratch. I'd love to learn more about your current funnel and where the biggest gap is — do you have 15 minutes this week?",
+    4: "Hi — I've done GA4 + server-side conversion tracking for multi-location healthcare groups before, including cross-location attribution. I can usually have this fully wired and validated within a week. Want me to send over a quick scope?",
+    5: "Hi! Happy to help you get started with paid ads the right way — I usually recommend starting with a tighter local radius and a conservative budget to validate messaging before scaling. Want me to put together a simple 30-day plan?",
+    6: "Hi — I'd be glad to run a full audit and put together a written report with prioritized recommendations. I can usually turn this around within 3-4 business days. Want me to outline exactly what the audit will cover?",
+    7: "Hi! I'd love to help — I've worked with a few non-profits on lean marketing budgets before. Happy to start with a quick audit of what's already working before recommending any paid spend. When works for a short call?",
+    10: "Hi! I've run SEO for local real estate brokerages before — the audit usually surfaces 5-10 quick wins in the first two weeks. Happy to send over a sample audit format so you know exactly what you'll get."
+  };
+
+  var jobListEl = document.getElementById("jobList");
+  var jobCountEl = document.getElementById("jobCount");
+  var searchEl = document.getElementById("jobSearch");
+  var verdictEl = document.getElementById("jobVerdict");
+  var sortEl = document.getElementById("jobSort");
+  var openJobId = null;
+  var drafting = {};
+  var revealedDrafts = {};
+
+  function scoreColor(v) { return v === "apply" ? "good" : v === "maybe" ? "warn" : "skip"; }
+
+  function renderJobs() {
+    var q = searchEl.value.trim().toLowerCase();
+    var vf = verdictEl.value;
+    var sort = sortEl.value;
+    var list = JOBS.filter(function (j) {
+      var matchesQ = !q || (j.title.toLowerCase().indexOf(q) > -1 || j.client.toLowerCase().indexOf(q) > -1);
+      var matchesV = !vf || j.verdict === vf;
+      return matchesQ && matchesV;
+    });
+    if (sort === "score") list.sort(function (a, b) { return b.score - a.score; });
+    if (sort === "budget") list.sort(function (a, b) { return b.budget - a.budget; });
+    if (sort === "posted") list.sort(function (a, b) { return a.id - b.id; });
+
+    jobCountEl.textContent = list.length + " of " + JOBS.length + " jobs";
+    jobListEl.innerHTML = "";
+    list.forEach(function (j) {
+      var card = document.createElement("div");
+      card.className = "jobcard" + (openJobId === j.id ? " open" : "");
+      var factorsHtml = j.factors.map(function (f) {
+        return '<span class="factor ' + (f[0] === "+" ? "plus" : "minus") + '">' + f[0] + " " + f[1] + "</span>";
+      }).join("");
+
+      var draftHtml = "";
+      if (drafting[j.id]) {
+        draftHtml = '<div class="draft-box"><div class="thinking">Drafting in voice <span class="dotpulse"><span></span><span></span><span></span></span></div></div>';
+      } else if (revealedDrafts[j.id]) {
+        draftHtml = '<div class="draft-box"><textarea readonly>' + (DRAFTS[j.id] || "This is a strong-fit job — a full draft would reference the client's specific ask and past similar wins.") + '</textarea>' +
+          '<div class="jobcard-actions"><button class="btn ghost copy-btn" data-id="' + j.id + '">Copy</button></div></div>';
+      }
+
+      card.innerHTML =
+        '<div class="jobcard-head" data-id="' + j.id + '">' +
+          '<div>' +
+            '<div class="jobcard-title">' + j.title + '</div>' +
+            '<div class="jobcard-meta"><span>' + j.client + '</span><span>' + j.country + '</span>' +
+            '<span>$' + j.budget.toLocaleString() + '</span><span>' + (j.verified ? "Payment verified" : "Unverified") + '</span>' +
+            '<span>' + j.hires + ' hires' + (j.rating ? " · " + j.rating + "★" : "") + '</span><span>' + j.posted + '</span></div>' +
+          '</div>' +
+          '<div class="jobcard-right">' +
+            '<span class="verdict-pill ' + j.verdict + '">' + j.verdict.toUpperCase() + '</span>' +
+            '<span class="score-num">' + j.score + '</span>' +
+            '<span class="car">▸</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="jobcard-body">' +
+          '<div class="jobcard-desc">' + j.desc + '</div>' +
+          '<div class="factor-row">' + factorsHtml + '</div>' +
+          '<div class="jobcard-actions">' +
+            '<button class="btn primary draft-btn" data-id="' + j.id + '" ' + (drafting[j.id] ? "disabled" : "") + '>' +
+              (revealedDrafts[j.id] ? "↻ Redraft proposal" : "✎ Draft proposal") + '</button>' +
+            '<button class="btn ghost">Skip</button>' +
+          '</div>' +
+          draftHtml +
+        '</div>';
+      jobListEl.appendChild(card);
+    });
+
+    jobListEl.querySelectorAll(".jobcard-head").forEach(function (h) {
+      h.addEventListener("click", function () {
+        var id = Number(h.dataset.id);
+        openJobId = openJobId === id ? null : id;
+        renderJobs();
+      });
+    });
+    jobListEl.querySelectorAll(".draft-btn").forEach(function (b) {
+      b.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var id = Number(b.dataset.id);
+        drafting[id] = true;
+        renderJobs();
+        setTimeout(function () {
+          drafting[id] = false;
+          revealedDrafts[id] = true;
+          renderJobs();
+        }, 850);
+      });
+    });
+    jobListEl.querySelectorAll(".copy-btn").forEach(function (b) {
+      b.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var id = Number(b.dataset.id);
+        var text = DRAFTS[id] || "";
+        if (navigator.clipboard && text) navigator.clipboard.writeText(text).catch(function () {});
+        b.textContent = "Copied!";
+        setTimeout(function () { b.textContent = "Copy"; }, 1200);
+      });
+    });
+  }
+  searchEl.addEventListener("input", renderJobs);
+  verdictEl.addEventListener("change", renderJobs);
+  sortEl.addEventListener("change", renderJobs);
+  renderJobs();
+
+  /* ---------------- messages ---------------- */
+  var THREADS = [
+    { id: 1, name: "Marcus T.", topic: "HVAC — Google + Meta Ads", unread: 2,
+      msgs: [
+        { me: false, t: "Hey! Saw your proposal — have you managed accounts in home services before?", time: "9:02 AM" },
+        { me: false, t: "Also curious what CPL you'd expect for HVAC in a mid-size metro.", time: "9:03 AM" }
+      ], draft: "Yes — I've run lead-gen accounts for two HVAC companies and a roofing contractor, all landing sub-$50 CPLs in mid-size metros. Happy to share exact numbers from a similar account if useful, or hop on a quick call this week." },
+    { id: 2, name: "Priya K.", topic: "Fielder Analytics — Paid Strategy", unread: 0,
+      msgs: [
+        { me: false, t: "Thanks for the detailed proposal, really appreciate the specifics.", time: "Yesterday" },
+        { me: true, t: "Of course! Let me know if you'd like to hop on a call to go deeper on the funnel plan.", time: "Yesterday" },
+        { me: false, t: "Yes, let's do Thursday at 2pm your time?", time: "10:41 AM" }
+      ], draft: "Thursday at 2pm works great — I'll send a calendar invite. Looking forward to it!" },
+    { id: 3, name: "Dan Whitfield", topic: "Northline Apparel — PPC Scaling", unread: 1,
+      msgs: [
+        { me: false, t: "What's your take on Performance Max for a store our size?", time: "11:20 AM" }
+      ], draft: "For a store scaling past $100k/mo I'd run PMax alongside a tightly segmented Shopping campaign, not instead of it — gives you the reach without losing visibility into what's actually driving ROAS. Happy to sketch out the split." },
+    { id: 4, name: "Angela Reyes", topic: "River City Youth Alliance", unread: 0,
+      msgs: [
+        { me: false, t: "We loved your audit approach — can you start next Monday?", time: "2 days ago" },
+        { me: true, t: "Yes, Monday works well — I'll send over the kickoff doc beforehand.", time: "2 days ago" }
+      ], draft: "" },
+    { id: 5, name: "Tom Okafor", topic: "Hartley & Voss — Ads Audit", unread: 0,
+      msgs: [
+        { me: false, t: "The audit was exactly what we needed, thank you.", time: "3 days ago" }
+      ], draft: "Really glad it was helpful! Let me know if you'd like a hand implementing any of the recommendations." }
+  ];
+  var activeThreadId = 1;
+  var msgDrafting = {};
+  var msgRevealed = {};
+
+  function renderConvList() {
+    var el = document.getElementById("convList");
+    el.innerHTML = "";
+    THREADS.forEach(function (th) {
+      var last = th.msgs[th.msgs.length - 1];
+      var item = document.createElement("div");
+      item.className = "conv-item" + (activeThreadId === th.id ? " active" : "");
+      item.innerHTML =
+        '<div class="name"><span>' + th.name + '</span>' + (th.unread ? '<span class="unread-dot">' + th.unread + '</span>' : '') + '</div>' +
+        '<div class="snippet">' + th.topic + '</div>' +
+        '<div class="snippet" style="margin-top:4px;color:var(--muted-2)">' + (last.me ? "You: " : "") + last.t + '</div>';
+      item.addEventListener("click", function () { activeThreadId = th.id; th.unread = 0; renderConvList(); renderThread(); });
+      el.appendChild(item);
+    });
+  }
+
+  function renderThread() {
+    var th = THREADS.filter(function (t) { return t.id === activeThreadId; })[0];
+    var el = document.getElementById("threadPanel");
+    if (!th) { el.innerHTML = ""; return; }
+    var bubbles = th.msgs.map(function (m) {
+      return '<div><div class="bubble ' + (m.me ? "me" : "them") + '">' + m.t + '</div>' +
+        '<div class="bubble-meta" style="' + (m.me ? "text-align:right" : "") + '">' + (m.me ? "You" : th.name) + " · " + m.time + '</div></div>';
+    }).join("");
+
+    var draftHtml = "";
+    if (msgDrafting[th.id]) {
+      draftHtml = '<div class="draft-box"><div class="thinking">Drafting a reply <span class="dotpulse"><span></span><span></span><span></span></span></div></div>';
+    } else if (msgRevealed[th.id] && th.draft) {
+      draftHtml = '<div class="draft-box"><textarea readonly>' + th.draft + '</textarea>' +
+        '<div class="jobcard-actions"><button class="btn ghost" id="copyReply">Copy</button></div></div>';
+    }
+
+    el.innerHTML =
+      '<div class="thread-title">' + th.name + '</div>' +
+      '<div class="thread-sub">' + th.topic + '</div>' +
+      '<div class="thread-body">' + bubbles + '</div>' +
+      '<div class="jobcard-actions" style="margin-top:14px">' +
+        '<button class="btn primary" id="draftReplyBtn" ' + (msgDrafting[th.id] || !th.draft ? "disabled" : "") + '>' +
+          (msgRevealed[th.id] ? "↻ Redraft reply" : "✎ Draft reply") + '</button>' +
+      '</div>' + draftHtml;
+
+    var btn = document.getElementById("draftReplyBtn");
+    if (btn) btn.addEventListener("click", function () {
+      msgDrafting[th.id] = true;
+      renderThread();
+      setTimeout(function () { msgDrafting[th.id] = false; msgRevealed[th.id] = true; renderThread(); }, 800);
+    });
+    var copyBtn = document.getElementById("copyReply");
+    if (copyBtn) copyBtn.addEventListener("click", function () {
+      if (navigator.clipboard) navigator.clipboard.writeText(th.draft).catch(function () {});
+      copyBtn.textContent = "Copied!";
+      setTimeout(function () { copyBtn.textContent = "Copy"; }, 1200);
+    });
+  }
+  renderConvList();
+  renderThread();
+
+  /* ---------------- weekly ---------------- */
+  var WEEKS = ["Jul 7", "Jul 14", "Jul 21", "Jul 28", "Aug 4"];
+  var sales = {
+    booked:   [4, 3, 5, 2, 3],
+    showedup: [3, 3, 4, 2, 2],
+    sql:      [2, 2, 3, 1, 2],
+    proposal: [2, 1, 2, 1, 1],
+    closed:   [1, 1, 1, 0, 1]
+  };
+  var finance = {
+    income: [2400, 1800, 3200, 0, 2600],
+    costs:  [1450, 1520, 1610, 1390, 1200]
+  };
+
+  function money(n) { return "$" + Math.round(n).toLocaleString(); }
+  function pct(n, d) { return d > 0 ? Math.round((n / d) * 100) + "%" : "—"; }
+  function sum(arr) { return arr.reduce(function (a, b) { return a + Number(b || 0); }, 0); }
+
+  function buildInputRow(table, label, key, store) {
+    var row = table.insertRow();
+    row.innerHTML = '<td class="metric">' + label + '</td>';
+    WEEKS.forEach(function (w, i) {
+      var td = row.insertCell();
+      td.innerHTML = '<input type="number" min="0" value="' + store[key][i] + '" data-key="' + key + '" data-i="' + i + '" />';
+    });
+    var totalCell = row.insertCell();
+    totalCell.className = "total";
+    totalCell.textContent = sum(store[key]);
+    return row;
+  }
+
+  function header(table) {
+    var thead = table.createTHead();
+    var row = thead.insertRow();
+    row.innerHTML = '<th class="metric">Metric</th>' + WEEKS.map(function (w) { return '<th class="num">' + w + '</th>'; }).join("") + '<th class="num">Total</th>';
+  }
+
+  var salesTable = document.getElementById("wkSales");
+  header(salesTable);
+  var salesBody = salesTable.createTBody();
+  buildInputRow(salesBody, "Appointments Booked", "booked", sales);
+  buildInputRow(salesBody, "Showed Up", "showedup", sales);
+  buildInputRow(salesBody, "Qualified (SQL)", "sql", sales);
+  buildInputRow(salesBody, "Proposals Given", "proposal", sales);
+  buildInputRow(salesBody, "Closed", "closed", sales);
+
+  var funnelTable = document.getElementById("wkFunnel");
+  header(funnelTable);
+  var funnelBody = funnelTable.createTBody();
+
+  var financeTable = document.getElementById("wkFinance");
+  header(financeTable);
+  var financeBody = financeTable.createTBody();
+  buildInputRow(financeBody, "Income", "income", finance);
+  buildInputRow(financeBody, "Costs", "costs", finance);
+  var cpaRow = financeBody.insertRow(); cpaRow.className = "derived-row";
+  var roiRow = financeBody.insertRow(); roiRow.className = "derived-row";
+
+  function renderDerived() {
+    funnelBody.innerHTML = "";
+    var rows = [
+      ["Booked → Show Up", sales.showedup, sales.booked],
+      ["Show Up → SQL", sales.sql, sales.showedup],
+      ["SQL → Proposal", sales.proposal, sales.sql],
+      ["Proposal → Closed", sales.closed, sales.proposal]
+    ];
+    rows.forEach(function (r) {
+      var row = funnelBody.insertRow();
+      row.className = "derived-row";
+      var cells = '<td class="metric">' + r[0] + '</td>';
+      WEEKS.forEach(function (w, i) { cells += '<td class="derived">' + pct(r[1][i], r[2][i]) + '</td>'; });
+      cells += '<td class="derived">' + pct(sum(r[1]), sum(r[2])) + '</td>';
+      row.innerHTML = cells;
+    });
+
+    var cpaCells = '<td class="metric">CPA (cost ÷ closed)</td>';
+    var roiCells = '<td class="metric">ROI %</td>';
+    WEEKS.forEach(function (w, i) {
+      var cpa = sales.closed[i] > 0 ? finance.costs[i] / sales.closed[i] : null;
+      cpaCells += '<td class="derived">' + (cpa == null ? "—" : money(cpa)) + '</td>';
+      var roi = finance.costs[i] > 0 ? ((finance.income[i] - finance.costs[i]) / finance.costs[i]) * 100 : null;
+      var roiClass = roi == null ? "" : (roi >= 0 ? "rate good" : "rate bad");
+      roiCells += '<td class="derived ' + roiClass + '">' + (roi == null ? "—" : (Math.round(roi) + "%")) + '</td>';
+    });
+    var totalCpa = sum(sales.closed) > 0 ? sum(finance.costs) / sum(sales.closed) : null;
+    cpaCells += '<td class="total">' + (totalCpa == null ? "—" : money(totalCpa)) + '</td>';
+    var totalRoi = sum(finance.costs) > 0 ? ((sum(finance.income) - sum(finance.costs)) / sum(finance.costs)) * 100 : null;
+    roiCells += '<td class="total ' + (totalRoi != null && totalRoi >= 0 ? "rate good" : "rate bad") + '">' + (totalRoi == null ? "—" : (Math.round(totalRoi) + "%")) + '</td>';
+    cpaRow.innerHTML = cpaCells;
+    roiRow.innerHTML = roiCells;
+  }
+
+  function refreshTotals(table, store) {
+    table.querySelectorAll("tbody tr").forEach(function (row) {
+      if (row.classList.contains("derived-row")) return;
+      var inputs = row.querySelectorAll("input");
+      if (!inputs.length) return;
+      var key = inputs[0].dataset.key;
+      var total = sum(store[key]);
+      row.querySelector(".total").textContent = (key === "income" || key === "costs") ? money(total) : total;
+    });
+  }
+
+  document.querySelectorAll("#wkSales input, #wkFinance input").forEach(function (input) {
+    input.addEventListener("input", function () {
+      var key = input.dataset.key, i = Number(input.dataset.i);
+      var store = (key in sales) ? sales : finance;
+      store[key][i] = Number(input.value || 0);
+      refreshTotals(input.closest("table"), store);
+      renderDerived();
+    });
+  });
+
+  renderDerived();
+})();
+</script>
+</body>
+</html>

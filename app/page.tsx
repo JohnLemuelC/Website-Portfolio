@@ -584,6 +584,80 @@ export default function Home() {
         </div>
       </section>
 
+      {/* INTERACTIVE DEMOS */}
+      <section id="demos" className="section section-alt">
+        <div className="section-inner">
+          <div className="section-eyebrow">Live Demos</div>
+          <h2 className="section-heading">Interactive demos</h2>
+          <p className="section-sub">Click any card to open a live, fully interactive demo. All data is synthetic.</p>
+
+          <div className="featured-grid">
+            <a
+              href={`${BASE}/demos/marketing-dashboard-demo.html`}
+              target="_blank"
+              rel="noopener"
+              style={{ textDecoration: "none" }}
+            >
+              <div className="proj-card" style={{ cursor: "pointer", height: "100%" }}>
+                <div style={{ height: 140, background: "linear-gradient(135deg,#0891B2 0%,#0e7490 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontSize: "2.5rem" }}>📊</span>
+                </div>
+                <div className="proj-body">
+                  <div className="proj-title">RC Marketing Dashboard</div>
+                  <div className="proj-desc">Multi-channel analytics for a 187-account agency. Switch accounts, change date ranges, sort and filter campaigns, and hover the spend chart.</div>
+                  <div className="tag-row">
+                    <span className="tag cyan">Analytics</span>
+                    <span className="tag emerald">Live Demo ↗</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            <a
+              href={`${BASE}/demos/upwork-lead-dashboard-demo.html`}
+              target="_blank"
+              rel="noopener"
+              style={{ textDecoration: "none" }}
+            >
+              <div className="proj-card" style={{ cursor: "pointer", height: "100%" }}>
+                <div style={{ height: 140, background: "linear-gradient(135deg,#059669 0%,#047857 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontSize: "2.5rem" }}>🎯</span>
+                </div>
+                <div className="proj-body">
+                  <div className="proj-title">Upwork Lead Dashboard</div>
+                  <div className="proj-desc">Lead tracking dashboard with job filtering, proposal drafting, and pipeline management. Click around, filter jobs, and draft a proposal.</div>
+                  <div className="tag-row">
+                    <span className="tag emerald">Lead Management</span>
+                    <span className="tag emerald">Live Demo ↗</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            <a
+              href={`${BASE}/demos/law-firm-lead-dashboard.html`}
+              target="_blank"
+              rel="noopener"
+              style={{ textDecoration: "none" }}
+            >
+              <div className="proj-card" style={{ cursor: "pointer", height: "100%" }}>
+                <div style={{ height: 140, background: "linear-gradient(135deg,#2E3192 0%,#4150B5 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontSize: "2.5rem" }}>⚖️</span>
+                </div>
+                <div className="proj-body">
+                  <div className="proj-title">Law Firm Lead Dashboard</div>
+                  <div className="proj-desc">Full lead management system for a law firm: intake tracking, case pipeline, conversion rates, and performance charts across practice areas.</div>
+                  <div className="tag-row">
+                    <span className="tag violet">Legal Tech</span>
+                    <span className="tag emerald">Live Demo ↗</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* EXPERIENCE */}
       <section id="experience" className="section section-alt">
         <div className="section-inner">

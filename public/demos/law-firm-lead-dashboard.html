@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Law Firm Lead Dashboard - Portfolio Sample</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --brand: #2E3192; --brand-2: #4150B5; --brand-3: #6A78D6; --brand-tint: #EEF0FB;
+    --ink: #1F2433; --muted: #6B7280; --line: #E5E7EB; --bg: #F7F8FB; --card: #FFFFFF;
+    --green: #2E9E5B; --red: #D64545; --amber: #D9A21B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--ink); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+  header { background: #fff; border-bottom: 1px solid var(--line); padding: 16px 36px 0; position: sticky; top: 0; z-index: 20; }
+  .header-top { display: flex; align-items: center; gap: 16px; padding-bottom: 14px; }
+  .brand { display: flex; flex-direction: column; }
+  .brand .name { font-size: 1.15rem; font-weight: 800; color: var(--brand); letter-spacing: 0.02em; }
+  .brand .sub { font-size: 0.78rem; color: var(--muted); margin-top: 1px; }
+  .pill { font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    background: var(--brand-tint); color: var(--brand); padding: 4px 10px; border-radius: 2px; }
+  .userbox { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+  .userbox .who { font-size: 0.78rem; color: var(--muted); }
+  .refresh-btn { background: var(--brand); border: none; color: #fff; padding: 8px 16px; border-radius: 2px; cursor: pointer; font-size: 0.82rem; font-weight: 600; }
+  .refresh-btn:hover { background: var(--brand-2); }
+
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tabs button { border: none; background: none; padding: 12px 18px; font-size: 0.88rem; font-weight: 600; color: var(--muted); cursor: pointer; font-family: inherit; border-bottom: 2px solid transparent; }
+  .tabs button:hover { color: var(--ink); }
+  .tabs button.on { color: var(--brand); border-bottom-color: var(--brand); }
+
+  main { padding: 28px 36px; width: 100%; max-width: 1500px; margin: 0 auto; }
+  .tabpane { display: none; } .tabpane.on { display: block; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 18px; margin-bottom: 30px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 2px; padding: 20px; box-shadow: 0 1px 2px rgba(16,24,40,0.04); }
+  .card .label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 10px; font-weight: 600; }
+  .card .value { font-size: 2.1rem; font-weight: 800; line-height: 1; color: var(--brand); letter-spacing: -0.02em; }
+  .card .foot { font-size: 0.74rem; color: var(--muted); margin-top: 8px; }
+  .card.accent .value { color: var(--green); }
+
+  .grid-2 { display: grid; grid-template-columns: 340px 1fr; gap: 22px; margin-bottom: 30px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-bottom: 30px; }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 2px; padding: 22px 24px; box-shadow: 0 1px 2px rgba(16,24,40,0.04); margin-bottom: 24px; }
+  .panel h2 { font-size: 0.82rem; font-weight: 700; color: var(--ink); margin-bottom: 18px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .panel-head { display: flex; align-items: center; margin-bottom: 18px; gap: 12px; }
+  .panel-head h2 { margin-bottom: 0; } .panel-head .spacer { margin-left: auto; }
+  .panel-head .note { color: var(--muted); font-size: 0.74rem; }
+  .chart-wrap { position: relative; } .chart-wrap.donut { height: 240px; } .chart-wrap.bar { height: 240px; } .chart-wrap.timeline { height: 260px; }
+
+  .table-controls { display: flex; gap: 12px; margin-bottom: 16px; }
+  .table-controls input, .table-controls select {
+    background: #fff; border: 1px solid var(--line); color: var(--ink); padding: 9px 13px; border-radius: 2px; font-size: 0.85rem; font-family: inherit; }
+  .table-controls input { flex: 1; }
+  .table-controls input:focus, .table-controls select:focus { outline: 2px solid var(--brand-tint); border-color: var(--brand-2); }
+
+  .tbl-wrap { overflow-x: auto; display: block; width: 100%; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+  th { text-align: left; padding: 11px 14px; color: var(--muted); border-bottom: 2px solid var(--line); font-weight: 700; white-space: nowrap; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.04em; }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 2px; font-size: 0.72rem; font-weight: 600; }
+  .b-click, .b-call, .b-enhanced, .b-won { background: #E4F6EB; color: var(--green); }
+  .b-error, .b-lost { background: #FBE6E6; color: var(--red); }
+  .b-none, .b-deleted { background: #F1F2F4; color: var(--muted); }
+  .b-open { background: var(--brand-tint); color: var(--brand); }
+  .tag-manual { background: #FFF3D6; color: var(--amber); padding: 2px 7px; border-radius: 2px; font-size: 0.66rem; font-weight: 700; }
+
+  .evt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 16px; }
+  .evt { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--muted); border-radius: 2px; padding: 16px 18px; }
+  .evt.ok { border-left-color: var(--green); } .evt.fail { border-left-color: var(--red); } .evt.nog { border-left-color: var(--amber); }
+  .evt .top { display:flex; align-items:center; gap:8px; font-weight:700; font-size:0.9rem; margin-bottom:10px; }
+  .evt .row { display:grid; grid-template-columns:1fr 1fr; gap:6px 14px; font-size:0.78rem; }
+  .evt .k { color: var(--muted); } .evt .v { font-weight:600; }
+  .evt .err { margin-top:10px; font-size:0.78rem; color: var(--red); font-weight:600; }
+
+  .stage-link { color: var(--brand); font-weight: 700; text-decoration: underline; cursor: pointer; }
+
+  .overlay { position: fixed; inset: 0; background: rgba(31,36,51,0.45); display: none; align-items: flex-start; justify-content: center; z-index: 50; padding: 40px 20px; overflow-y: auto; }
+  .overlay.on { display: flex; }
+  .modal { background: #fff; border-radius: 2px; width: 100%; max-width: 900px; padding: 26px 28px; box-shadow: 0 20px 50px rgba(16,24,40,0.25); }
+  .modal h3 { font-size: 1.1rem; font-weight: 800; color: var(--brand); margin-bottom: 4px; }
+  .modal .msub { font-size: 0.8rem; color: var(--muted); margin-bottom: 20px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 24px; justify-content: flex-end; }
+  .btn { border: none; border-radius: 2px; padding: 9px 16px; font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-ghost { background: var(--bg); color: var(--ink); border: 1px solid var(--line); } .btn-ghost:hover { background: var(--brand-tint); }
+
+  footer { text-align:center; color: var(--muted); font-size: 0.74rem; padding: 24px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-top">
+    <div class="brand">
+      <span class="name">LAW FIRM LEAD DASHBOARD</span>
+      <span class="sub">Conversion &amp; Lead Analytics</span>
+    </div>
+    <span class="pill">Portfolio Sample</span>
+    <div class="userbox">
+      <span class="who">Signed in as analyst@lawfirm.example</span>
+      <button class="refresh-btn" onclick="flashRefresh(this)">Refresh</button>
+    </div>
+  </div>
+  <div class="tabs" id="tabs">
+    <button data-tab="overview" class="on">Overview</button>
+    <button data-tab="leads">Leads</button>
+    <button data-tab="events">Conversion Events</button>
+    <button data-tab="pipeline">Pipeline</button>
+    <button data-tab="greport">Google Report</button>
+    <button data-tab="revenue">Revenue</button>
+  </div>
+</header>
+
+<main>
+  <!-- OVERVIEW -->
+  <div class="tabpane on" id="pane-overview">
+    <div class="cards" id="ovCards"></div>
+    <div class="grid-2">
+      <div class="panel"><h2>Lead Types</h2><div class="chart-wrap donut"><canvas id="leadTypeChart"></canvas></div></div>
+      <div class="panel"><h2>Leads Over Time</h2><div class="chart-wrap timeline"><canvas id="timelineChart"></canvas></div></div>
+    </div>
+    <div class="grid-3">
+      <div class="panel"><h2>Top Sources</h2><div class="chart-wrap bar"><canvas id="sourceChart"></canvas></div></div>
+      <div class="panel"><h2>Conversion Upload Status</h2><div class="chart-wrap bar"><canvas id="convChart"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- LEADS -->
+  <div class="tabpane" id="pane-leads">
+    <div class="table-controls">
+      <input id="search" placeholder="Search leads by name, source, stage..." oninput="renderLeads()">
+      <select id="filterType" onchange="renderLeads()"><option value="">All lead types</option></select>
+    </div>
+    <div class="panel"><div class="tbl-wrap"><table>
+      <thead><tr><th></th><th>Date</th><th>Type</th><th>Source</th><th>Deal</th><th>Client</th><th>Pipeline Stage</th><th>Status</th><th>GCLID</th><th>Conversion</th></tr></thead>
+      <tbody id="leadsBody"></tbody>
+    </table></div></div>
+  </div>
+
+  <!-- CONVERSION EVENTS -->
+  <div class="tabpane" id="pane-events">
+    <div class="panel">
+      <div class="panel-head"><h2>Offline Conversion Uploads (Google Ads)</h2><span class="spacer"></span>
+        <span class="note">Live upload log - fired / failed / no click ID</span></div>
+      <div class="evt-grid" id="evtGrid"></div>
+    </div>
+  </div>
+
+  <!-- PIPELINE -->
+  <div class="tabpane" id="pane-pipeline">
+    <div class="table-controls">
+      <select id="pipeSource" onchange="renderPipeline()"></select>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Lead Funnel by Month</h2><span class="spacer"></span>
+        <span class="note">Computed live from the leads table - by form type</span></div>
+      <div class="tbl-wrap" id="pipeWrap"></div>
+    </div>
+  </div>
+
+  <!-- GOOGLE REPORT -->
+  <div class="tabpane" id="pane-greport">
+    <div class="cards" id="grCards"></div>
+    <div class="panel">
+      <div class="panel-head"><h2>Google Leads &amp; Revenue by Month</h2><span class="spacer"></span>
+        <span class="note">Modeled + actual revenue - click a Stage count to see the leads</span></div>
+      <div class="tbl-wrap" id="grWrap"></div>
+    </div>
+  </div>
+
+  <!-- REVENUE -->
+  <div class="tabpane" id="pane-revenue">
+    <div class="cards" id="revCards"></div>
+    <div class="panel">
+      <div class="panel-head"><h2>Actual Revenue Collected by Month</h2><span class="spacer"></span>
+        <span class="note">Real cash collected (from billing) - money in the bank</span></div>
+      <div class="tbl-wrap" id="revWrap"></div>
+    </div>
+  </div>
+
+  <footer>Portfolio sample &middot; LAW FIRM LEAD DASHBOARD &middot; All data shown is illustrative and anonymized. Built with FastAPI + Supabase + Chart.js.</footer>
+</main>
+
+<div class="overlay" id="leadsOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h3 id="modalTitle">Leads</h3>
+    <p class="msub" id="modalSub"></p>
+    <div class="tbl-wrap" id="modalWrap"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal()">Close</button></div>
+  </div>
+</div>
+
+<script>
+/* ---------------- Illustrative sample data (anonymized) ---------------- */
+const BRAND={indigo:'#2E3192',blue:'#4150B5',blue2:'#6A78D6',blue3:'#9AA4E4',blue4:'#C5CBF0',green:'#2E9E5B',red:'#D64545',amber:'#D9A21B',muted:'#9CA3AF'};
+const RAMP=[BRAND.indigo,BRAND.blue,BRAND.blue2,BRAND.blue3,BRAND.blue4,'#B7BDE9','#D5D9F4'];
+
+const OVERVIEW={
+  total:2840, uploaded_ok:1330, won:231, gclid_yes:1910, gclid_no:930,
+  lead_types:{'Web Form':1620,'Phone Call':720,'Text Message':310,'Chat':190},
+  sources:{'google':1740,'organic':540,'direct':320,'referral':180,'bing':60},
+  conversions:{'Click Conversion':980,'Call Conversion':210,'Enhanced Conversion':140,'Not uploaded':1200,'Error':310},
+  timeline:[['Jun 25',150],['Jul 25',168],['Aug 25',166],['Sep 25',183],['Oct 25',177],['Nov 25',141],['Dec 25',88],['Jan 26',173],['Feb 26',195],['Mar 26',157],['Apr 26',210],['May 26',214],['Jun 26',249],['Jul 26',96]]
+};
+
+const CLIENTS=['Bright Futures Foundation','Community Arts Collective','Green Valley Youth League','Harmony Music Society','Riverside Animal Rescue','Hope Housing Initiative','STEM Forward Foundation','Unity Sports Club','Coastal Cleanup Alliance','Elder Care Network','Maple Street Theater','Global Health Fund','Learning Tree Academy Fund','Veterans Support Network','Sunrise Recovery Center','Downtown Food Bank','Youth Coding Guild','Harbor Sailing Club','Meadowlark Land Trust','New Roots Refugee Aid'];
+const STAGES=['Lead In','Incorporation','Bylaws & EIN','IRS 501c3 Application','State Exemption','Completed & Paid'];
+const SOURCES=['google','organic','direct','referral','bing'];
+const TYPES=['Web Form','Phone Call','Text Message','Chat'];
+const STATUS=['open','open','open','won','lost'];
+function pick(a,i){return a[i%a.length];}
+const LEADS=[];
+for(let i=0;i<26;i++){
+  const st=pick(STATUS,i*3+1); const src=pick(SOURCES,i*2+1);
+  const gclid = src==='google' && i%4!==0;
+  LEADS.push({
+    date:'2026-0'+((i%6)+1)+'-'+String((i*3)%27+1).padStart(2,'0'),
+    lead_type:pick(TYPES,i), source:src, deal_id:9000+i*7, client:pick(CLIENTS,i),
+    stage:pick(STAGES,i%6===0?0:(i%6)), status:st,
+    gclid:gclid, conv: gclid?(i%3===0?'Call':(i%3===1?'Click':'Enhanced')):(st==='won'?'Error':'')
+  });
+}
+
+const EVENTS=[
+  {r:'ok', deal:9412, ms:'M1', pipe:'Incorporation', stage:'State Incorporation Filed', form:'1023 EZ -> $500', gclid:true, err:null},
+  {r:'ok', deal:9388, ms:'M2', pipe:'Bylaws & EIN', stage:'Bylaws Submitted', form:'1023 -> $700', gclid:true, err:null},
+  {r:'fail', deal:8750, ms:'M3', pipe:'State Exemption', stage:'Ready for State Exemption', form:'1023 EZ -> $500', gclid:true, err:'EXPIRED_EVENT - click older than 90 days'},
+  {r:'fail', deal:8586, ms:'M4', pipe:'Completed & Paid', stage:'Completed & Paid in Full', form:'1023 -> $1,400', gclid:true, err:'EXPIRED_EVENT - click older than 90 days'},
+  {r:'nog', deal:9250, ms:'M3', pipe:'State Exemption', stage:'IRS App Submitted', form:'1023 -> $700', gclid:false, err:'NO_GCLID - no click ID captured'},
+  {r:'ok', deal:9501, ms:'M1', pipe:'Incorporation', stage:'State Incorporation Filed', form:'1023 -> $700', gclid:true, err:null},
+  {r:'nog', deal:9144, ms:'M3', pipe:'State Exemption', stage:'IRS App Submitted', form:'1023 EZ -> $500', gclid:false, err:'NO_GCLID - no click ID captured'},
+  {r:'fail', deal:7801, ms:'M3', pipe:'State Exemption', stage:'Ready for State Exemption', form:'1023 -> $700', gclid:true, err:'EXPIRED_EVENT - click older than 90 days'}
+];
+
+const PIPE=[
+  ['Jun 2026','1023',249,0,16,0,221,1,2,1,0],['','1023 EZ','','','',0,0,0,0,0,0],
+  ['May 2026','1023',214,0,24,0,159,0,1,0,1],['','1023 EZ','','','',0,0,0,0,0,0],
+  ['Apr 2026','1023',210,12,16,2,168,0,0,0,0],['','1023 EZ','','','',0,0,0,0,0,0],
+  ['Mar 2026','1023',157,0,51,3,19,1,0,2,5],['','1023 EZ','','','',0,1,1,0,0,1],
+  ['Feb 2026','1023',195,0,54,7,15,0,0,0,4],['','1023 EZ','','','',0,0,0,0,0,0],
+  ['Jan 2026','1023',173,0,24,23,12,0,0,1,1],['','1023 EZ','','','',0,0,0,0,0,0],
+  ['Dec 2025','1023',88,0,44,11,8,0,0,2,6],['','1023 EZ','','','',0,0,0,0,0,1]
+];
+
+const GREPORT=[
+  {m:'Jul 2026',key:'2026-07',raw:96,actual:96,junk:24,lost:0,active:60,s1:1,s2:1,s3:0,s4:0,est:2100,actual_rev:2140,spend:2752},
+  {m:'Jun 2026',key:'2026-06',raw:120,actual:120,junk:10,lost:0,active:98,s1:1,s2:2,s3:2,s4:0,est:7700,actual_rev:6400,spend:2847},
+  {m:'May 2026',key:'2026-05',raw:94,actual:94,junk:12,lost:0,active:53,s1:0,s2:1,s3:1,s4:1,est:6300,actual_rev:5310,spend:2203},
+  {m:'Apr 2026',key:'2026-04',raw:105,actual:74,junk:16,lost:2,active:42,s1:0,s2:0,s3:0,s4:0,est:0,actual_rev:0,spend:2272},
+  {m:'Mar 2026',key:'2026-03',raw:86,actual:86,junk:51,lost:3,active:19,s1:1,s2:0,s3:2,s4:5,est:21200,actual_rev:18740,spend:5118},
+  {m:'Feb 2026',key:'2026-02',raw:92,actual:92,junk:54,lost:7,active:15,s1:0,s2:0,s3:0,s4:4,est:14000,actual_rev:12250,spend:5052},
+  {m:'Jan 2026',key:'2026-01',raw:73,actual:73,junk:24,lost:23,active:12,s1:0,s2:0,s3:1,s4:1,est:5000,actual_rev:4830,spend:5914},
+  {m:'Dec 2025',key:'2025-12',raw:88,actual:88,junk:44,lost:11,active:8,s1:0,s2:0,s3:2,s4:6,est:25200,actual_rev:22370,spend:2932}
+];
+const GLEADS={
+  '2026-06|3':[{deal:9886,title:'Harmony Music Society',stage:'IRS App Submitted',form:'1023',source:'google',created:'2026-06',modeled:2100,actual:2955},{deal:9300,title:'Youth Coding Guild',stage:'IRS App Submitted',form:'1023',source:'google',created:'2026-06',modeled:2100,actual:1460}],
+  '2026-06|4':[],
+  '2026-03|4':[{deal:7573,title:'Riverside Animal Rescue',stage:'Completed & Paid in Full',form:'1023',source:'referral',created:'2026-03',modeled:3500,actual:3530},{deal:6037,title:'Coastal Cleanup Alliance',stage:'Completed & Paid in Full',form:'1023',source:'google',created:'2026-03',modeled:3500,actual:2980},{deal:8021,title:'Elder Care Network',stage:'Completed & Paid in Full',form:'1023 EZ',source:'google',created:'2026-03',modeled:2500,actual:2617},{deal:8144,title:'Maple Street Theater',stage:'Completed & Paid in Full',form:'1023',source:'direct',created:'2026-03',modeled:3500,actual:3305},{deal:8330,title:'Global Health Fund',stage:'Completed & Paid in Full',form:'1023',source:'google',created:'2026-03',modeled:3500,actual:3350}],
+  '2025-12|4':[{deal:9822,title:'Unity Sports Club',stage:'Completed & Paid in Full',form:'1023',source:'google',created:'2025-12',modeled:3500,actual:0},{deal:9305,title:'Bright Futures Foundation',stage:'Completed & Paid in Full',form:'1023',source:'google',created:'2025-12',modeled:3500,actual:0}]
+};
+
+const REVENUE=[
+  {m:'Jul 2026',pay:25,deals:22,cash:23193,gcash:9100},
+  {m:'Jun 2026',pay:20,deals:19,cash:23470,gcash:7655},
+  {m:'May 2026',pay:21,deals:19,cash:14876,gcash:1200},
+  {m:'Apr 2026',pay:11,deals:10,cash:8456,gcash:1709},
+  {m:'Mar 2026',pay:21,deals:18,cash:26162,gcash:7444},
+  {m:'Feb 2026',pay:21,deals:19,cash:16097,gcash:3580},
+  {m:'Jan 2026',pay:19,deals:15,cash:17466,gcash:7020}
+];
+
+/* ---------------- Rendering ---------------- */
+const $=id=>document.getElementById(id);
+const money=v=>'$'+Math.round(v||0).toLocaleString();
+const charts={};
+
+function renderOverview(){
+  const d=OVERVIEW, pct=Math.round(d.uploaded_ok/d.total*100), gp=Math.round(d.gclid_yes/d.total*100);
+  $('ovCards').innerHTML=`
+    <div class="card"><div class="label">Total Leads</div><div class="value">${d.total.toLocaleString()}</div><div class="foot">all sources</div></div>
+    <div class="card accent"><div class="label">Conversions Uploaded</div><div class="value">${d.uploaded_ok.toLocaleString()}</div><div class="foot">${pct}% of leads</div></div>
+    <div class="card"><div class="label">Deals Won</div><div class="value">${d.won}</div><div class="foot">closed &amp; paid</div></div>
+    <div class="card"><div class="label">Has Click ID</div><div class="value">${d.gclid_yes.toLocaleString()}</div><div class="foot">${gp}% trackable</div></div>
+    <div class="card"><div class="label">No Click ID</div><div class="value">${d.gclid_no.toLocaleString()}</div><div class="foot">organic / direct</div></div>`;
+  donut('leadTypeChart',d.lead_types);
+  bar('sourceChart',d.sources);
+  bar('convChart',d.conversions,l=>l.includes('Click')||l.includes('Call')||l.includes('Enhanced')?BRAND.green:l==='Error'?BRAND.red:BRAND.muted);
+  timeline('timelineChart',d.timeline);
+}
+function donut(id,obj){ if(charts[id])charts[id].destroy(); charts[id]=new Chart($(id),{type:'doughnut',data:{labels:Object.keys(obj),datasets:[{data:Object.values(obj),backgroundColor:RAMP,borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'right',labels:{color:'#1F2433',font:{size:12},padding:14,boxWidth:12}}}}}); }
+function bar(id,obj,cf){ if(charts[id])charts[id].destroy(); const labels=Object.keys(obj); charts[id]=new Chart($(id),{type:'bar',data:{labels,datasets:[{data:Object.values(obj),backgroundColor:cf?labels.map(cf):labels.map((_,i)=>RAMP[i%RAMP.length]),borderRadius:5,maxBarThickness:34}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',scales:{x:{ticks:{color:'#6B7280',precision:0},grid:{color:'#EEF0F4'}},y:{ticks:{color:'#1F2433',font:{size:11}},grid:{display:false}}},plugins:{legend:{display:false}}}}); }
+function timeline(id,arr){ if(charts[id])charts[id].destroy(); charts[id]=new Chart($(id),{type:'line',data:{labels:arr.map(x=>x[0]),datasets:[{data:arr.map(x=>x[1]),borderColor:BRAND.indigo,backgroundColor:'rgba(46,49,146,0.08)',fill:true,tension:0.3,pointRadius:0,pointHoverRadius:4,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#6B7280',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#6B7280',precision:0},grid:{color:'#EEF0F4'}}},plugins:{legend:{display:false}}}}); }
+
+function statusBadge(s){ s=(s||'').toLowerCase(); if(s==='won')return '<span class="badge b-won">Won</span>'; if(s==='lost')return '<span class="badge b-lost">Lost</span>'; if(s==='open')return '<span class="badge b-open">Open</span>'; return '-'; }
+function convBadge(v){ if(!v)return '<span class="badge b-none">-</span>'; if(v==='Error')return '<span class="badge b-error">Error</span>'; if(v==='Click')return '<span class="badge b-click">Click</span>'; if(v==='Call')return '<span class="badge b-call">Call</span>'; if(v==='Enhanced')return '<span class="badge b-enhanced">Enhanced</span>'; return `<span class="badge b-none">${v}</span>`; }
+function initLeadFilter(){ const sel=$('filterType'); [...new Set(LEADS.map(l=>l.lead_type))].forEach(t=>{const o=document.createElement('option');o.textContent=t;sel.appendChild(o);}); }
+function renderLeads(){
+  const q=($('search').value||'').toLowerCase(), t=$('filterType').value;
+  const rows=LEADS.filter(l=>(!q||[l.client,l.source,l.stage,String(l.deal_id)].some(v=>(''+v).toLowerCase().includes(q)))&&(!t||l.lead_type===t));
+  $('leadsBody').innerHTML=rows.length?rows.map(l=>`<tr>
+    <td>${l.status==='won'?'<span class="tag-manual">VIP</span>':''}</td>
+    <td>${l.date}</td><td>${l.lead_type}</td><td>${l.source}</td><td><b>${l.deal_id}</b></td>
+    <td>${l.client}</td><td>${l.stage}</td><td>${statusBadge(l.status)}</td>
+    <td style="text-align:center">${l.gclid?'✓':'-'}</td><td>${convBadge(l.conv)}</td></tr>`).join('')
+    :'<tr><td colspan="10" style="text-align:center;color:#9CA3AF;padding:34px">No matching leads</td></tr>';
+}
+
+function renderEvents(){
+  const cls={ok:'ok',fail:'fail',nog:'nog'}, dot={ok:'🟢',fail:'🔴',nog:'🟡'}, ttl={ok:'Conversion Fired',fail:'Upload Failed',nog:'No Click ID'};
+  $('evtGrid').innerHTML=EVENTS.map(e=>`<div class="evt ${cls[e.r]}">
+    <div class="top">${dot[e.r]} ${ttl[e.r]}</div>
+    <div class="row">
+      <div><div class="k">Deal</div><div class="v">${e.deal}</div></div>
+      <div><div class="k">Milestone</div><div class="v">${e.ms}</div></div>
+      <div><div class="k">Pipeline</div><div class="v">${e.pipe}</div></div>
+      <div><div class="k">Conversion</div><div class="v">${e.form}</div></div>
+      <div><div class="k">Stage</div><div class="v">${e.stage}</div></div>
+      <div><div class="k">Click ID</div><div class="v">${e.gclid?'present':'missing'}</div></div>
+    </div>${e.err?`<div class="err">✗ ${e.err}</div>`:''}</div>`).join('');
+}
+
+function initPipeSource(){ const sel=$('pipeSource'); ['All Sources','Google CPC','Organic','Direct','Referral'].forEach((s,i)=>{const o=document.createElement('option');o.value=i;o.textContent=s;sel.appendChild(o);}); }
+function renderPipeline(){
+  const H=['Month','Form Type','Leads In','Duplicate','Junk','Lost','Active','Stage 1','Stage 2','Stage 3','Stage 4','Good Lead %','Onboard %','Closed %'];
+  const tint=h=>{h=h.toLowerCase(); if(h==='duplicate'||h==='junk'||h==='lost')return '#FBE9E9'; if(h==='active'||h.startsWith('stage'))return '#E8F5ED'; return '';};
+  let cur='';
+  const body=PIPE.map(r=>{
+    const nm=(''+r[0]).trim()!=='';
+    if(nm)cur=r[0];
+    const total=r[2]||0,dup=r[3]||0,junk=r[4]||0,s4=(r[10]||0);
+    const denom=(total-dup)||1, onboard=((r[7]||0)+(r[8]||0)+(r[9]||0)+(r[10]||0));
+    const extra=nm?[`${Math.round((denom-junk)/denom*100)}%`,`${Math.round(onboard/denom*100)}%`,`${Math.round(s4/denom*100)}%`]:['','',''];
+    const base=r.slice(0,11).concat(extra);
+    const cells=base.map((v,i)=>{const h=H[i],al=i>=2?'text-align:right;':'',bg=tint(h)?`background:${tint(h)};`:'',fw=i===0?'font-weight:700;':'';return `<td style="${al}${bg}${fw}">${v}</td>`;}).join('');
+    return `<tr style="${nm?'border-top:2px solid var(--line);':''}">${cells}</tr>`;
+  }).join('');
+  $('pipeWrap').innerHTML=`<table style="font-size:0.8rem;min-width:100%"><thead><tr>${H.map((h,i)=>`<th style="${i>=2?'text-align:right;':''}${tint(h)?`background:${tint(h)}`:''}">${h}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table>`;
+}
+
+function renderGReport(){
+  const t=GREPORT.reduce((a,o)=>{['raw','actual','junk','lost','active','s1','s2','s3','s4','est','actual_rev','spend'].forEach(k=>a[k]=(a[k]||0)+o[k]);return a;},{});
+  const paid=t.s1+t.s2+t.s3+t.s4;
+  $('grCards').innerHTML=`
+    <div class="card"><div class="label">Actual Google Leads</div><div class="value">${t.actual.toLocaleString()}</div><div class="foot">excl. deleted</div></div>
+    <div class="card"><div class="label">In Paid Stages</div><div class="value">${paid}</div><div class="foot">Stage 1-4 deals</div></div>
+    <div class="card"><div class="label">Completed (Stage 4)</div><div class="value">${t.s4}</div><div class="foot">paid in full</div></div>
+    <div class="card"><div class="label">Est. Revenue</div><div class="value">$${Math.round(t.est/1000)}k</div><div class="foot">per-stage modeled</div></div>
+    <div class="card accent"><div class="label">Actual Rev</div><div class="value">$${Math.round(t.actual_rev/1000)}k</div><div class="foot">real cash</div></div>
+    <div class="card"><div class="label">Blended ROAS</div><div class="value">${(t.est/t.spend).toFixed(1)}x</div><div class="foot">modeled &divide; spend</div></div>`;
+  const STAGE={s1:1,s2:2,s3:3,s4:4};
+  const cols=[['m','Month',0],['raw','Raw',1],['actual','Actual',1],['junk','Junk',1],['lost','Lost',1],['active','Active',1],['s1','Stage 1',1],['s2','Stage 2',1],['s3','Stage 3',1],['s4','Stage 4',1],['est','Est. Revenue',2],['actual_rev','Actual Rev',2],['spend','Ad Spend',2],['roas','ROAS (modeled)',3]];
+  const fmt=(k,o)=>{if(k==='est'||k==='actual_rev'||k==='spend')return money(o[k]);if(k==='roas')return (o.spend?(o.est/o.spend).toFixed(2):'-')+'x';return o[k];};
+  const cell=(o,c,tot)=>{const k=c[0],al=c[2]?'text-align:right;':'';
+    if(STAGE[k]&&!tot&&o[k]>0)return `<td style="${al}"><span class="stage-link" onclick="openStage('${o.key}',${STAGE[k]},'${o.m} &middot; Stage ${STAGE[k]}')">${o[k]}</span></td>`;
+    return `<td style="${al}">${tot&&k==='m'?'TOTAL':fmt(k,o)}</td>`;};
+  const head='<thead><tr>'+cols.map(c=>`<th style="${c[2]?'text-align:right;':''}">${c[1]}</th>`).join('')+'</tr></thead>';
+  const tRow={...t,m:'TOTAL',key:''};
+  const body='<tbody>'+GREPORT.map(o=>'<tr>'+cols.map(c=>cell(o,c,false)).join('')+'</tr>').join('')
+    +'<tr style="border-top:2px solid var(--brand);font-weight:700">'+cols.map(c=>cell(tRow,c,true)).join('')+'</tr></tbody>';
+  $('grWrap').innerHTML=`<table style="font-size:0.8rem;min-width:100%">${head}${body}</table>`;
+}
+function openStage(key,stage,label){
+  const ls=GLEADS[key+'|'+stage]||[];
+  $('modalTitle').innerHTML=label;
+  const tot=ls.reduce((s,l)=>s+(l.actual||0),0);
+  $('modalSub').textContent=`${ls.length} deal${ls.length===1?'':'s'} · ${money(tot)} collected`;
+  $('modalWrap').innerHTML=ls.length?`<table style="font-size:0.8rem;min-width:100%">
+    <thead><tr><th>Deal</th><th>Client</th><th>Pipeline Stage</th><th>Form</th><th>Source</th><th>Created</th><th style="text-align:right">Modeled</th><th style="text-align:right">Actual</th></tr></thead>
+    <tbody>${ls.map(l=>`<tr><td><b>${l.deal}</b></td><td>${l.title}</td><td>${l.stage}</td><td>${l.form}</td><td>${l.source}</td><td>${l.created}</td><td style="text-align:right">${money(l.modeled)}</td><td style="text-align:right;font-weight:700">${money(l.actual)}</td></tr>`).join('')}</tbody></table>`
+    :'<p style="color:var(--muted);padding:20px 0">These deals have no recorded payment yet (their click is older than the 90-day window).</p>';
+  $('leadsOverlay').classList.add('on');
+}
+function closeModal(){ $('leadsOverlay').classList.remove('on'); }
+
+function renderRevenue(){
+  const t=REVENUE.reduce((a,o)=>{a.cash+=o.cash;a.pay+=o.pay;a.deals+=o.deals;a.gcash+=o.gcash;return a;},{cash:0,pay:0,deals:0,gcash:0});
+  $('revCards').innerHTML=`
+    <div class="card accent"><div class="label">Total Collected</div><div class="value">$${Math.round(t.cash/1000)}k</div><div class="foot">real cash in</div></div>
+    <div class="card"><div class="label">Paying Deals</div><div class="value">${t.deals}</div><div class="foot">${t.pay} payments</div></div>
+    <div class="card"><div class="label">Google Attributed</div><div class="value">${money(t.gcash)}</div><div class="foot">from Google leads</div></div>
+    <div class="card"><div class="label">Avg / Deal</div><div class="value">${money(t.cash/t.deals)}</div><div class="foot">collected</div></div>`;
+  const cols=[['m','Month',0],['pay','Payments',1],['deals','Deals',1],['cash','Collected',2],['gcash','of which Google',2]];
+  const fmt=(k,o)=>(k==='cash'||k==='gcash')?money(o[k]):o[k];
+  const head='<thead><tr>'+cols.map(c=>`<th style="${c[2]?'text-align:right;':''}">${c[1]}</th>`).join('')+'</tr></thead>';
+  const tRow={m:'TOTAL',pay:t.pay,deals:t.deals,cash:t.cash,gcash:t.gcash};
+  const row=(o,tot)=>'<tr'+(tot?' style="border-top:2px solid var(--brand);font-weight:700"':'')+'>'+cols.map(c=>`<td style="${c[2]?'text-align:right;':''}">${tot&&c[0]==='m'?'TOTAL':fmt(c[0],o)}</td>`).join('')+'</tr>';
+  $('revWrap').innerHTML=`<table style="font-size:0.82rem;min-width:100%">${head}<tbody>${REVENUE.map(o=>row(o,false)).join('')}${row(tRow,true)}</tbody></table>`;
+}
+
+/* ---------------- Tabs + boot ---------------- */
+function wireTabs(){ document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
+  const tab=b.dataset.tab;
+  document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.tabpane').forEach(p=>p.classList.toggle('on',p.id==='pane-'+tab));
+  Object.values(charts).forEach(c=>c.resize());
+}); }
+function flashRefresh(btn){ btn.textContent='Refreshing...'; setTimeout(()=>btn.textContent='Refresh',700); }
+
+wireTabs();
+renderOverview();
+initLeadFilter(); renderLeads();
+renderEvents();
+initPipeSource(); renderPipeline();
+renderGReport();
+renderRevenue();
+</script>
+</body>
+</html>

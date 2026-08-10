@@ -27,12 +27,10 @@ export default function Topbar() {
           ))}
           <a
             className="nav-link"
-            href={`${BASE}/demos/marketing-dashboard-demo.html`}
-            target="_blank"
-            rel="noopener"
+            href="#demos"
             style={{ color: "var(--accent)", fontWeight: 600 }}
           >
-            Interactive Demo ↗
+            Interactive Demos
           </a>
         </div>
 
