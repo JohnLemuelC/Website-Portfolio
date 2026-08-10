@@ -675,6 +675,27 @@ export default function Home() {
                 </div>
               </div>
             </a>
+
+            <a
+              href={`${BASE}/demos/cascade-land-buyers-dashboard-demo.html`}
+              target="_blank"
+              rel="noopener"
+              style={{ textDecoration: "none" }}
+            >
+              <div className="proj-card" style={{ cursor: "pointer", height: "100%" }}>
+                <div style={{ height: 140, background: "linear-gradient(135deg,#6d28d9 0%,#8b5cf6 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontSize: "2.5rem" }}>🤖</span>
+                </div>
+                <div className="proj-body">
+                  <div className="proj-title">AI Receptionist Dashboard</div>
+                  <div className="proj-desc">Real-time call monitoring, lead pipeline, and AI agent performance tracking for a land buying company. Explore live calls, transcripts, and conversion metrics.</div>
+                  <div className="tag-row">
+                    <span className="tag violet">Voice AI</span>
+                    <span className="tag emerald">Live Demo ↗</span>
+                  </div>
+                </div>
+              </div>
+            </a>
           </div>
         </div>
       </section>
