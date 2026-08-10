@@ -182,7 +182,7 @@ const projectSections = [
     label: "Web Apps",
     projects: [
       {
-        title: "RC Marketing Dashboard",
+        title: "Marketing Dashboard",
         desc: "Multi-channel analytics platform for a 187-account agency. Unified 5 ad platforms + 3 SEO sources into a cloud warehouse with 25 analysis views, budget pacing, wasted-spend detection, and AI-powered querying.",
         tags: ["Next.js", "BigQuery", "TypeScript", "Python"],
         img: `${BASE}/images/projects/marketing-sdi.png`,
@@ -269,6 +269,18 @@ const projectSections = [
 
 const experiences = [
   {
+    role: "AI Automation & Workflow Specialist",
+    company: "Contract / Project-Based",
+    period: "2025 - Present",
+    status: "current",
+    highlights: [
+      "AI Receptionist: 24/7 voice AI agent for real estate lead qualification",
+      "GoHighLevel integrations for automated lead capture and CRM sync",
+      "Automated daily reporting delivered via Slack digests",
+      "n8n workflows on VPS for webhook processing and cross-tool automation",
+    ],
+  },
+  {
     role: "AI & Automation Specialist",
     company: "Ruskin Consulting (Full-time)",
     period: "2025",
@@ -291,18 +303,6 @@ const experiences = [
       "AdLoop: Meta Ads + Triple Whale + Funnelish dashboard with SCALE/KILL/ITERATE analysis",
       "Winning ads analysis loop that recreates top-performing ad variations",
       "Email marketing automations across Mailchimp, ActiveCampaign, and Customer.io",
-    ],
-  },
-  {
-    role: "AI Automation & Workflow Specialist",
-    company: "Contract / Project-Based",
-    period: "2025 - Present",
-    status: "current",
-    highlights: [
-      "AI Receptionist: 24/7 voice AI agent for real estate lead qualification",
-      "GoHighLevel integrations for automated lead capture and CRM sync",
-      "Automated daily reporting delivered via Slack digests",
-      "n8n workflows on VPS for webhook processing and cross-tool automation",
     ],
   },
   {
@@ -603,7 +603,7 @@ export default function Home() {
                   <span style={{ fontSize: "2.5rem" }}>📊</span>
                 </div>
                 <div className="proj-body">
-                  <div className="proj-title">RC Marketing Dashboard</div>
+                  <div className="proj-title">Marketing Dashboard</div>
                   <div className="proj-desc">Multi-channel analytics for a 187-account agency. Switch accounts, change date ranges, sort and filter campaigns, and hover the spend chart.</div>
                   <div className="tag-row">
                     <span className="tag cyan">Analytics</span>
