@@ -91,14 +91,14 @@ const projectSections = [
         title: "Grace Inbound AI Receptionist",
         desc: "24/7 inbound voice AI agent for a land buying company. GRACE handles incoming seller calls, qualifies leads in real time, and books appointments without human intervention.",
         tags: ["Retell AI", "Voice AI", "Inbound", "Land Buying"],
-        img: `${BASE}/images/projects/ACE.png`,
+        img: `${BASE}/images/projects/Grace.png`,
         color: "rose",
       },
       {
         title: "Sarah Outbound AI Receptionist",
         desc: "Outbound AI calling agent for a land buying company. SARAH proactively pre-qualifies seller leads via automated calls and follows up with SMS to keep every lead engaged.",
         tags: ["Retell AI", "Voice AI", "Outbound", "SMS"],
-        img: `${BASE}/images/projects/ACE.png`,
+        img: `${BASE}/images/projects/Sarah.png`,
         color: "violet",
       },
       {
