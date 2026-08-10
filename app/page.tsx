@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
@@ -189,6 +189,19 @@ const projectSections = [
         color: "cyan",
         demo: `${BASE}/demos/marketing-dashboard-demo.html`,
         casestudy: `${BASE}/demos/marketing-dashboard-casestudy.html`,
+      },
+      {
+        title: "GHL Dashboard",
+        desc: "Custom GoHighLevel CRM setup for a real estate company. Includes automated pre-qualification workflows, a multi-step form builder, and tailored custom fields to track and convert inbound leads.",
+        tags: ["GoHighLevel", "CRM", "Automation", "Real Estate"],
+        img: `${BASE}/images/projects/ghl/01_workflows_clean.png`,
+        images: [
+          `${BASE}/images/projects/ghl/01_workflows_clean.png`,
+          `${BASE}/images/projects/ghl/02_prequal_workflows_clean.png`,
+          `${BASE}/images/projects/ghl/03_builder_clean.png`,
+          `${BASE}/images/projects/ghl/05_custom_fields_clean.png`,
+        ],
+        color: "violet",
       },
       {
         title: "Blog Automation Web App",
@@ -399,10 +412,42 @@ type Project = {
   desc: string;
   tags: string[];
   img: string;
+  images?: string[];
   color: string;
   demo?: string;
   casestudy?: string;
 };
+
+function CardImage({ img, images, alt, imgStyle }: { img: string; images?: string[]; alt: string; imgStyle?: React.CSSProperties }) {
+  const all = images && images.length > 1 ? images : [img];
+  const [idx, setIdx] = useState(0);
+  const multi = all.length > 1;
+  const btnStyle: React.CSSProperties = {
+    position: "absolute", top: "50%", transform: "translateY(-50%)",
+    background: "rgba(0,0,0,0.5)", border: "none", borderRadius: "50%",
+    width: "28px", height: "28px", color: "#fff", cursor: "pointer",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    fontSize: "1.1rem", lineHeight: "1", zIndex: 2,
+  };
+  return (
+    <div style={{ position: "relative" }}>
+      <img className="proj-img" style={imgStyle} src={all[idx]} alt={alt} />
+      {multi && (
+        <>
+          <button style={{ ...btnStyle, left: "8px" }}
+            onClick={(e) => { e.stopPropagation(); setIdx((idx - 1 + all.length) % all.length); }}>&#8249;</button>
+          <button style={{ ...btnStyle, right: "8px" }}
+            onClick={(e) => { e.stopPropagation(); setIdx((idx + 1) % all.length); }}>&#8250;</button>
+          <div style={{ position: "absolute", bottom: "8px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "4px", zIndex: 2 }}>
+            {all.map((_, i) => (
+              <div key={i} style={{ width: "5px", height: "5px", borderRadius: "50%", background: i === idx ? "#fff" : "rgba(255,255,255,0.45)" }} />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 
 // ---- PAGE ----
 
@@ -500,7 +545,7 @@ export default function Home() {
           <div className="featured-grid">
             {featured.map((p) => (
               <div key={p.title} className="proj-card">
-                <img className="proj-img" src={p.img} alt={p.title} />
+                <CardImage img={p.img} alt={p.title} />
                 <div className="proj-body">
                   <div className="proj-title">{p.title}</div>
                   <div className="proj-desc">{p.desc}</div>
@@ -563,7 +608,7 @@ export default function Home() {
               <div className="projects-grid">
                 {section.projects.map((p) => (
                   <div key={p.title} className="proj-card" onClick={() => setSelected(p)} style={{ cursor: "pointer" }}>
-                    <img className="proj-img" src={p.img} alt={p.title} />
+                    <CardImage img={p.img} images={p.images} alt={p.title} />
                     <div className="proj-body">
                       <div className="proj-title">{p.title}</div>
                       <div className="proj-desc">{p.desc}</div>
@@ -863,9 +908,9 @@ export default function Home() {
             >
               &times;
             </button>
-            <img
-              src={selected.img} alt={selected.title}
-              style={{ width: "100%", height: "180px", objectFit: "cover", borderRadius: "10px", marginBottom: "1.25rem", background: "var(--surface-2)" }}
+            <CardImage
+              img={selected.img} images={selected.images} alt={selected.title}
+              imgStyle={{ width: "100%", aspectRatio: "16/9", objectFit: "cover", borderRadius: "10px", marginBottom: "1.25rem", background: "var(--surface-2)" }}
             />
             <div style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text)", marginBottom: "0.65rem" }}>
               {selected.title}
