@@ -30,7 +30,7 @@ const featured = [
     desc: "Meta Ads + Triple Whale + Funnelish intelligence dashboard. Uses Claude to output SCALE / KILL / ITERATE decisions for e-commerce brands.",
     tags: ["Claude API", "Python", "Supabase"],
     color: "violet",
-    img: `${BASE}/images/projects/adloop.png`,
+    img: `${BASE}/images/projects/Adloop.png`,
   },
   {
     title: "MER Engine",
