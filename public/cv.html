@@ -247,6 +247,19 @@
     line-height: 1.4;
   }
 
+  /* ── Project category label ── */
+  .proj-category {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 16px 0 10px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .proj-category:first-of-type { margin-top: 0; }
+
   /* ── Print ── */
   @media print {
     body { background: #fff; }
@@ -434,9 +447,11 @@
     </div>
   </div>
 
-  <!-- Selected Projects -->
+  <!-- Projects -->
   <div class="section">
-    <div class="section-title">Selected Projects</div>
+    <div class="section-title">Projects</div>
+
+    <div class="proj-category">AI Agents &amp; Dashboards</div>
     <div class="projects-grid">
       <div class="proj-item">
         <div class="proj-name">AdLoop</div>
@@ -449,14 +464,24 @@
         <div class="proj-tags"><span class="tag">Python</span><span class="tag">Supabase</span><span class="tag">Google Ads</span></div>
       </div>
       <div class="proj-item">
-        <div class="proj-name">Marketing Dashboard</div>
-        <div class="proj-desc">Multi-channel analytics for a 187-account agency: 5 ad platforms, 3 SEO sources, 25 analysis views, budget pacing, and AI querying.</div>
-        <div class="proj-tags"><span class="tag">Next.js</span><span class="tag">BigQuery</span><span class="tag">TypeScript</span></div>
-      </div>
-      <div class="proj-item">
         <div class="proj-name">Google Ads MCP Server</div>
         <div class="proj-desc">Open-source MCP server enabling Claude/ChatGPT to query and manage Google Ads natively via natural language.</div>
         <div class="proj-tags"><span class="tag">MCP</span><span class="tag">Python</span><span class="tag">Google Ads API</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">AdLlama</div>
+        <div class="proj-desc">Next.js + Python platform for managing Google Ads via Claude-powered chat. Built Keyword Planner API and Ad Copy Validation.</div>
+        <div class="proj-tags"><span class="tag">Next.js</span><span class="tag">Python</span><span class="tag">Claude API</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Google Ads AI Agent</div>
+        <div class="proj-desc">Custom GPT + MCP server pulling all Google Ads metrics conversationally.</div>
+        <div class="proj-tags"><span class="tag">Custom GPT</span><span class="tag">MCP</span><span class="tag">Google Ads</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Ad Writing AI GPT</div>
+        <div class="proj-desc">Self-learning agent writing Google Ad copy from live campaign data with CTA optimization.</div>
+        <div class="proj-tags"><span class="tag">Custom GPT</span><span class="tag">Google Ads</span><span class="tag">AI</span></div>
       </div>
       <div class="proj-item">
         <div class="proj-name">ACE AI Receptionist</div>
@@ -464,9 +489,136 @@
         <div class="proj-tags"><span class="tag">Retell AI</span><span class="tag">GoHighLevel</span><span class="tag">Voice AI</span></div>
       </div>
       <div class="proj-item">
+        <div class="proj-name">Grace Inbound AI Receptionist</div>
+        <div class="proj-desc">24/7 inbound voice AI for a land buying company. Handles incoming seller calls, qualifies leads, and books appointments.</div>
+        <div class="proj-tags"><span class="tag">Retell AI</span><span class="tag">Voice AI</span><span class="tag">Inbound</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Sarah Outbound AI Receptionist</div>
+        <div class="proj-desc">Outbound AI calling agent pre-qualifying seller leads with automated SMS follow-up for a land buying company.</div>
+        <div class="proj-tags"><span class="tag">Retell AI</span><span class="tag">Voice AI</span><span class="tag">SMS</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Google Analytics AI Agent</div>
+        <div class="proj-desc">Custom GPT + MCP server for GA4 data queries via natural language.</div>
+        <div class="proj-tags"><span class="tag">Custom GPT</span><span class="tag">MCP</span><span class="tag">GA4</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Basecamp AI Agent</div>
+        <div class="proj-desc">Full Basecamp workspace made conversational via MCP, with daily Slack briefings.</div>
+        <div class="proj-tags"><span class="tag">Zapier</span><span class="tag">ChatGPT</span><span class="tag">Slack</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Copy Chief AI</div>
+        <div class="proj-desc">AI copywriting evaluator using a 7-criterion scoring rubric powered by Claude API.</div>
+        <div class="proj-tags"><span class="tag">Claude API</span><span class="tag">Copywriting</span><span class="tag">Evaluation</span></div>
+      </div>
+    </div>
+
+    <div class="proj-category">Workflows &amp; Automation</div>
+    <div class="projects-grid">
+      <div class="proj-item">
         <div class="proj-name">N8N Blog Automation</div>
         <div class="proj-desc">5-workflow pipeline: keyword research → outline → draft → SEO check → WordPress publish, fully automated.</div>
         <div class="proj-tags"><span class="tag">n8n</span><span class="tag">OpenAI</span><span class="tag">WordPress</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">KPI Data Manager</div>
+        <div class="proj-desc">Apps Script aggregating KPIs from LinkedIn, Meta, Bing, and StackAdapt with Discord alerts.</div>
+        <div class="proj-tags"><span class="tag">Apps Script</span><span class="tag">APIs</span><span class="tag">Discord</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">FB Lead Capture Pipeline</div>
+        <div class="proj-desc">Facebook Lead Ads to Google Sheets with automated email notifications.</div>
+        <div class="proj-tags"><span class="tag">Zapier</span><span class="tag">Facebook</span><span class="tag">Sheets</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">LinkedIn Ads to HubSpot</div>
+        <div class="proj-desc">Routes LinkedIn leads and creates HubSpot engagement records automatically.</div>
+        <div class="proj-tags"><span class="tag">Zapier</span><span class="tag">LinkedIn</span><span class="tag">HubSpot</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Customer.io Email Automation</div>
+        <div class="proj-desc">90-day nurture sequences, A/B tested outreach, and re-engagement flows. Achieved 5.6% CTR.</div>
+        <div class="proj-tags"><span class="tag">Customer.io</span><span class="tag">Email</span><span class="tag">Automation</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Pipeline to Webinar Registration</div>
+        <div class="proj-desc">Auto-registers contacts for Zoom when they reach a specific CRM pipeline stage.</div>
+        <div class="proj-tags"><span class="tag">Zapier</span><span class="tag">CRM</span><span class="tag">Zoom</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Pipedrive to Google Ads</div>
+        <div class="proj-desc">n8n workflow mapping Pipedrive deal stages to Google Ads offline conversion events for pipeline attribution.</div>
+        <div class="proj-tags"><span class="tag">n8n</span><span class="tag">Pipedrive</span><span class="tag">Google Ads</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">LinkedIn Lead Alert</div>
+        <div class="proj-desc">Instant email notifications for new LinkedIn Lead Gen Form responses.</div>
+        <div class="proj-tags"><span class="tag">Zapier</span><span class="tag">LinkedIn</span><span class="tag">Email</span></div>
+      </div>
+    </div>
+
+    <div class="proj-category">Web Apps</div>
+    <div class="projects-grid">
+      <div class="proj-item">
+        <div class="proj-name">Marketing Dashboard</div>
+        <div class="proj-desc">Multi-channel analytics for a 187-account agency: 5 ad platforms, 3 SEO sources, 25 analysis views, budget pacing, and AI querying.</div>
+        <div class="proj-tags"><span class="tag">Next.js</span><span class="tag">BigQuery</span><span class="tag">TypeScript</span><span class="tag">Python</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">GHL Dashboard</div>
+        <div class="proj-desc">Custom GoHighLevel CRM with pre-qualification workflows, multi-step form builder, and custom fields for a real estate company.</div>
+        <div class="proj-tags"><span class="tag">GoHighLevel</span><span class="tag">CRM</span><span class="tag">Automation</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Blog Automation Web App</div>
+        <div class="proj-desc">Full UI for SEO-optimized blog content generation and management.</div>
+        <div class="proj-tags"><span class="tag">Web App</span><span class="tag">SEO</span><span class="tag">AI</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Canva Listing Automation</div>
+        <div class="proj-desc">Real estate branded graphics generated from property data with batch CSV support.</div>
+        <div class="proj-tags"><span class="tag">Canva API</span><span class="tag">Real Estate</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Video AI Merger</div>
+        <div class="proj-desc">6-step video pipeline with AI voiceovers and automated editing.</div>
+        <div class="proj-tags"><span class="tag">AI Voice</span><span class="tag">Video</span></div>
+      </div>
+    </div>
+
+    <div class="proj-category">Marketing &amp; Websites</div>
+    <div class="projects-grid">
+      <div class="proj-item">
+        <div class="proj-name">Synergy Data Investments</div>
+        <div class="proj-desc">200+ marketing assets, 30% engagement increase, 28 investment deals closed.</div>
+        <div class="proj-tags"><span class="tag">Marketing</span><span class="tag">Content</span><span class="tag">Investment</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Synergy Estates</div>
+        <div class="proj-desc">62% faster production, 91% on-time delivery rate achieved across campaigns.</div>
+        <div class="proj-tags"><span class="tag">Marketing</span><span class="tag">Real Estate</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Metalkin Australia</div>
+        <div class="proj-desc">168 leads generated, 54 meetings booked, 5 deals closed via B2B marketing.</div>
+        <div class="proj-tags"><span class="tag">Marketing</span><span class="tag">Lead Gen</span><span class="tag">B2B</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Aljay Agro-Industrial</div>
+        <div class="proj-desc">Grew Facebook page to 70K likes in 3 months; 40% Instagram growth.</div>
+        <div class="proj-tags"><span class="tag">Social Media</span><span class="tag">Marketing</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Synergy Data Investments Website</div>
+        <div class="proj-desc">Investment company site with portfolios, investor tools, and guides.</div>
+        <div class="proj-tags"><span class="tag">WordPress</span><span class="tag">Finance</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Synergy Estates Website</div>
+        <div class="proj-desc">Property investment platform with UK news, rankings, and guides.</div>
+        <div class="proj-tags"><span class="tag">WordPress</span><span class="tag">Real Estate</span></div>
       </div>
     </div>
   </div>
