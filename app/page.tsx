@@ -287,8 +287,8 @@ const experiences = [
   {
     role: "AI Automation & Workflow Specialist",
     company: "Contract / Project-Based",
-    period: "2025",
-    status: "prev",
+    period: "2025 - Present",
+    status: "current",
     highlights: [
       "AI Receptionist: 24/7 voice AI agent for real estate lead qualification",
       "GoHighLevel integrations for automated lead capture and CRM sync",
