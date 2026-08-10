@@ -466,6 +466,25 @@ export default function Home() {
 
   return (
     <>
+      {/* BACKGROUND VIDEO */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        style={{
+          position: "fixed",
+          top: 0, left: 0,
+          width: "100%", height: "100%",
+          objectFit: "cover",
+          opacity: 0.3,
+          zIndex: -1,
+          pointerEvents: "none",
+        }}
+      >
+        <source src={`${BASE}/videos/bg.mp4`} type="video/mp4" />
+      </video>
+
       {/* HERO */}
       <section id="hero" className="hero-section">
         <div className="hero-inner">
