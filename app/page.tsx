@@ -88,6 +88,13 @@ const projectSections = [
         color: "rose",
       },
       {
+        title: "GRACE + SARAH — Inbound, Outbound & SMS",
+        desc: "Full-stack AI receptionist suite: GRACE handles inbound calls and qualifies leads 24/7, SARAH runs outbound pre-qualification, and automated SMS follows up with every contact.",
+        tags: ["Retell AI", "Voice AI", "SMS", "Real Estate"],
+        img: `${BASE}/images/projects/ACE.png`,
+        color: "rose",
+      },
+      {
         title: "Google Analytics AI Agent",
         desc: "Custom GPT + MCP server for GA4 data queries via natural language.",
         tags: ["Custom GPT", "MCP", "GA4"],
