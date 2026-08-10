@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Prism Preview + RC Analysis</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :root {
+    --bg: #F4F6FB;
+    --surface: #FFFFFF;
+    --surface-2: #EEF2F9;
+    --border: #E2E8F0;
+    --border-2: #CBD5E1;
+    --accent: #6366F1;
+    --accent-dim: rgba(99,102,241,0.08);
+    --accent-ring: rgba(99,102,241,0.22);
+    --text: #0F172A;
+    --text-muted: #94A3B8;
+    --text-sub: #475569;
+    --green: #059669;
+    --green-bg: #ECFDF5;
+    --amber: #D97706;
+    --red: #DC2626;
+  }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px; -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ''; display: block; height: 3px;
+    background: linear-gradient(90deg, #6366F1 0%, #8B5CF6 45%, #06B6D4 100%);
+  }
+
+  .page { max-width: 1160px; margin: 0 auto; padding: 40px 28px 80px; }
+
+  .page-header { margin-bottom: 36px; }
+  .page-header h1 {
+    font-size: 22px; font-weight: 800; letter-spacing: -.025em; margin: 0 0 6px;
+    background: linear-gradient(135deg, #6366F1, #8B5CF6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    display: inline-block;
+  }
+  .page-header p { font-size: 13px; color: var(--text-muted); margin: 0; }
+  .eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+
+  /* ── browser chrome ── */
+  .browser-wrap {
+    border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--border-2);
+    box-shadow: 0 8px 40px rgba(15,23,42,.12), 0 2px 8px rgba(15,23,42,.06);
+    margin-bottom: 60px;
+  }
+  .browser-bar {
+    background: #F1F3F9; border-bottom: 1px solid var(--border);
+    padding: 10px 16px; display: flex; align-items: center; gap: 12px;
+  }
+  .dots { display: flex; gap: 6px; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot-r { background: #FF5F57; } .dot-y { background: #FEBC2E; } .dot-g { background: #28C840; }
+  .url-bar {
+    flex: 1; max-width: 340px; background: #fff; border: 1px solid var(--border);
+    border-radius: 6px; padding: 5px 12px; font-size: 11.5px; color: var(--text-muted); margin: 0 auto;
+  }
+
+  /* ── dashboard shell ── */
+  .dash { display: flex; height: 620px; overflow: hidden; background: var(--bg); position: relative; }
+  .dash::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, #6366F1 0%, #8B5CF6 45%, #06B6D4 100%); z-index: 10;
+  }
+
+  /* ── sidebar ── */
+  .sb { width: 220px; min-width: 220px; background: #FAFBFF; border-right: 1px solid var(--border); display: flex; flex-direction: column; padding-top: 2px; overflow-y: auto; }
+  .sb-logo { padding: 18px 15px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .sb-prism {
+    font-size: 14px; font-weight: 800; letter-spacing: -.02em;
+    background: linear-gradient(135deg, #6366F1, #8B5CF6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: 1px;
+  }
+  .sb-wm { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); }
+  .sb-nav { flex: 1; padding: 10px 8px; }
+  .sb-section { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); padding: 10px 10px 4px; }
+
+  /* top-level nav items */
+  .nav-item {
+    display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 8px;
+    font-size: 12.5px; font-weight: 500; color: var(--text-sub); margin-bottom: 2px;
+    border: 1px solid transparent; cursor: pointer; transition: all .12s; user-select: none;
+  }
+  .nav-item:hover { color: var(--text); background: var(--surface-2); }
+  .nav-item.active { color: var(--accent); background: var(--accent-dim); border-color: var(--accent-ring); font-weight: 600; }
+  .nav-item.group-open { color: var(--text); background: var(--surface-2); }
+  .nav-item svg.icon { width: 14px; height: 14px; flex-shrink: 0; opacity: .55; }
+  .nav-item.active svg.icon { opacity: 1; }
+  .chevron { width: 12px; height: 12px; margin-left: auto; opacity: .4; transition: transform .18s; flex-shrink: 0; }
+  .chevron.open { transform: rotate(180deg); }
+
+  /* sub-nav (dropdown) */
+  .nav-sub { display: none; padding: 2px 0 4px 8px; }
+  .nav-sub.open { display: block; }
+  .nav-sub-item {
+    display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 7px;
+    font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 1px;
+    cursor: pointer; transition: all .1s; border: 1px solid transparent;
+  }
+  .nav-sub-item:hover { color: var(--text-sub); background: var(--surface-2); }
+  .nav-sub-item.active { color: var(--accent); background: var(--accent-dim); border-color: var(--accent-ring); font-weight: 600; }
+  .nav-sub-item::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .35; flex-shrink: 0; }
+  .nav-sub-item.active::before { opacity: 1; }
+
+  .sb-foot { padding: 8px 18px 14px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--text-muted); flex-shrink: 0; }
+
+  /* ── main ── */
+  .main { flex: 1; overflow-y: auto; padding: 20px 28px 32px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .ph-title { font-size: 17px; font-weight: 700; letter-spacing: -.02em; color: var(--text); margin: 0 0 2px; }
+  .ph-sub { font-size: 12px; color: var(--text-muted); margin: 0 0 18px; }
+
+  /* layout */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .four-col { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+  .stack > * + * { margin-top: 12px; }
+
+  /* cards */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(15,23,42,.05); }
+  .card-title { font-size: 13px; font-weight: 700; color: var(--text); margin: 0 0 12px; }
+  .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+
+  /* fields */
+  .lbl { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; display: block; }
+  .inp-mock { width: 100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: 7px; padding: 8px 11px; font-size: 12px; color: var(--text-sub); margin-bottom: 10px; }
+  .inp-mock.focused { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); background: var(--surface); }
+  .inp-mock.tall { min-height: 56px; }
+
+  /* pills */
+  .pills { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .pill { padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid var(--border); color: var(--text-muted); background: var(--surface); cursor: pointer; }
+  .pill.on { background: var(--accent-dim); border-color: var(--accent-ring); color: var(--accent); }
+
+  /* buttons */
+  .btn-mock { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 7px; font-size: 12px; font-weight: 700; justify-content: center; cursor: pointer; }
+  .btn-full { width: 100%; }
+  .btn-p { background: var(--accent); color: #fff; box-shadow: 0 1px 3px rgba(99,102,241,.2); }
+  .btn-g { background: var(--surface); color: var(--text-sub); border: 1px solid var(--border); }
+  .btn-s { background: var(--green-bg); color: var(--green); border: 1px solid rgba(16,185,129,.3); }
+  .btn-warn { background: #FFFBEB; color: #92400E; border: 1px solid rgba(245,158,11,.3); }
+
+  /* selector */
+  .sel-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 10px; }
+  .sel-c { padding: 9px 10px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface-2); text-align: center; font-size: 11px; color: var(--text-sub); }
+  .sel-c.on { border-color: var(--accent-ring); background: var(--accent-dim); color: var(--accent); font-weight: 600; }
+  .sel-c-icon { font-size: 15px; margin-bottom: 3px; }
+
+  /* post card */
+  .post-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 9px; padding: 12px 14px; margin-bottom: 8px; }
+  .post-platform { display: inline-block; font-size: 9.5px; font-weight: 700; text-transform: uppercase; color: var(--accent); background: var(--accent-dim); border: 1px solid var(--accent-ring); border-radius: 20px; padding: 2px 8px; margin-bottom: 7px; }
+  .post-text { font-size: 11.5px; color: var(--text-sub); line-height: 1.55; }
+
+  /* image grid */
+  .img-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .img-tile { aspect-ratio: 1; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+
+  /* stat mini */
+  .stat-mini { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 13px 15px; }
+  .stat-mini .n { font-size: 24px; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+  .stat-mini .l { font-size: 9.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); margin-top: 4px; }
+
+  /* cal rows */
+  .cal-row { display: flex; gap: 12px; align-items: flex-start; background: var(--surface-2); border: 1px solid var(--border); border-radius: 9px; padding: 11px 13px; margin-bottom: 7px; }
+  .cal-day { font-size: 10.5px; font-weight: 700; color: var(--accent); width: 36px; flex-shrink: 0; padding-top: 1px; }
+  .cal-topic { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .cal-plat { font-size: 10.5px; color: var(--text-muted); }
+
+  /* brand */
+  .brand-swatch { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border); }
+
+  /* accounts */
+  .acct-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; }
+  .acct-row + .acct-row { border-top: 1px solid var(--border); }
+  .acct-av { width: 32px; height: 32px; border-radius: 50%; background: var(--accent-dim); border: 1px solid var(--accent-ring); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+  .connected-badge { font-size: 10px; font-weight: 700; color: var(--green); background: var(--green-bg); border: 1px solid rgba(16,185,129,.3); border-radius: 20px; padding: 2px 8px; }
+  .not-connected { font-size: 10px; font-weight: 700; color: var(--text-muted); background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; padding: 2px 8px; }
+
+  /* history rows */
+  .history-row { background: var(--surface-2); border: 1px solid var(--border); border-radius: 9px; padding: 11px 13px; margin-bottom: 7px; }
+  .history-preview { font-size: 11.5px; color: var(--text-sub); line-height: 1.5; margin: 5px 0; }
+  .history-date { font-size: 10.5px; color: var(--text-muted); }
+
+  /* ── data tables ── */
+  .table-wrap { overflow-x: auto; }
+  .data-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  .data-table th { font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--text-muted); text-align: left; padding: 0 10px 8px; white-space: nowrap; }
+  .data-table td { padding: 9px 10px; border-top: 1px solid var(--border); color: var(--text-sub); vertical-align: middle; }
+  .data-table tr:hover td { background: var(--surface-2); }
+  .data-table .num { font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+  .data-table .green { color: var(--green); font-weight: 700; }
+  .data-table .red { color: var(--red); font-weight: 700; }
+  .data-table .amber { color: var(--amber); font-weight: 700; }
+
+  /* badges */
+  .badge { display: inline-block; font-size: 9.5px; font-weight: 700; border-radius: 20px; padding: 2px 8px; }
+  .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid rgba(16,185,129,.3); }
+  .badge-red { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+  .badge-amber { background: #FFFBEB; color: var(--amber); border: 1px solid rgba(245,158,11,.25); }
+  .badge-blue { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-ring); }
+  .badge-gray { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); }
+
+  /* platform connection row */
+  .conn-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; }
+  .conn-row + .conn-row { border-top: 1px solid var(--border); }
+  .conn-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .conn-name { font-size: 12.5px; font-weight: 600; color: var(--text); }
+  .conn-sub { font-size: 11px; color: var(--text-muted); }
+
+  /* pacing bar */
+  .pacing-wrap { margin-bottom: 12px; }
+  .pacing-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-sub); margin-bottom: 5px; }
+  .pacing-label strong { color: var(--text); }
+  .pacing-bar-bg { height: 7px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+  .pacing-bar-fill { height: 100%; border-radius: 99px; }
+
+  /* keyword quality score */
+  .qs-dot { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0; }
+  .qs-hi { background: #ECFDF5; color: var(--green); }
+  .qs-mid { background: #FFFBEB; color: var(--amber); }
+  .qs-lo { background: #FEF2F2; color: var(--red); }
+
+  /* seo grade */
+  .seo-grade { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; flex-shrink: 0; }
+  .grade-a { background: #ECFDF5; color: var(--green); }
+  .grade-b { background: #FFFBEB; color: var(--amber); }
+  .grade-c { background: #FEF2F2; color: var(--red); }
+
+  /* metrics analytics specific */
+  .insight-bullet { display: flex; gap: 8px; font-size: 12px; line-height: 1.55; margin-bottom: 5px; }
+  .insight-bullet span.dot { font-weight: 700; flex-shrink: 0; }
+
+  /* ── below fold RC Analysis ── */
+  .section-head { margin-bottom: 28px; }
+  .section-head h2 { font-size: 17px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 5px; }
+  .section-head p { font-size: 13px; color: var(--text-muted); margin: 0; }
+  .analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .a-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; box-shadow: 0 1px 3px rgba(15,23,42,.05); }
+  .a-card-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .a-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .icon-indigo { background: var(--accent-dim); } .icon-green { background: #ECFDF5; } .icon-amber { background: #FFFBEB; } .icon-red { background: #FEF2F2; }
+  .a-card-head div h3 { font-size: 13.5px; font-weight: 700; color: var(--text); margin: 0 0 3px; }
+  .a-card-head div p { font-size: 11.5px; color: var(--text-muted); margin: 0; line-height: 1.5; }
+  .a-item { display: flex; gap: 10px; padding: 9px 0; border-top: 1px solid var(--border); font-size: 12.5px; line-height: 1.55; }
+  .a-label { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; min-width: 60px; padding-top: 2px; flex-shrink: 0; }
+  .label-blue { color: var(--accent); } .label-green { color: var(--green); } .label-amber { color: var(--amber); } .label-red { color: var(--red); }
+  .a-desc { color: var(--text-sub); flex: 1; }
+  .a-desc strong { color: var(--text); font-weight: 600; }
+  .stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 32px; }
+  .stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(15,23,42,.04); }
+  .stat-n { font-size: 24px; font-weight: 800; letter-spacing: -.03em; color: var(--text); line-height: 1; }
+  .stat-n.accent { color: var(--accent); } .stat-n.green { color: var(--green); } .stat-n.amber { color: var(--amber); }
+  .stat-l { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); margin-top: 5px; }
+  .divider { height: 1px; background: var(--border); margin: 48px 0; }
+  .token-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 48px; }
+  .token-swatch { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+  .swatch { width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--border); }
+  .swatch-lbl { font-size: 10px; color: var(--text-muted); text-align: center; }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-header">
+    <div class="eyebrow">Prism Marketing Dashboard</div>
+    <h1>Theme Preview + RC Analysis</h1>
+    <p>All tabs are clickable. Social Channel collapses into a dropdown. RC analysis below.</p>
+  </div>
+
+  <div class="browser-wrap">
+    <div class="browser-bar">
+      <div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <div class="url-bar">marketing-dashboard.up.railway.app</div>
+    </div>
+
+    <div class="dash">
+      <!-- ── Sidebar ── -->
+      <aside class="sb">
+        <div class="sb-logo">
+          <div class="sb-prism">Prism</div>
+          <div class="sb-wm">WorkSmart AI</div>
+        </div>
+        <nav class="sb-nav">
+
+          <!-- Social Channel dropdown -->
+          <div class="nav-item group-trigger" id="trigger-social" onclick="toggleGroup('social')">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Social Channel
+            <svg class="chevron open" id="chevron-social" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="nav-sub open" id="sub-social">
+            <div class="nav-sub-item active" data-tab="social">Social Posts</div>
+            <div class="nav-sub-item" data-tab="studio">Image Studio</div>
+            <div class="nav-sub-item" data-tab="brandkit">Brand Kit</div>
+            <div class="nav-sub-item" data-tab="calendar">Content Calendar</div>
+            <div class="nav-sub-item" data-tab="gallery">Gallery</div>
+            <div class="nav-sub-item" data-tab="metrics">Metrics</div>
+          </div>
+
+          <!-- New top-level tabs -->
+          <div class="nav-item" data-tab="ads" style="margin-top:4px">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            Marketing Ads
+          </div>
+          <div class="nav-item" data-tab="analytics">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 20h18M8 20V10M12 20V4M16 20v-6"/></svg>
+            Analytics
+          </div>
+          <div class="nav-item" data-tab="website">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Website Analysis
+          </div>
+
+        </nav>
+        <div class="sb-foot">Sign out</div>
+      </aside>
+
+      <!-- ── Main ── -->
+      <main class="main">
+
+        <!-- Social Posts -->
+        <div class="tab-panel active" id="tab-social">
+          <div class="ph-title">Social Posts</div>
+          <div class="ph-sub">Generate platform-ready captions and images from your brand topic.</div>
+          <div class="two-col">
+            <div class="card">
+              <div class="card-title">Post Details</div>
+              <span class="lbl">Topic / Campaign</span>
+              <div class="inp-mock focused">AI tools that save real estate agents 5 hrs a week</div>
+              <span class="lbl">Target Audience</span>
+              <div class="inp-mock">Real estate professionals &amp; agency owners</div>
+              <span class="lbl">Platforms</span>
+              <div class="pills">
+                <div class="pill on">LinkedIn</div><div class="pill on">Instagram</div>
+                <div class="pill on">Twitter/X</div><div class="pill">Facebook</div>
+              </div>
+              <span class="lbl" style="margin-top:4px">Post Image Type</span>
+              <div class="sel-row">
+                <div class="sel-c"><div class="sel-c-icon">✕</div>Text Only</div>
+                <div class="sel-c on"><div class="sel-c-icon">🖼</div>Single Photo</div>
+                <div class="sel-c"><div class="sel-c-icon">▪▪▪</div>Carousel</div>
+              </div>
+              <span class="lbl">Image description</span>
+              <div class="inp-mock">Modern office, agent on laptop, clean aesthetic</div>
+              <div class="btn-mock btn-p btn-full" style="margin-top:4px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Generate Posts + Image
+              </div>
+            </div>
+            <div class="card" style="overflow-y:auto">
+              <div class="card-title">Generated Posts</div>
+              <div class="post-card">
+                <div class="post-platform">LinkedIn</div>
+                <div class="post-text">Most real estate agents spend 5+ hours a week on tasks AI handles in minutes. Drafting follow-up emails. Writing listing descriptions. Responding to the same questions over and over.</div>
+                <div style="display:flex;gap:6px;margin-top:10px">
+                  <div class="btn-mock btn-g" style="padding:5px 11px;font-size:11px">Copy</div>
+                  <div class="btn-mock btn-s" style="padding:5px 11px;font-size:11px">Sent!</div>
+                </div>
+              </div>
+              <div class="post-card">
+                <div class="post-platform">Instagram</div>
+                <div class="post-text">What if you got Friday afternoons back every week? 🏡 Automate the repetitive. Focus on the deals.</div>
+                <div style="display:flex;gap:6px;margin-top:10px">
+                  <div class="btn-mock btn-g" style="padding:5px 11px;font-size:11px">Copy</div>
+                  <div class="btn-mock btn-g" style="padding:5px 11px;font-size:11px">Send to ContentStudio</div>
+                </div>
+              </div>
+              <div style="border:1px solid var(--border);border-radius:9px;background:linear-gradient(135deg,#EEF2F9,#F0EFFF);height:90px;display:flex;align-items:center;justify-content:center;margin-top:4px">
+                <div style="text-align:center;font-size:11px;color:var(--text-muted)">🖼 Generated image appears here</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Image Studio -->
+        <div class="tab-panel" id="tab-studio">
+          <div class="ph-title">Image Studio</div>
+          <div class="ph-sub">Generate standalone AI images for ads, posts, or campaigns.</div>
+          <div class="two-col">
+            <div class="card stack">
+              <div><span class="lbl">Image Prompt</span><div class="inp-mock tall">A confident female real estate agent in a bright modern office, handing over keys, natural light, photorealistic</div></div>
+              <div><span class="lbl">Size</span>
+                <div class="sel-row"><div class="sel-c on"><div class="sel-c-icon">⬛</div>1:1</div><div class="sel-c"><div class="sel-c-icon">▬</div>16:9</div><div class="sel-c"><div class="sel-c-icon">▐</div>9:16</div></div>
+              </div>
+              <div><span class="lbl">Reference Image (optional)</span><div style="border:1.5px dashed var(--border-2);border-radius:8px;padding:18px;text-align:center;font-size:11px;color:var(--text-muted)">Drop an image to use as style reference</div></div>
+              <div class="btn-mock btn-p btn-full">Generate Image</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Output</div>
+              <div class="img-grid">
+                <div class="img-tile" style="background:linear-gradient(135deg,#EEF2F9,#E0E7FF)">🏡</div>
+                <div class="img-tile" style="background:linear-gradient(135deg,#F0FDF4,#DCFCE7)">🏢</div>
+                <div class="img-tile" style="background:linear-gradient(135deg,#FEF9C3,#FEF3C7)">🌇</div>
+              </div>
+              <div style="margin-top:12px;display:flex;gap:6px">
+                <div class="btn-mock btn-g" style="padding:6px 12px;font-size:11px">Download All</div>
+                <div class="btn-mock btn-g" style="padding:6px 12px;font-size:11px">Edit Image</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Brand Kit -->
+        <div class="tab-panel" id="tab-brandkit">
+          <div class="ph-title">Brand Kit</div>
+          <div class="ph-sub">Your brand identity, used across all generated content.</div>
+          <div class="two-col">
+            <div class="card stack">
+              <div><span class="lbl">Brand Name</span><div class="inp-mock focused">WorkSmart AI</div></div>
+              <div><span class="lbl">Brand Voice</span><div class="inp-mock tall">Professional but approachable. Direct, confident. Never jargon-heavy.</div></div>
+              <div><span class="lbl">Primary Colour</span><div style="display:flex;align-items:center;gap:10px"><div class="brand-swatch" style="background:#6366F1"></div><div class="inp-mock" style="margin:0;flex:1">#6366F1</div></div></div>
+              <div><span class="lbl">Target Audience</span><div class="inp-mock">Professional services businesses, agency owners, consultants</div></div>
+              <div class="btn-mock btn-p btn-full">Save Brand Kit</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Connected Accounts</div>
+              <div class="acct-row"><div class="acct-av">Li</div><div style="flex:1"><div style="font-size:12.5px;font-weight:500;color:var(--text)">LinkedIn</div><div style="font-size:11px;color:var(--text-muted)">WorkSmart AI</div></div><div class="connected-badge">Connected</div></div>
+              <div class="acct-row"><div class="acct-av">Ig</div><div style="flex:1"><div style="font-size:12.5px;font-weight:500;color:var(--text)">Instagram</div><div style="font-size:11px;color:var(--text-muted)">@worksmartai</div></div><div class="connected-badge">Connected</div></div>
+              <div class="acct-row"><div class="acct-av">X</div><div style="flex:1"><div style="font-size:12.5px;font-weight:500;color:var(--text)">Twitter / X</div><div style="font-size:11px;color:var(--text-muted)">Not connected</div></div><div class="btn-mock btn-g" style="padding:4px 10px;font-size:11px">Connect</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content Calendar -->
+        <div class="tab-panel" id="tab-calendar">
+          <div class="ph-title">Content Calendar</div>
+          <div class="ph-sub">Planned posts for the next 7 days, generated from your brand strategy.</div>
+          <div class="two-col">
+            <div class="card stack">
+              <div><span class="lbl">Theme</span><div class="inp-mock">AI automation for small business owners</div></div>
+              <div><span class="lbl">Platforms</span><div class="pills"><div class="pill on">LinkedIn</div><div class="pill on">Instagram</div><div class="pill">Twitter/X</div></div></div>
+              <div class="btn-mock btn-p btn-full">Generate Week Plan</div>
+            </div>
+            <div class="card" style="overflow-y:auto">
+              <div class="card-title">This Week</div>
+              <div class="cal-row"><div class="cal-day">MON 11</div><div><div class="cal-topic">5 tasks AI handles instead of you</div><div class="cal-plat">LinkedIn · Instagram</div></div></div>
+              <div class="cal-row"><div class="cal-day">WED 13</div><div><div class="cal-topic">Client success: 10 hrs saved per week</div><div class="cal-plat">LinkedIn</div></div></div>
+              <div class="cal-row"><div class="cal-day">FRI 15</div><div><div class="cal-topic">Weekend tip: automate your follow-up</div><div class="cal-plat">Instagram · Twitter/X</div></div></div>
+              <div class="cal-row"><div class="cal-day">SUN 17</div><div><div class="cal-topic">Monday prep: 3 workflows to set up</div><div class="cal-plat">LinkedIn</div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gallery -->
+        <div class="tab-panel" id="tab-gallery">
+          <div class="ph-title">Gallery</div>
+          <div class="ph-sub">All AI-generated images. Click to download.</div>
+          <div class="card">
+            <div class="img-grid" style="grid-template-columns:repeat(4,1fr);gap:10px">
+              <div class="img-tile" style="background:linear-gradient(135deg,#EEF2F9,#E0E7FF);aspect-ratio:1;font-size:28px">🏡</div>
+              <div class="img-tile" style="background:linear-gradient(135deg,#F0FDF4,#DCFCE7);aspect-ratio:1;font-size:28px">💼</div>
+              <div class="img-tile" style="background:linear-gradient(135deg,#FEF9C3,#FEF3C7);aspect-ratio:1;font-size:28px">📊</div>
+              <div class="img-tile" style="background:linear-gradient(135deg,#FFF0F0,#FEE2E2);aspect-ratio:1;font-size:28px">🤝</div>
+              <div class="img-tile" style="background:linear-gradient(135deg,#F5F3FF,#EDE9FE);aspect-ratio:1;font-size:28px">🏢</div>
+              <div class="img-tile" style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5);aspect-ratio:1;font-size:28px">📱</div>
+              <div class="img-tile" style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE);aspect-ratio:1;font-size:28px">✍️</div>
+              <div class="img-tile" style="background:linear-gradient(135deg,#FDF4FF,#FAE8FF);aspect-ratio:1;font-size:28px">🌇</div>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:6px">
+              <div class="btn-mock btn-g" style="padding:6px 12px;font-size:11px">Download All</div>
+              <div class="btn-mock btn-g" style="padding:6px 12px;font-size:11px">Clear Gallery</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics -->
+        <div class="tab-panel" id="tab-metrics">
+          <div class="ph-title">Metrics</div>
+          <div class="ph-sub">Real engagement data from ContentStudio + AI suggestions.</div>
+          <div class="three-col" style="margin-bottom:14px">
+            <div class="stat-mini"><div class="n" style="color:var(--green)">142</div><div class="l">Published</div></div>
+            <div class="stat-mini"><div class="n" style="color:var(--accent)">18</div><div class="l">Scheduled</div></div>
+            <div class="stat-mini"><div class="n" style="color:var(--amber)">6</div><div class="l">Drafts</div></div>
+          </div>
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-head">
+              <div><div style="font-size:13px;font-weight:700;color:var(--text)">Performance Analytics</div><div style="font-size:11.5px;color:var(--text-muted);margin-top:2px">Real engagement data from your connected accounts. Last 30 days.</div></div>
+              <div class="btn-mock btn-p" style="padding:7px 13px;font-size:11.5px;white-space:nowrap;flex-shrink:0">Analyse Now</div>
+            </div>
+            <!-- Top posts -->
+            <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">Top Posts (Last 30 Days)</div>
+            <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:11px 14px;margin-bottom:7px">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span class="post-platform">Instagram</span><span class="badge badge-green">6.4% eng</span></div>
+              <div style="font-size:11.5px;color:var(--text-sub);line-height:1.5;margin-bottom:7px">What if you got Friday afternoons back every week? Automate the repetitive. Focus on the deals...</div>
+              <div style="display:flex;gap:14px;font-size:11px;color:var(--text-muted)"><span><strong style="color:var(--text)">284</strong> likes</span><span><strong style="color:var(--text)">31</strong> comments</span><span><strong style="color:var(--text)">4,820</strong> reach</span></div>
+            </div>
+            <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:11px 14px;margin-bottom:16px">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span class="post-platform">LinkedIn</span><span class="badge badge-green">4.1% eng</span></div>
+              <div style="font-size:11.5px;color:var(--text-sub);line-height:1.5;margin-bottom:7px">5 tasks AI handles instead of you — and the one thing it still can't do...</div>
+              <div style="display:flex;gap:14px;font-size:11px;color:var(--text-muted)"><span><strong style="color:var(--text)">187</strong> likes</span><span><strong style="color:var(--text)">24</strong> comments</span><span><strong style="color:var(--text)">3,210</strong> reach</span></div>
+            </div>
+            <!-- 3 panels -->
+            <div style="background:#ECFDF5;border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:12px 15px;margin-bottom:8px">
+              <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#059669;margin-bottom:8px">What's Working</div>
+              <div class="insight-bullet" style="color:#065F46"><span class="dot" style="color:#059669">•</span><span>Posts opening with a specific number average 5.2% engagement vs 2.1% for generic openers.</span></div>
+              <div class="insight-bullet" style="color:#065F46"><span class="dot" style="color:#059669">•</span><span>Tuesday and Wednesday posts average 40% more reach than weekend posts.</span></div>
+            </div>
+            <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:12px 15px;margin-bottom:8px">
+              <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#DC2626;margin-bottom:8px">What's Not Working</div>
+              <div class="insight-bullet" style="color:#991B1B"><span class="dot" style="color:#DC2626">•</span><span>Facebook posts averaging under 0.8% engagement. No ROI for this audience.</span></div>
+            </div>
+            <div style="background:var(--accent-dim);border:1px solid var(--accent-ring);border-radius:10px;padding:12px 15px">
+              <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Next Post Suggestions</div>
+              <div style="display:flex;gap:9px;font-size:12px;color:var(--text-sub);line-height:1.55;margin-bottom:6px"><span style="background:var(--accent);color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;margin-top:2px">1</span><span>Instagram carousel Tuesday: "7 questions your AI receptionist should answer."</span></div>
+              <div style="display:flex;gap:9px;font-size:12px;color:var(--text-sub);line-height:1.55"><span style="background:var(--accent);color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;margin-top:2px">2</span><span>Drop Facebook from the weekly rotation. Redirect to a second Instagram mid-week post.</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div><div style="font-size:13px;font-weight:700;color:var(--text)">Published Post History</div><div style="font-size:11.5px;color:var(--text-muted);margin-top:2px">Your last 25 posts. Hit Reuse on anything worth running again.</div></div>
+              <div class="btn-mock btn-g" style="padding:6px 11px;font-size:11px;flex-shrink:0">Analyze Patterns</div>
+            </div>
+            <div class="history-row"><div class="post-platform">LinkedIn</div><div class="history-preview">5 tasks AI handles instead of you — and the one thing it still can't do...</div><div class="history-date">Aug 5, 2026 &nbsp;·&nbsp; <span style="color:var(--accent);cursor:pointer">Reuse</span></div></div>
+            <div class="history-row"><div class="post-platform">Instagram</div><div class="history-preview">What if you got Friday afternoons back every week? 🏡 Automate the repetitive...</div><div class="history-date">Aug 2, 2026 &nbsp;·&nbsp; <span style="color:var(--accent);cursor:pointer">Reuse</span></div></div>
+          </div>
+        </div>
+
+        <!-- ════════════════════════════════════
+             MARKETING ADS
+        ════════════════════════════════════ -->
+        <div class="tab-panel" id="tab-ads">
+          <div class="ph-title">Marketing Ads</div>
+          <div class="ph-sub">Campaign performance, budget pacing, and wasted spend across all ad platforms.</div>
+
+          <!-- Platform connections -->
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-title">Connected Ad Accounts</div>
+            <div class="conn-row">
+              <div class="conn-icon" style="background:#EFF6FF">🔵</div>
+              <div style="flex:1"><div class="conn-name">Google Ads</div><div class="conn-sub">MCC · 3 accounts linked</div></div>
+              <div class="connected-badge">Connected</div>
+            </div>
+            <div class="conn-row">
+              <div class="conn-icon" style="background:#F0F9FF">🟦</div>
+              <div style="flex:1"><div class="conn-name">Meta Ads (Facebook + Instagram)</div><div class="conn-sub">Business Portfolio · WorkSmart AI</div></div>
+              <div class="connected-badge">Connected</div>
+            </div>
+            <div class="conn-row">
+              <div class="conn-icon" style="background:#F0F9FF">🔷</div>
+              <div style="flex:1"><div class="conn-name">LinkedIn Ads</div><div class="conn-sub">Not connected</div></div>
+              <div class="btn-mock btn-g" style="padding:4px 10px;font-size:11px">Connect</div>
+            </div>
+          </div>
+
+          <!-- Multi-channel summary stats -->
+          <div class="four-col" style="margin-bottom:14px">
+            <div class="stat-mini"><div class="n" style="color:var(--text)">£4,820</div><div class="l">Total Spend</div></div>
+            <div class="stat-mini"><div class="n" style="color:var(--green)">3.8x</div><div class="l">Avg ROAS</div></div>
+            <div class="stat-mini"><div class="n" style="color:var(--accent)">£1.92</div><div class="l">Avg CPC</div></div>
+            <div class="stat-mini"><div class="n" style="color:var(--amber)">£342</div><div class="l">Wasted Spend</div></div>
+          </div>
+
+          <!-- Campaign table -->
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-title">Campaign Performance — Last 30 Days</div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Campaign</th><th>Platform</th><th>Spend</th><th>Impressions</th><th>Clicks</th><th>CTR</th><th>Conv.</th><th>ROAS</th><th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Lead Gen — Sellers Q3</td><td><span class="badge badge-blue">Google</span></td><td class="num">£1,840</td><td class="num">48,200</td><td class="num">1,920</td><td class="green">4.0%</td><td class="num">38</td><td class="green">4.9x</td><td><span class="badge badge-green">Active</span></td></tr>
+                  <tr><td>Brand Awareness — FB</td><td><span class="badge badge-blue">Meta</span></td><td class="num">£1,240</td><td class="num">92,100</td><td class="num">840</td><td class="amber">0.9%</td><td class="num">12</td><td class="amber">2.1x</td><td><span class="badge badge-green">Active</span></td></tr>
+                  <tr><td>Retargeting — Visitors</td><td><span class="badge badge-blue">Meta</span></td><td class="num">£680</td><td class="num">18,400</td><td class="num">560</td><td class="green">3.0%</td><td class="num">19</td><td class="green">5.2x</td><td><span class="badge badge-green">Active</span></td></tr>
+                  <tr><td>PMax — Service Pages</td><td><span class="badge badge-blue">Google</span></td><td class="num">£1,060</td><td class="num">31,600</td><td class="num">980</td><td class="amber">3.1%</td><td class="num">14</td><td class="amber">2.8x</td><td><span class="badge badge-amber">Review</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Budget pacing + Wasted spend side by side -->
+          <div class="two-col">
+            <div class="card">
+              <div class="card-title">Budget Pacing</div>
+              <div class="pacing-wrap">
+                <div class="pacing-label"><span><strong>Google Ads</strong></span><span>£2,900 / £4,000</span></div>
+                <div class="pacing-bar-bg"><div class="pacing-bar-fill" style="width:72%;background:var(--green)"></div></div>
+              </div>
+              <div class="pacing-wrap">
+                <div class="pacing-label"><span><strong>Meta Ads</strong></span><span>£1,920 / £2,500</span></div>
+                <div class="pacing-bar-bg"><div class="pacing-bar-fill" style="width:77%;background:var(--accent)"></div></div>
+              </div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:8px">Day 9 of 31. Google on track. Meta slightly ahead of pace.</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Wasted Spend</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)">
+                <div><div style="font-size:12px;font-weight:600;color:var(--text)">Low-intent search terms</div><div style="font-size:11px;color:var(--text-muted)">18 terms triggering irrelevant clicks</div></div>
+                <div style="font-size:14px;font-weight:800;color:var(--red)">£184</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)">
+                <div><div style="font-size:12px;font-weight:600;color:var(--text)">Duplicate keywords</div><div style="font-size:11px;color:var(--text-muted)">Competing across 2 ad groups</div></div>
+                <div style="font-size:14px;font-weight:800;color:var(--amber)">£98</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0">
+                <div><div style="font-size:12px;font-weight:600;color:var(--text)">Under-performing placements</div><div style="font-size:11px;color:var(--text-muted)">Meta Audience Network</div></div>
+                <div style="font-size:14px;font-weight:800;color:var(--amber)">£60</div>
+              </div>
+              <div class="btn-mock btn-warn btn-full" style="margin-top:10px;font-size:12px">Review &amp; Fix</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ════════════════════════════════════
+             ANALYTICS
+        ════════════════════════════════════ -->
+        <div class="tab-panel" id="tab-analytics">
+          <div class="ph-title">Analytics</div>
+          <div class="ph-sub">Search terms, keyword performance, and negative management with push-to-account.</div>
+
+          <!-- Connections -->
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-title">Data Sources</div>
+            <div class="conn-row">
+              <div class="conn-icon" style="background:#EFF6FF">🔵</div>
+              <div style="flex:1"><div class="conn-name">Google Ads</div><div class="conn-sub">Search terms, keywords, conversion data</div></div>
+              <div class="connected-badge">Connected</div>
+            </div>
+            <div class="conn-row">
+              <div class="conn-icon" style="background:#F0FDF4">🟢</div>
+              <div style="flex:1"><div class="conn-name">Google Analytics 4</div><div class="conn-sub">Sessions, goal completions, landing page data</div></div>
+              <div class="connected-badge">Connected</div>
+            </div>
+          </div>
+
+          <!-- Summary stats -->
+          <div class="four-col" style="margin-bottom:14px">
+            <div class="stat-mini"><div class="n" style="color:var(--text)">2,841</div><div class="l">Search Terms</div></div>
+            <div class="stat-mini"><div class="n" style="color:var(--green)">142</div><div class="l">Converting</div></div>
+            <div class="stat-mini"><div class="n" style="color:var(--red)">318</div><div class="l">Wasted Terms</div></div>
+            <div class="stat-mini"><div class="n" style="color:var(--amber)">87</div><div class="l">Need Review</div></div>
+          </div>
+
+          <!-- Search terms table + negative suggestions side by side -->
+          <div class="two-col" style="margin-bottom:14px">
+            <div class="card">
+              <div class="card-title">Top Converting Search Terms</div>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead><tr><th>Query</th><th>Clicks</th><th>Conv.</th><th>CPA</th></tr></thead>
+                  <tbody>
+                    <tr><td>sell land fast uk</td><td class="num">284</td><td class="green">22</td><td class="num">£84</td></tr>
+                    <tr><td>land buyers near me</td><td class="num">196</td><td class="green">17</td><td class="num">£91</td></tr>
+                    <tr><td>cash land offer</td><td class="num">163</td><td class="green">14</td><td class="num">£97</td></tr>
+                    <tr><td>quick land sale</td><td class="num">142</td><td class="green">11</td><td class="num">£102</td></tr>
+                    <tr><td>sell agricultural land</td><td class="num">118</td><td class="amber">6</td><td class="num">£134</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Negative Keyword Suggestions</div>
+              <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:10px">AI-flagged terms wasting budget. Push directly to your Google Ads account.</div>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead><tr><th>Term</th><th>Spend</th><th>Conv.</th><th></th></tr></thead>
+                  <tbody>
+                    <tr><td>land for sale</td><td class="num">£48</td><td class="red">0</td><td><span class="badge badge-amber">Add Neg.</span></td></tr>
+                    <tr><td>buy land uk</td><td class="num">£41</td><td class="red">0</td><td><span class="badge badge-amber">Add Neg.</span></td></tr>
+                    <tr><td>land price calculator</td><td class="num">£29</td><td class="red">0</td><td><span class="badge badge-amber">Add Neg.</span></td></tr>
+                    <tr><td>free land plots</td><td class="num">£22</td><td class="red">0</td><td><span class="badge badge-amber">Add Neg.</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="btn-mock btn-p btn-full" style="margin-top:12px;font-size:12px">
+                Push All Negatives to Google Ads
+              </div>
+            </div>
+          </div>
+
+          <!-- Keyword quality scores + GA4 landing pages -->
+          <div class="two-col">
+            <div class="card">
+              <div class="card-title">Keyword Quality Scores</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;align-items:center;gap:10px"><div class="qs-dot qs-hi">9</div><div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--text)">sell land fast uk</div><div style="font-size:10.5px;color:var(--text-muted)">Exp. CTR: Above avg · Landing page: Above avg</div></div></div>
+                <div style="display:flex;align-items:center;gap:10px"><div class="qs-dot qs-hi">8</div><div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--text)">cash land offer</div><div style="font-size:10.5px;color:var(--text-muted)">Exp. CTR: Above avg · Ad rel: Average</div></div></div>
+                <div style="display:flex;align-items:center;gap:10px"><div class="qs-dot qs-mid">5</div><div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--text)">land buyers near me</div><div style="font-size:10.5px;color:var(--text-muted)">Ad rel: Below avg · Improve ad copy</div></div></div>
+                <div style="display:flex;align-items:center;gap:10px"><div class="qs-dot qs-lo">3</div><div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--text)">sell agricultural land</div><div style="font-size:10.5px;color:var(--text-muted)">Landing page: Below avg · Update page</div></div></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">GA4 — Top Landing Pages</div>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead><tr><th>Page</th><th>Sessions</th><th>Conv. Rate</th></tr></thead>
+                  <tbody>
+                    <tr><td>/sell-your-land</td><td class="num">1,840</td><td class="green">4.2%</td></tr>
+                    <tr><td>/cash-offer</td><td class="num">920</td><td class="green">3.8%</td></tr>
+                    <tr><td>/how-it-works</td><td class="num">680</td><td class="amber">1.4%</td></tr>
+                    <tr><td>/contact</td><td class="num">440</td><td class="amber">1.1%</td></tr>
+                    <tr><td>/blog/land-value</td><td class="num">310</td><td class="red">0.3%</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ════════════════════════════════════
+             WEBSITE ANALYSIS
+        ════════════════════════════════════ -->
+        <div class="tab-panel" id="tab-website">
+          <div class="ph-title">Website Analysis</div>
+          <div class="ph-sub">Search Console, Ahrefs, and PageSpeed in one view.</div>
+
+          <!-- Connections -->
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-title">Data Sources</div>
+            <div class="conn-row">
+              <div class="conn-icon" style="background:#F0FDF4">🟢</div>
+              <div style="flex:1"><div class="conn-name">Google Search Console</div><div class="conn-sub">kinglandbuyers.com · Verified</div></div>
+              <div class="connected-badge">Connected</div>
+            </div>
+            <div class="conn-row">
+              <div class="conn-icon" style="background:#FFF7ED">🟠</div>
+              <div style="flex:1"><div class="conn-name">Ahrefs</div><div class="conn-sub">Domain overview, backlinks, organic keywords</div></div>
+              <div class="connected-badge">Connected</div>
+            </div>
+            <div class="conn-row">
+              <div class="conn-icon" style="background:#EFF6FF">🔵</div>
+              <div style="flex:1"><div class="conn-name">Google PageSpeed Insights</div><div class="conn-sub">Core Web Vitals, performance scores</div></div>
+              <div class="connected-badge">Connected</div>
+            </div>
+          </div>
+
+          <!-- SEO overview -->
+          <div class="two-col" style="margin-bottom:14px">
+            <!-- SEO grade card -->
+            <div class="card">
+              <div class="card-title">SEO Grade</div>
+              <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+                <div class="seo-grade grade-b">B</div>
+                <div>
+                  <div style="font-size:15px;font-weight:800;color:var(--text)">Score: 71 / 100</div>
+                  <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px">Good foundation. 4 issues to fix.</div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-sub)">On-page SEO</span><span class="badge badge-green">Good</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-sub)">Backlink profile</span><span class="badge badge-amber">Average</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-sub)">Page speed (mobile)</span><span class="badge badge-red">Poor</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-sub)">Index coverage</span><span class="badge badge-green">Good</span></div>
+              </div>
+            </div>
+            <!-- Ahrefs overview -->
+            <div class="card">
+              <div class="card-title">Ahrefs Overview</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+                <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:11px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--text)">34</div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-top:3px">Domain Rating</div></div>
+                <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:11px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--green)">842</div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-top:3px">Backlinks</div></div>
+                <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:11px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--accent)">1,240</div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-top:3px">Org. Keywords</div></div>
+                <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:11px;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--amber)">~980</div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-top:3px">Org. Traffic</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GSC top queries + PageSpeed side by side -->
+          <div class="two-col">
+            <div class="card">
+              <div class="card-title">GSC — Top Queries (Last 28 Days)</div>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead><tr><th>Query</th><th>Pos.</th><th>Impr.</th><th>Clicks</th><th>CTR</th></tr></thead>
+                  <tbody>
+                    <tr><td>sell land fast uk</td><td class="green">2.1</td><td class="num">8,420</td><td class="num">924</td><td class="green">11%</td></tr>
+                    <tr><td>land buyers uk</td><td class="num">5.4</td><td class="num">4,180</td><td class="num">318</td><td class="amber">7.6%</td></tr>
+                    <tr><td>cash offer for land</td><td class="num">6.8</td><td class="num">2,940</td><td class="num">184</td><td class="amber">6.3%</td></tr>
+                    <tr><td>how to sell land quickly</td><td class="num">9.2</td><td class="num">1,820</td><td class="num">64</td><td class="red">3.5%</td></tr>
+                    <tr><td>sell agricultural land uk</td><td class="num">11.4</td><td class="num">1,240</td><td class="num">38</td><td class="red">3.1%</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">PageSpeed — Core Web Vitals</div>
+              <div style="display:flex;gap:10px;margin-bottom:14px">
+                <div style="flex:1;text-align:center;background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:12px"><div style="font-size:20px;font-weight:800;color:var(--green)">92</div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);margin-top:3px">Desktop</div></div>
+                <div style="flex:1;text-align:center;background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:12px"><div style="font-size:20px;font-weight:800;color:var(--red)">48</div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);margin-top:3px">Mobile</div></div>
+              </div>
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">Mobile issues affecting Google ranking:</div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-sub)">LCP (Largest Contentful Paint)</span><span class="badge badge-red">4.2s</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-sub)">CLS (Layout Shift)</span><span class="badge badge-amber">0.14</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-sub)">INP (Interaction delay)</span><span class="badge badge-green">180ms</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-sub)">FCP (First Contentful Paint)</span><span class="badge badge-amber">2.8s</span></div>
+              </div>
+              <div class="btn-mock btn-g btn-full" style="margin-top:12px;font-size:12px">View Full Report</div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Colour tokens -->
+  <div class="token-row">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);padding-top:8px;flex-basis:100%">Theme Tokens</div>
+    <div class="token-swatch"><div class="swatch" style="background:#6366F1"></div><div class="swatch-lbl">--accent</div></div>
+    <div class="token-swatch"><div class="swatch" style="background:#8B5CF6"></div><div class="swatch-lbl">grad mid</div></div>
+    <div class="token-swatch"><div class="swatch" style="background:#06B6D4"></div><div class="swatch-lbl">bar end</div></div>
+    <div class="token-swatch"><div class="swatch" style="background:#FFFFFF"></div><div class="swatch-lbl">--surface</div></div>
+    <div class="token-swatch"><div class="swatch" style="background:#F4F6FB"></div><div class="swatch-lbl">--bg</div></div>
+    <div class="token-swatch"><div class="swatch" style="background:#EEF2F9"></div><div class="swatch-lbl">--surface-2</div></div>
+    <div class="token-swatch"><div class="swatch" style="background:#059669"></div><div class="swatch-lbl">success</div></div>
+    <div class="token-swatch"><div class="swatch" style="background:#0F172A"></div><div class="swatch-lbl">--text</div></div>
+    <div class="token-swatch"><div class="swatch" style="background:#475569"></div><div class="swatch-lbl">--text-sub</div></div>
+    <div class="token-swatch"><div class="swatch" style="background:#94A3B8"></div><div class="swatch-lbl">--text-muted</div></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- RC Analysis -->
+  <div class="section-head">
+    <div class="eyebrow">RC Marketing Dashboard Handoff</div>
+    <h2>What We Learned &amp; What's Worth Borrowing</h2>
+    <p>The RC dashboard (Ad Llama) is a Next.js 15 analytics tool for Ruskin Consulting. 187 Google Ads accounts, 146 BigQuery objects, 68 API routes, 25 per-account tabs. Here's what's relevant for Prism.</p>
+  </div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="stat-n accent">187</div><div class="stat-l">Ad Accounts</div></div>
+    <div class="stat-box"><div class="stat-n">25</div><div class="stat-l">Tabs per Account</div></div>
+    <div class="stat-box"><div class="stat-n green">68</div><div class="stat-l">API Routes</div></div>
+    <div class="stat-box"><div class="stat-n amber">146</div><div class="stat-l">BigQuery Objects</div></div>
+  </div>
+  <div class="analysis-grid">
+    <div class="a-card">
+      <div class="a-card-head"><div class="a-icon icon-indigo">🎨</div><div><h3>Design Patterns Worth Copying</h3><p>UI and UX patterns RC uses that Prism should adopt or already has.</p></div></div>
+      <div class="a-item"><div class="a-label label-blue">Eyebrows</div><div class="a-desc"><strong>Uppercase 10px labels above sections.</strong> Prism has them via <code>.lbl</code> — expand to all section headers.</div></div>
+      <div class="a-item"><div class="a-label label-blue">Stats grid</div><div class="a-desc"><strong>Big number, letter-spaced label below.</strong> RC uses it on every major view. Now in Prism's Metrics and all 3 new tabs.</div></div>
+      <div class="a-item"><div class="a-label label-blue">Token CSS</div><div class="a-desc"><strong>Everything through <code>:root</code> vars.</strong> Prism now matches this. Makes future theming or white-labelling trivial.</div></div>
+      <div class="a-item"><div class="a-label label-blue">Data tables</div><div class="a-desc">RC's tabular data style — left-aligned text, right-aligned numbers, tabular-nums, subtle row hover. Now in Prism's Ads, Analytics, and Website tabs.</div></div>
+    </div>
+    <div class="a-card">
+      <div class="a-card-head"><div class="a-icon icon-green">✨</div><div><h3>Features Borrowed from RC</h3><p>Directly ported from the RC handoff into Prism's new tabs.</p></div></div>
+      <div class="a-item"><div class="a-label label-green">Neg. push</div><div class="a-desc"><strong>Push negative keywords directly to Google Ads.</strong> RC's SearchTermReviewTab does this. Prism's Analytics tab has the same pattern with a "Push All Negatives" button.</div></div>
+      <div class="a-item"><div class="a-label label-green">Budget pace</div><div class="a-desc"><strong>Spend vs target bars per platform.</strong> RC tracks this cross-client. Prism shows Google Ads and Meta pacing in the Ads tab.</div></div>
+      <div class="a-item"><div class="a-label label-green">Wasted spend</div><div class="a-desc">RC's /waste route surfaces low-intent spend. Prism shows the same breakdown by category with spend amounts.</div></div>
+      <div class="a-item"><div class="a-label label-green">SEO grade</div><div class="a-desc">RC's SEO vertical (GSC + Ahrefs + PageSpeed + GA4). Prism's Website Analysis tab follows the same structure.</div></div>
+    </div>
+    <div class="a-card">
+      <div class="a-card-head"><div class="a-icon icon-amber">🏗</div><div><h3>Architecture Lessons</h3><p>How RC is built and what it means for Prism.</p></div></div>
+      <div class="a-item"><div class="a-label label-amber">No live API</div><div class="a-desc"><strong>RC never calls ad platforms at render time.</strong> Everything pre-written to BigQuery by cron. Prism should cache ContentStudio and ad platform data server-side, not fetch on every page load.</div></div>
+      <div class="a-item"><div class="a-label label-amber">Row-level SQL</div><div class="a-desc">RC's client auth scoping prepends a CTE in SQL. Right security boundary if Prism ever goes multi-client.</div></div>
+      <div class="a-item"><div class="a-label label-amber">Service proxy</div><div class="a-desc">Both RC and Prism hold service keys server-side and expose allowlisted GET endpoints. Never leaks credentials to the browser.</div></div>
+      <div class="a-item"><div class="a-label label-amber">Naming</div><div class="a-desc">RC's "three Llamas" confusion cost time. Prism should keep ContentStudio, OpenAI, Supabase clearly separated in env var names from day one.</div></div>
+    </div>
+    <div class="a-card">
+      <div class="a-card-head"><div class="a-icon icon-red">⚠️</div><div><h3>Gotchas RC Got Burned By</h3><p>Specific bugs from the handoff. Don't repeat them.</p></div></div>
+      <div class="a-item"><div class="a-label label-red">Full-row writes</div><div class="a-desc"><strong>Supabase upserts replace the entire row.</strong> RC silently nulled fields for weeks. In Prism: always read, merge, then write.</div></div>
+      <div class="a-item"><div class="a-label label-red">Stale deploys</div><div class="a-desc"><strong>Railway env var changes can redeploy the old image.</strong> RC shipped stale for weeks. Always verify the build timestamp after deploy.</div></div>
+      <div class="a-item"><div class="a-label label-red">--ci flag</div><div class="a-desc"><code>railway up --ci</code> times out even when upload succeeds. Confirmed on Prism. Drop <code>--ci</code>, use <code>railway up --service marketing-dashboard</code>.</div></div>
+      <div class="a-item"><div class="a-label label-red">DATE params</div><div class="a-desc">Bound <code>DATE</code> params resolve to NULL in BigQuery multi-statement scripts. If SQL analytics are added: use <code>CURRENT_DATE()</code>, not bound params.</div></div>
+    </div>
+  </div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-top:20px;box-shadow:0 1px 3px rgba(15,23,42,.05)">
+    <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Bottom Line</div>
+    <div style="font-size:13px;color:var(--text-sub);line-height:1.7">RC and Prism share the same stack: Railway, Supabase, OpenAI, agency managing multiple clients. The most directly transferable things are the <strong style="color:var(--text)">CSS token system</strong> (done), the <strong style="color:var(--text)">service-proxy auth pattern</strong> (done), and the <strong style="color:var(--text)">scheduled-pull data architecture</strong>. The three new Prism tabs — Ads, Analytics, Website — are direct ports of RC's /budget, /waste, and /seo verticals adapted for a content/marketing agency context.</div>
+  </div>
+
+</div>
+
+<script>
+  // Tab switching
+  const allNavItems = document.querySelectorAll('.nav-item[data-tab], .nav-sub-item[data-tab]');
+  const allPanels = document.querySelectorAll('.tab-panel');
+
+  allNavItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const tab = item.dataset.tab;
+      // Clear all active states
+      allNavItems.forEach(n => n.classList.remove('active'));
+      allPanels.forEach(p => p.classList.remove('active'));
+      // Set active
+      item.classList.add('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+    });
+  });
+
+  // Dropdown toggle for Social Channel
+  function toggleGroup(id) {
+    const sub = document.getElementById('sub-' + id);
+    const chevron = document.getElementById('chevron-' + id);
+    sub.classList.toggle('open');
+    chevron.classList.toggle('open');
+  }
+</script>
+</body>
+</html>

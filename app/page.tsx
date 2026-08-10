@@ -591,7 +591,7 @@ export default function Home() {
           <h2 className="section-heading">Interactive demos</h2>
           <p className="section-sub">Click any card to open a live, fully interactive demo. All data is synthetic.</p>
 
-          <div className="featured-grid">
+          <div className="featured-grid" style={{ gridTemplateColumns: "repeat(2,1fr)" }}>
             <a
               href={`${BASE}/demos/marketing-dashboard-demo.html`}
               target="_blank"
@@ -649,6 +649,27 @@ export default function Home() {
                   <div className="proj-desc">Full lead management system for a law firm: intake tracking, case pipeline, conversion rates, and performance charts across practice areas.</div>
                   <div className="tag-row">
                     <span className="tag violet">Legal Tech</span>
+                    <span className="tag emerald">Live Demo ↗</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            <a
+              href={`${BASE}/demos/prism-marketing-dashboard.html`}
+              target="_blank"
+              rel="noopener"
+              style={{ textDecoration: "none" }}
+            >
+              <div className="proj-card" style={{ cursor: "pointer", height: "100%" }}>
+                <div style={{ height: 140, background: "linear-gradient(135deg,#6366F1 0%,#8B5CF6 60%,#06B6D4 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontSize: "2.5rem" }}>🖥️</span>
+                </div>
+                <div className="proj-body">
+                  <div className="proj-title">Prism Marketing Dashboard</div>
+                  <div className="proj-desc">Social content generation, AI image studio, content calendar, multi-platform ad tracking, and SEO analysis in one dashboard. All tabs are fully interactive.</div>
+                  <div className="tag-row">
+                    <span className="tag violet">Social & Ads</span>
                     <span className="tag emerald">Live Demo ↗</span>
                   </div>
                 </div>
