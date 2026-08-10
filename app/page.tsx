@@ -182,6 +182,15 @@ const projectSections = [
     label: "Web Apps",
     projects: [
       {
+        title: "RC Marketing Dashboard",
+        desc: "Multi-channel analytics platform for a 187-account agency. Unified 5 ad platforms + 3 SEO sources into a cloud warehouse with 25 analysis views, budget pacing, wasted-spend detection, and AI-powered querying.",
+        tags: ["Next.js", "BigQuery", "TypeScript", "Python"],
+        img: `${BASE}/images/projects/marketing-sdi.png`,
+        color: "cyan",
+        demo: `${BASE}/demos/marketing-dashboard-demo.html`,
+        casestudy: `${BASE}/demos/marketing-dashboard-casestudy.html`,
+      },
+      {
         title: "Blog Automation Web App",
         desc: "Full UI for SEO-optimized blog content generation and management.",
         tags: ["Web App", "SEO", "AI"],
@@ -385,11 +394,21 @@ const toolGroups = [
 
 const filterLabels = ["All", "AI Agents", "Workflows & Automation", "Web Apps", "Marketing", "Websites"];
 
+type Project = {
+  title: string;
+  desc: string;
+  tags: string[];
+  img: string;
+  color: string;
+  demo?: string;
+  casestudy?: string;
+};
+
 // ---- PAGE ----
 
 export default function Home() {
   const [filter, setFilter] = useState("All");
-  const [selected, setSelected] = useState<(typeof projectSections[0]["projects"][0]) | null>(null);
+  const [selected, setSelected] = useState<Project | null>(null);
 
   const visibleSections = filter === "All" ? projectSections : projectSections.filter((s) => s.label === filter);
 
@@ -552,6 +571,9 @@ export default function Home() {
                         {p.tags.map((t) => (
                           <span key={t} className={`tag ${p.color}`}>{t}</span>
                         ))}
+                        {p.demo && (
+                          <span className="tag emerald">Live Demo ↗</span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -740,6 +762,34 @@ export default function Home() {
                 <span key={t} className={`tag ${selected.color}`}>{t}</span>
               ))}
             </div>
+            {(selected.demo || selected.casestudy) && (
+              <div style={{ display: "flex", gap: "0.65rem", marginTop: "1.25rem", flexWrap: "wrap" }}>
+                {selected.demo && (
+                  <a
+                    href={selected.demo}
+                    target="_blank"
+                    rel="noopener"
+                    className="btn-primary"
+                    style={{ fontSize: "0.82rem", padding: "0.55rem 1.1rem" }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Interactive Demo ↗
+                  </a>
+                )}
+                {selected.casestudy && (
+                  <a
+                    href={selected.casestudy}
+                    target="_blank"
+                    rel="noopener"
+                    className="btn-secondary"
+                    style={{ fontSize: "0.82rem", padding: "0.55rem 1.1rem" }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Case Study ↗
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketing Dashboard — Interactive Demo</title>
+<style>
+  :root{
+    --background:210 40% 98%; --foreground:222 47% 11%;
+    --card:0 0% 100%; --muted:214 32% 91%; --muted-foreground:215 16% 42%;
+    --border:214 32% 86%;
+    --pos:152 52% 32%; --neg:0 62% 47%; --brand:190 72% 38%; --brand-2:262 52% 55%;
+    --warnc:32 78% 44%;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+  html[data-theme="dark"]{
+    --background:222 47% 11%; --foreground:213 31% 91%;
+    --card:222 47% 14%; --muted:223 47% 20%; --muted-foreground:215 20% 65%;
+    --border:216 34% 22%;
+    --pos:152 55% 52%; --neg:0 72% 64%; --brand:190 80% 55%; --brand-2:262 72% 72%;
+    --warnc:32 90% 60%;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:hsl(var(--background)); color:hsl(var(--foreground));
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; font-size:14px; line-height:1.5}
+  .n{font-variant-numeric:tabular-nums}
+  button{font:inherit; cursor:pointer}
+  .wrap{max-width:1340px; margin:0 auto; padding:0 20px 64px}
+
+  /* nav */
+  nav.top{border-bottom:1px solid hsl(var(--border)); background:hsl(var(--card))}
+  .navin{max-width:1340px; margin:0 auto; padding:0 20px; display:flex; align-items:center; gap:22px; height:54px}
+  .logo{display:flex; align-items:center; gap:9px; font-weight:700; letter-spacing:-.02em; font-size:15px}
+  .logo i{width:24px; height:24px; border-radius:6px; background:hsl(var(--brand));
+    display:grid; place-items:center; color:hsl(var(--background)); font-size:11px; font-weight:800; font-style:normal}
+  .navlinks{display:flex; gap:2px; margin-right:auto}
+  .navlinks a{padding:6px 11px; border-radius:7px; text-decoration:none; font-size:13.5px;
+    color:hsl(var(--muted-foreground))}
+  .navlinks a.on{background:hsl(var(--muted)); color:hsl(var(--foreground)); font-weight:600}
+  .navlinks a:hover{color:hsl(var(--foreground))}
+  .iconbtn{background:transparent; border:1px solid hsl(var(--border)); color:hsl(var(--muted-foreground));
+    border-radius:7px; width:32px; height:32px; display:grid; place-items:center; font-size:14px}
+  .iconbtn:hover{color:hsl(var(--foreground))}
+  .demoflag{font-size:11px; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+    color:hsl(var(--brand)); border:1px solid hsl(var(--brand)/.45); border-radius:999px; padding:3px 9px}
+
+  /* controls */
+  .controls{display:flex; gap:12px; align-items:center; flex-wrap:wrap; padding:20px 0 4px}
+  .sel{position:relative}
+  select{appearance:none; background:hsl(var(--card)); color:hsl(var(--foreground));
+    border:1px solid hsl(var(--border)); border-radius:8px; padding:8px 32px 8px 12px;
+    font:inherit; font-size:13.5px; font-weight:600}
+  .sel::after{content:"▾"; position:absolute; right:11px; top:8px; pointer-events:none;
+    color:hsl(var(--muted-foreground)); font-size:11px}
+  .seg{display:flex; border:1px solid hsl(var(--border)); border-radius:8px; overflow:hidden}
+  .seg button{background:hsl(var(--card)); border:0; color:hsl(var(--muted-foreground));
+    padding:8px 13px; font-size:13px; font-weight:600}
+  .seg button.on{background:hsl(var(--brand)); color:#fff}
+  .toggle{display:flex; align-items:center; gap:8px; font-size:13px; color:hsl(var(--muted-foreground))}
+  .sw{width:36px; height:20px; border-radius:999px; background:hsl(var(--muted));
+    border:1px solid hsl(var(--border)); position:relative; padding:0}
+  .sw::after{content:""; position:absolute; top:2px; left:2px; width:14px; height:14px;
+    border-radius:50%; background:hsl(var(--muted-foreground)); transition:.16s}
+  .sw[aria-pressed="true"]{background:hsl(var(--brand))}
+  .sw[aria-pressed="true"]::after{left:18px; background:#fff}
+  .spacer{margin-left:auto}
+  .updated{font-size:12px; color:hsl(var(--muted-foreground))}
+
+  /* kpi */
+  .kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(148px,1fr)); gap:10px; margin-top:16px}
+  .kpi{background:hsl(var(--card)); border:1px solid hsl(var(--border)); border-radius:10px; padding:13px 14px}
+  .kpi .lab{font-size:11.5px; color:hsl(var(--muted-foreground)); text-transform:uppercase;
+    letter-spacing:.06em; font-weight:600}
+  .kpi .val{font-size:22px; font-weight:700; letter-spacing:-.025em; margin-top:5px}
+  .kpi .d{font-size:12px; font-weight:650; margin-top:2px}
+  .up{color:hsl(var(--pos))} .down{color:hsl(var(--neg))} .flat{color:hsl(var(--muted-foreground))}
+
+  /* card */
+  .card{background:hsl(var(--card)); border:1px solid hsl(var(--border));
+    border-radius:12px; padding:16px 18px; margin-top:14px}
+  .card > h2{margin:0 0 2px; font-size:15px; font-weight:660; letter-spacing:-.01em}
+  .card .sub{font-size:12.5px; color:hsl(var(--muted-foreground)); margin:0 0 12px}
+  .chartwrap{position:relative}
+  .chartwrap svg{width:100%; height:auto; display:block}
+  .tip{position:absolute; pointer-events:none; background:hsl(var(--background));
+    border:1px solid hsl(var(--border)); border-radius:8px; padding:8px 10px; font-size:12px;
+    box-shadow:0 6px 22px rgb(0 0 0 / .28); opacity:0; transition:opacity .1s; min-width:132px; z-index:5}
+  .tip b{display:block; font-size:11.5px; color:hsl(var(--muted-foreground)); font-weight:600; margin-bottom:4px}
+  .tip .r{display:flex; justify-content:space-between; gap:14px}
+  .tip .r span:last-child{font-variant-numeric:tabular-nums; font-weight:650}
+  .legend{display:flex; gap:16px; font-size:12px; color:hsl(var(--muted-foreground)); margin-top:8px}
+  .legend i{display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:6px}
+
+  /* tabs */
+  .tabbar{display:flex; gap:3px; overflow-x:auto; border-bottom:1px solid hsl(var(--border));
+    margin-top:22px; padding-bottom:0}
+  .tabbar button{background:transparent; border:0; border-bottom:2px solid transparent;
+    padding:9px 13px; font-size:13.5px; font-weight:600; color:hsl(var(--muted-foreground)); white-space:nowrap}
+  .tabbar button.on{color:hsl(var(--foreground)); border-bottom-color:hsl(var(--brand))}
+  .tabbar button:hover{color:hsl(var(--foreground))}
+
+  .tablehead{display:flex; align-items:center; gap:10px; margin:14px 0 0; flex-wrap:wrap}
+  .tablehead input{background:hsl(var(--card)); border:1px solid hsl(var(--border));
+    color:hsl(var(--foreground)); border-radius:8px; padding:7px 11px; font:inherit; font-size:13px; min-width:210px}
+  .tablehead input:focus-visible{outline:2px solid hsl(var(--brand)); outline-offset:1px}
+  .rowcount{font-size:12.5px; color:hsl(var(--muted-foreground))}
+
+  .scroll{overflow-x:auto; border:1px solid hsl(var(--border)); border-radius:11px; margin-top:10px}
+  table{border-collapse:collapse; width:100%; background:hsl(var(--card)); min-width:760px}
+  th,td{padding:9px 13px; border-bottom:1px solid hsl(var(--border)); text-align:left; font-size:13.5px}
+  th{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:hsl(var(--muted-foreground));
+    font-weight:650; background:hsl(var(--muted)/.45); cursor:pointer; white-space:nowrap; user-select:none}
+  th.r,td.r{text-align:right}
+  th:hover{color:hsl(var(--foreground))}
+  th .ar{opacity:.45; font-size:9px; margin-left:3px}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover{background:hsl(var(--muted)/.35)}
+  .badge{font-size:11px; font-weight:650; padding:2px 7px; border-radius:999px;
+    background:hsl(var(--muted)); color:hsl(var(--muted-foreground))}
+  .badge.ok{background:hsl(var(--pos)/.16); color:hsl(var(--pos))}
+  .badge.warn{background:hsl(var(--warnc)/.16); color:hsl(var(--warnc))}
+  .badge.bad{background:hsl(var(--neg)/.16); color:hsl(var(--neg))}
+  .bar{height:6px; border-radius:3px; background:hsl(var(--muted)); overflow:hidden; min-width:66px}
+  .bar i{display:block; height:100%; background:hsl(var(--brand))}
+  .bar i.over{background:hsl(var(--warnc))}
+  .spark{vertical-align:middle}
+
+  .note{font-size:12.5px; color:hsl(var(--muted-foreground)); margin-top:22px;
+    border-top:1px solid hsl(var(--border)); padding-top:16px}
+  @media (max-width:640px){ .navlinks{display:none} }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="navin">
+    <div class="logo"><i>M</i> Marketing Dashboard</div>
+    <div class="navlinks">
+      <a href="#" class="on">Dashboard</a><a href="#">Budget</a><a href="#">Waste</a>
+      <a href="#">SEO</a><a href="#">Data</a><a href="#">Admin</a>
+    </div>
+    <span class="demoflag">Demo</span>
+    <button class="iconbtn" id="theme" title="Toggle theme" aria-label="Toggle theme">◐</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="controls">
+    <div class="sel">
+      <select id="acct" aria-label="Account"></select>
+    </div>
+    <div class="seg" id="range" role="group" aria-label="Date range">
+      <button data-d="7">7d</button><button data-d="30" class="on">30d</button><button data-d="90">90d</button>
+    </div>
+    <div class="toggle">
+      <button class="sw" id="cmp" aria-pressed="true" aria-label="Compare to previous period"></button>
+      <label for="cmp">Compare to previous period</label>
+    </div>
+    <span class="spacer"></span>
+    <span class="updated" id="updated"></span>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="card">
+    <h2 id="chartTitle">Daily performance</h2>
+    <p class="sub" id="chartSub">Spend and conversions</p>
+    <div class="chartwrap" id="cw">
+      <svg id="chart" viewBox="0 0 1000 280" preserveAspectRatio="none" role="img" aria-label="Daily spend and conversions over the selected period"></svg>
+      <div class="tip" id="tip"></div>
+    </div>
+    <div class="legend">
+      <span><i style="background:hsl(var(--brand))"></i>Spend</span>
+      <span><i style="background:hsl(var(--brand-2))"></i>Conversions</span>
+    </div>
+  </div>
+
+  <div class="tabbar" id="tabs"></div>
+
+  <div class="tablehead">
+    <input id="filter" type="search" placeholder="Filter rows…" aria-label="Filter rows">
+    <span class="rowcount" id="rowcount"></span>
+    <span class="spacer"></span>
+    <span class="rowcount">Click any column to sort</span>
+  </div>
+
+  <div class="scroll"><table id="tbl"><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
+
+  <p class="note">
+    <strong>Interactive demo.</strong> Switch accounts, change the date range, toggle comparison,
+    sort and filter any table, and hover the chart. All client names are placeholders and all
+    figures are synthetic — no real advertiser data appears here.
+  </p>
+</div>
+
+<script>
+/* ── deterministic pseudo-random so the demo is stable across reloads ── */
+function rng(seed){ return function(){ seed|=0; seed=seed+0x6D2B79F5|0;
+  var t=Math.imul(seed^seed>>>15,1|seed); t=t+Math.imul(t^t>>>7,61|t)^t;
+  return ((t^t>>>14)>>>0)/4294967296; }; }
+
+var COMPANIES = [
+  {id:'a', name:'Company A', vert:'Home services', spend:560, cpa:74,  cvr:.061, budget:17500, ch:'Search · Social · Bing'},
+  {id:'b', name:'Company B', vert:'Professional services', spend:1750, cpa:132, cvr:.038, budget:55000, ch:'Search · Local services'},
+  {id:'c', name:'Company C', vert:'Construction', spend:830, cpa:96,  cvr:.049, budget:25000, ch:'Search · Social'},
+  {id:'d', name:'Company D', vert:'Healthcare', spend:300, cpa:58,  cvr:.072, budget:9000,  ch:'Search · Display'},
+  {id:'e', name:'Company E', vert:'Retail',    spend:118, cpa:31,  cvr:.094, budget:3500,  ch:'Search'},
+  {id:'f', name:'Company F', vert:'B2B SaaS',  spend:640, cpa:210, cvr:.021, budget:19000, ch:'Search · LinkedIn'}
+];
+
+var CAMPAIGNS = ['Brand — Exact','Non-Brand — Core services','Non-Brand — Long tail','Performance Max','Local services','Remarketing — Display','Competitor'];
+var KEYWORDS  = ['[company a]','[emergency repair near me]','"same day service"','[commercial installation]','"free estimate"','[24 hour service]','"licensed contractor"','[repair cost]','"book online"','[best rated provider]'];
+var TERMS     = ['emergency repair near me','how much does repair cost','same day service open now','free estimate near me','24 hour emergency service','licensed contractor reviews','cheap diy fix','repair jobs hiring','best provider in my area','commercial installation quote'];
+var ADS       = ['RSA — Core services v4','RSA — Emergency / urgency','RSA — Trust & reviews','RSA — Offer / free estimate','RSA — Commercial'];
+var GEOS      = ['Metro — Central','Metro — North','Metro — South','Suburban belt','Adjacent county','Statewide remainder'];
+var DEVICES   = ['Mobile','Desktop','Tablet'];
+var WEIGHTS = {
+  campaign:[.20,.31,.14,.18,.09,.05,.03],
+  keyword:[.19,.16,.13,.11,.10,.09,.07,.06,.05,.04],
+  term:[.17,.15,.13,.11,.10,.09,.08,.07,.06,.04],
+  ad:[.29,.24,.20,.16,.11],
+  geo:[.30,.22,.17,.14,.10,.07],
+  device:[.62,.33,.05]
+};
+
+var state = { acct:'a', days:30, cmp:true, tab:'campaigns', sort:{key:'cost', dir:-1}, filter:'' };
+
+/* ── build 200 days of daily data per company ── */
+var DATA = {};
+COMPANIES.forEach(function(c, ci){
+  var r = rng(1000 + ci * 77), out = [];
+  var trend = 0.85 + r() * 0.35;
+  for (var i = 199; i >= 0; i--) {
+    var dt = new Date(); dt.setDate(dt.getDate() - i);
+    var dow = dt.getDay();
+    var weekend = (dow === 0 || dow === 6) ? 0.58 : 1;
+    var drift = 1 + ((199 - i) / 199) * (trend - 1);
+    var noise = 0.78 + r() * 0.44;
+    var cost = c.spend * weekend * drift * noise;
+    var clicks = cost / (1.6 + r() * 1.5);
+    var impr = clicks / (0.038 + r() * 0.035);
+    var conv = clicks * c.cvr * (0.7 + r() * 0.6);
+    out.push({ d:dt, cost:cost, clicks:clicks, impr:impr, conv:conv });
+  }
+  DATA[c.id] = out;
+});
+
+var fmtMoney = function(v){ return '$' + Math.round(v).toLocaleString(); };
+var fmtMoney2 = function(v){ return '$' + v.toFixed(2); };
+var fmtInt = function(v){ return Math.round(v).toLocaleString(); };
+var fmtPct = function(v){ return (v * 100).toFixed(2) + '%'; };
+
+function slice(id, days, offset){
+  var all = DATA[id], end = all.length - (offset || 0);
+  return all.slice(Math.max(0, end - days), end);
+}
+function total(rows){
+  return rows.reduce(function(a, r){
+    return { cost:a.cost + r.cost, clicks:a.clicks + r.clicks, impr:a.impr + r.impr, conv:a.conv + r.conv };
+  }, { cost:0, clicks:0, impr:0, conv:0 });
+}
+
+/* ── KPI row ── */
+function renderKpis(){
+  var cur = total(slice(state.acct, state.days, 0));
+  var prev = total(slice(state.acct, state.days, state.days));
+  var defs = [
+    ['Spend',       fmtMoney(cur.cost),                 cur.cost, prev.cost, false],
+    ['Conversions', fmtInt(cur.conv),                   cur.conv, prev.conv, false],
+    ['Cost / conv', fmtMoney2(cur.cost / cur.conv),     cur.cost / cur.conv, prev.cost / prev.conv, true],
+    ['Conv. rate',  fmtPct(cur.conv / cur.clicks),      cur.conv / cur.clicks, prev.conv / prev.clicks, false],
+    ['Clicks',      fmtInt(cur.clicks),                 cur.clicks, prev.clicks, false],
+    ['Impressions', fmtInt(cur.impr),                   cur.impr, prev.impr, false],
+    ['CTR',         fmtPct(cur.clicks / cur.impr),      cur.clicks / cur.impr, prev.clicks / prev.impr, false],
+    ['Avg. CPC',    fmtMoney2(cur.cost / cur.clicks),   cur.cost / cur.clicks, prev.cost / prev.clicks, true]
+  ];
+  document.getElementById('kpis').innerHTML = defs.map(function(d){
+    var delta = '';
+    if (state.cmp && isFinite(d[3]) && d[3] > 0) {
+      var pc = (d[2] - d[3]) / d[3] * 100;
+      var good = d[4] ? pc < 0 : pc > 0;
+      var cls = Math.abs(pc) < 0.5 ? 'flat' : (good ? 'up' : 'down');
+      var arrow = Math.abs(pc) < 0.5 ? '±' : (pc > 0 ? '▲' : '▼');
+      delta = '<div class="d ' + cls + '">' + arrow + ' ' + Math.abs(pc).toFixed(1) + '% vs prev</div>';
+    }
+    return '<div class="kpi"><div class="lab">' + d[0] + '</div><div class="val n">' + d[1] + '</div>' + delta + '</div>';
+  }).join('');
+}
+
+/* ── chart ── */
+function renderChart(){
+  var rows = slice(state.acct, state.days, 0);
+  var W = 1000, H = 280, L = 58, R = 52, T = 14, B = 30;
+  var iw = W - L - R, ih = H - T - B;
+  var maxC = Math.max.apply(null, rows.map(function(r){ return r.cost; })) * 1.15;
+  var maxV = Math.max.apply(null, rows.map(function(r){ return r.conv; })) * 1.35;
+  var x = function(i){ return L + (rows.length === 1 ? iw / 2 : i / (rows.length - 1) * iw); };
+  var yC = function(v){ return T + ih - (v / maxC) * ih; };
+  var yV = function(v){ return T + ih - (v / maxV) * ih; };
+  var s = '';
+
+  for (var g = 0; g <= 4; g++) {
+    var gy = T + ih - (g / 4) * ih;
+    s += '<line x1="' + L + '" y1="' + gy + '" x2="' + (W - R) + '" y2="' + gy +
+         '" stroke="hsl(var(--border))" stroke-width="1"/>';
+    s += '<text x="' + (L - 9) + '" y="' + (gy + 4) + '" text-anchor="end" font-size="11" ' +
+         'fill="hsl(var(--muted-foreground))">$' + Math.round(maxC * g / 4).toLocaleString() + '</text>';
+    s += '<text x="' + (W - R + 9) + '" y="' + (gy + 4) + '" font-size="11" ' +
+         'fill="hsl(var(--muted-foreground))">' + Math.round(maxV * g / 4) + '</text>';
+  }
+
+  var area = 'M' + x(0) + ',' + (T + ih), line = '';
+  rows.forEach(function(r, i){
+    area += ' L' + x(i).toFixed(1) + ',' + yC(r.cost).toFixed(1);
+    line += (i ? ' L' : 'M') + x(i).toFixed(1) + ',' + yC(r.cost).toFixed(1);
+  });
+  area += ' L' + x(rows.length - 1) + ',' + (T + ih) + ' Z';
+  s += '<path d="' + area + '" fill="hsl(var(--brand)/.15)"/>';
+  s += '<path d="' + line + '" fill="none" stroke="hsl(var(--brand))" stroke-width="2" ' +
+       'stroke-linejoin="round" stroke-linecap="round"/>';
+
+  var cl = '';
+  rows.forEach(function(r, i){ cl += (i ? ' L' : 'M') + x(i).toFixed(1) + ',' + yV(r.conv).toFixed(1); });
+  s += '<path d="' + cl + '" fill="none" stroke="hsl(var(--brand-2))" stroke-width="2" ' +
+       'stroke-dasharray="4 3" stroke-linejoin="round"/>';
+
+  var step = Math.max(1, Math.floor(rows.length / 7));
+  rows.forEach(function(r, i){
+    if (i % step === 0 || i === rows.length - 1) {
+      s += '<text x="' + x(i) + '" y="' + (H - 9) + '" text-anchor="middle" font-size="11" ' +
+           'fill="hsl(var(--muted-foreground))">' +
+           r.d.toLocaleDateString(undefined, { month:'short', day:'numeric' }) + '</text>';
+    }
+  });
+
+  s += '<line id="cross" x1="0" y1="' + T + '" x2="0" y2="' + (T + ih) +
+       '" stroke="hsl(var(--muted-foreground))" stroke-width="1" stroke-dasharray="3 3" opacity="0"/>';
+  s += '<circle id="dot" r="4" fill="hsl(var(--brand))" opacity="0"/>';
+  rows.forEach(function(r, i){
+    var w = iw / rows.length;
+    s += '<rect class="hit" data-i="' + i + '" x="' + (x(i) - w / 2) + '" y="' + T +
+         '" width="' + w + '" height="' + ih + '" fill="transparent"/>';
+  });
+
+  var svg = document.getElementById('chart');
+  svg.innerHTML = s;
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+
+  var tip = document.getElementById('tip'), cw = document.getElementById('cw');
+  var cross = svg.querySelector('#cross'), dot = svg.querySelector('#dot');
+  Array.prototype.forEach.call(svg.querySelectorAll('.hit'), function(h){
+    h.addEventListener('mouseenter', function(){
+      var i = +h.dataset.i, r = rows[i];
+      cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.setAttribute('opacity', '1');
+      dot.setAttribute('cx', x(i)); dot.setAttribute('cy', yC(r.cost)); dot.setAttribute('opacity', '1');
+      tip.innerHTML = '<b>' + r.d.toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' }) + '</b>' +
+        '<div class="r"><span>Spend</span><span>' + fmtMoney(r.cost) + '</span></div>' +
+        '<div class="r"><span>Conversions</span><span>' + r.conv.toFixed(1) + '</span></div>' +
+        '<div class="r"><span>Clicks</span><span>' + fmtInt(r.clicks) + '</span></div>' +
+        '<div class="r"><span>CPA</span><span>' + fmtMoney2(r.cost / r.conv) + '</span></div>';
+      var pct = x(i) / W;
+      tip.style.left = Math.min(Math.max(pct * cw.clientWidth - 70, 4), cw.clientWidth - 150) + 'px';
+      tip.style.top = '8px';
+      tip.style.opacity = '1';
+    });
+  });
+  svg.addEventListener('mouseleave', function(){
+    tip.style.opacity = '0'; cross.setAttribute('opacity', '0'); dot.setAttribute('opacity', '0');
+  });
+}
+
+/* ── tables ── */
+var TABS = [
+  { id:'campaigns', label:'Campaigns' }, { id:'keywords', label:'Keywords' },
+  { id:'terms', label:'Search terms' },  { id:'ads', label:'Ads' },
+  { id:'geo', label:'Geography' },       { id:'devices', label:'Devices' },
+  { id:'pacing', label:'Budget pacing' }
+];
+
+function splitRows(names, weights, seedOffset){
+  var t = total(slice(state.acct, state.days, 0));
+  var r = rng(4242 + seedOffset + state.acct.charCodeAt(0) * 13);
+  return names.map(function(nm, i){
+    var w = weights[i], j1 = 0.85 + r() * 0.3, j2 = 0.8 + r() * 0.4;
+    var cost = t.cost * w, clicks = t.clicks * w * j1, impr = t.impr * w * (0.9 + r() * 0.25);
+    var conv = t.conv * w * j2;
+    return { name:nm, cost:cost, clicks:clicks, impr:impr, conv:conv,
+             cpa:cost / conv, cvr:conv / clicks, ctr:clicks / impr, cpc:cost / clicks };
+  });
+}
+
+var COLS = {
+  perf:[
+    { k:'name',  t:'Name',        f:function(v){ return v; } },
+    { k:'cost',  t:'Cost',        r:1, f:fmtMoney },
+    { k:'clicks',t:'Clicks',      r:1, f:fmtInt },
+    { k:'impr',  t:'Impr.',       r:1, f:fmtInt },
+    { k:'ctr',   t:'CTR',         r:1, f:fmtPct },
+    { k:'cpc',   t:'Avg. CPC',    r:1, f:fmtMoney2 },
+    { k:'conv',  t:'Conv.',       r:1, f:function(v){ return v.toFixed(1); } },
+    { k:'cvr',   t:'Conv. rate',  r:1, f:fmtPct },
+    { k:'cpa',   t:'Cost / conv', r:1, f:fmtMoney2 }
+  ]
+};
+
+function currentRows(){
+  switch (state.tab) {
+    case 'campaigns': return splitRows(CAMPAIGNS, WEIGHTS.campaign, 1);
+    case 'keywords':  return splitRows(KEYWORDS,  WEIGHTS.keyword, 2);
+    case 'terms':     return splitRows(TERMS,     WEIGHTS.term, 3);
+    case 'ads':       return splitRows(ADS,       WEIGHTS.ad, 4);
+    case 'geo':       return splitRows(GEOS,      WEIGHTS.geo, 5);
+    case 'devices':   return splitRows(DEVICES,   WEIGHTS.device, 6);
+    default:          return [];
+  }
+}
+
+function renderPacing(){
+  var thead = document.getElementById('thead'), tbody = document.getElementById('tbody');
+  thead.innerHTML = '<tr><th>Client</th><th>Channels</th><th class="r">Monthly budget</th>' +
+    '<th class="r">Spend MTD</th><th>Pace</th><th class="r">Projected</th><th>Status</th></tr>';
+  var day = new Date().getDate(), dim = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+  tbody.innerHTML = COMPANIES.map(function(c){
+    var mtd = total(slice(c.id, day, 0)).cost;
+    var proj = mtd / day * dim;
+    var pct = proj / c.budget;
+    var pacePct = Math.min(100, mtd / c.budget * 100);
+    var over = pct > 1.07, under = pct < 0.93;
+    var st = over ? '<span class="badge warn">Over pace</span>'
+           : under ? '<span class="badge bad">Under pace</span>'
+           : '<span class="badge ok">On track</span>';
+    return '<tr><td><strong>' + c.name + '</strong></td><td>' + c.ch + '</td>' +
+      '<td class="r n">' + fmtMoney(c.budget) + '</td><td class="r n">' + fmtMoney(mtd) + '</td>' +
+      '<td><span class="bar"><i class="' + (over ? 'over' : '') + '" style="width:' + pacePct.toFixed(0) + '%"></i></span></td>' +
+      '<td class="r n">' + fmtMoney(proj) + '</td><td>' + st + '</td></tr>';
+  }).join('');
+  document.getElementById('rowcount').textContent = COMPANIES.length + ' clients · month to date';
+}
+
+function renderTable(){
+  if (state.tab === 'pacing') return renderPacing();
+  var cols = COLS.perf, rows = currentRows();
+  if (state.filter) {
+    var q = state.filter.toLowerCase();
+    rows = rows.filter(function(r){ return r.name.toLowerCase().indexOf(q) !== -1; });
+  }
+  var sk = state.sort.key, dir = state.sort.dir;
+  rows.sort(function(a, b){
+    var av = a[sk], bv = b[sk];
+    if (typeof av === 'string') return av.localeCompare(bv) * dir;
+    return (av - bv) * dir;
+  });
+  document.getElementById('thead').innerHTML = '<tr>' + cols.map(function(c){
+    var ar = sk === c.k ? '<span class="ar">' + (dir === 1 ? '▲' : '▼') + '</span>' : '';
+    return '<th class="' + (c.r ? 'r' : '') + '" data-k="' + c.k + '">' + c.t + ar + '</th>';
+  }).join('') + '</tr>';
+  document.getElementById('tbody').innerHTML = rows.map(function(r){
+    return '<tr>' + cols.map(function(c){
+      return '<td class="' + (c.r ? 'r n' : '') + '">' + c.f(r[c.k]) + '</td>';
+    }).join('') + '</tr>';
+  }).join('');
+  document.getElementById('rowcount').textContent = rows.length + ' rows';
+  Array.prototype.forEach.call(document.querySelectorAll('#thead th'), function(th){
+    th.addEventListener('click', function(){
+      var k = th.dataset.k;
+      state.sort = { key:k, dir: state.sort.key === k ? -state.sort.dir : (k === 'name' ? 1 : -1) };
+      renderTable();
+    });
+  });
+}
+
+/* ── shell ── */
+function renderAll(){
+  var c = COMPANIES.filter(function(x){ return x.id === state.acct; })[0];
+  document.getElementById('chartTitle').textContent = c.name + ' — daily performance';
+  document.getElementById('chartSub').textContent = c.vert + ' · ' + c.ch + ' · last ' + state.days + ' days';
+  var last = DATA[c.id][DATA[c.id].length - 1].d;
+  document.getElementById('updated').textContent = 'Data through ' +
+    last.toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' });
+  renderKpis(); renderChart(); renderTable();
+}
+
+document.getElementById('acct').innerHTML = COMPANIES.map(function(c){
+  return '<option value="' + c.id + '">' + c.name + ' — ' + c.vert + '</option>';
+}).join('');
+document.getElementById('acct').addEventListener('change', function(e){ state.acct = e.target.value; renderAll(); });
+
+document.getElementById('tabs').innerHTML = TABS.map(function(t){
+  return '<button data-t="' + t.id + '"' + (t.id === state.tab ? ' class="on"' : '') + '>' + t.label + '</button>';
+}).join('');
+document.getElementById('tabs').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  state.tab = b.dataset.t; state.filter = ''; document.getElementById('filter').value = '';
+  state.sort = { key: state.tab === 'pacing' ? 'name' : 'cost', dir:-1 };
+  Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle('on', x === b); });
+  renderTable();
+});
+
+document.getElementById('range').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  state.days = +b.dataset.d;
+  Array.prototype.forEach.call(this.children, function(x){ x.classList.toggle('on', x === b); });
+  renderAll();
+});
+
+document.getElementById('cmp').addEventListener('click', function(){
+  state.cmp = this.getAttribute('aria-pressed') !== 'true';
+  this.setAttribute('aria-pressed', String(state.cmp));
+  renderKpis();
+});
+
+document.getElementById('filter').addEventListener('input', function(e){
+  state.filter = e.target.value; renderTable();
+});
+
+document.getElementById('theme').addEventListener('click', function(){
+  var el = document.documentElement;
+  el.setAttribute('data-theme', el.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  renderChart();
+});
+
+window.addEventListener('resize', function(){ renderChart(); });
+renderAll();
+</script>
+</body>
+</html>

@@ -25,6 +25,15 @@ export default function Topbar() {
               {l.label}
             </a>
           ))}
+          <a
+            className="nav-link"
+            href={`${BASE}/demos/marketing-dashboard-demo.html`}
+            target="_blank"
+            rel="noopener"
+            style={{ color: "var(--accent)", fontWeight: 600 }}
+          >
+            Interactive Demo ↗
+          </a>
         </div>
 
         <div className="nav-status">

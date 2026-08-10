@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Channel Marketing Analytics Platform — Case Study</title>
+<style>
+  :root{
+    --bg:#0a0d11;
+    --bg-2:#0e1217;
+    --panel:#131820;
+    --panel-2:#182029;
+    --line:#232c37;
+    --line-2:#2f3a47;
+    --ink:#e9eef4;
+    --ink-2:#a4b0bd;
+    --ink-3:#6f7d8c;
+    --accent:#3fb9c4;
+    --accent-2:#8fd9a8;
+    --accent-dim:#123840;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --maxw:1120px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,sans-serif;
+    font-size:16.5px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px}
+  h1,h2,h3,h4{margin:0; line-height:1.15; letter-spacing:-0.025em; text-wrap:balance}
+  h1{font-size:clamp(32px,5.6vw,60px); font-weight:700}
+  h2{font-size:clamp(23px,3vw,33px); font-weight:660}
+  h3{font-size:18px; font-weight:650; letter-spacing:-0.015em}
+  p{margin:12px 0; color:var(--ink-2); max-width:70ch}
+  p.big{font-size:clamp(17px,2vw,20px); color:var(--ink-2)}
+  strong{color:var(--ink); font-weight:620}
+  a{color:var(--accent)}
+  code{font-family:var(--mono); font-size:.86em; color:var(--accent-2);
+    background:var(--panel-2); border:1px solid var(--line); border-radius:4px; padding:1px 5px}
+  .eyebrow{font-family:var(--mono); font-size:11.5px; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 14px}
+  section{padding:76px 0; border-top:1px solid var(--line)}
+  section:first-of-type{border-top:0}
+
+  /* hero */
+  .hero{padding:88px 0 68px; border-top:0}
+  .hero .sub{max-width:62ch; font-size:clamp(16px,2.1vw,20px); color:var(--ink-2); margin-top:20px}
+  .anon{display:inline-flex; align-items:center; gap:8px; margin-top:26px; font-size:12.5px;
+    color:var(--ink-3); border:1px solid var(--line); border-radius:999px; padding:5px 13px}
+  .anon::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--accent)}
+
+  /* metrics */
+  .metrics{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:1px; background:var(--line); border:1px solid var(--line);
+    border-radius:12px; overflow:hidden; margin-top:44px}
+  .metric{background:var(--bg-2); padding:20px 18px}
+  .metric b{display:block; font-size:clamp(24px,3.4vw,34px); font-weight:680;
+    letter-spacing:-.03em; font-variant-numeric:tabular-nums; color:var(--ink)}
+  .metric span{font-size:12.5px; color:var(--ink-3); display:block; margin-top:3px}
+
+  /* grid cards */
+  .grid{display:grid; gap:16px; margin-top:32px}
+  .grid.two{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .grid.three{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:22px 22px}
+  .card h3{margin-bottom:7px}
+  .card p{margin:0; font-size:14.5px; max-width:none}
+  .card .k{font-family:var(--mono); font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--accent); display:block; margin-bottom:11px}
+
+  /* tabs */
+  .tabs{display:flex; gap:8px; flex-wrap:wrap; margin:30px 0 0}
+  .tabs button{appearance:none; font:inherit; font-size:14px; font-weight:600;
+    background:var(--panel); color:var(--ink-2); border:1px solid var(--line);
+    border-radius:9px; padding:9px 15px; cursor:pointer; transition:all .15s ease}
+  .tabs button:hover{border-color:var(--line-2); color:var(--ink)}
+  .tabs button[aria-selected="true"]{background:var(--accent-dim);
+    border-color:var(--accent); color:var(--accent)}
+  .tabs button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .panelbox{background:var(--panel); border:1px solid var(--line);
+    border-radius:12px; padding:26px 26px; margin-top:14px}
+  .panelbox[hidden]{display:none}
+  .panelbox h3{margin-bottom:4px; font-size:19px}
+  .panelbox .prob{font-family:var(--mono); font-size:11.5px; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--ink-3); margin-bottom:14px}
+
+  /* table */
+  .scroll{overflow-x:auto; border:1px solid var(--line); border-radius:12px; margin-top:24px}
+  table{border-collapse:collapse; width:100%; font-size:14px; background:var(--panel); min-width:640px}
+  th,td{text-align:left; padding:11px 15px; border-bottom:1px solid var(--line)}
+  th{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink-3); font-weight:600; background:var(--panel-2)}
+  tr:last-child td{border-bottom:0}
+  td.n{font-variant-numeric:tabular-nums; text-align:right}
+  .bar{height:5px; border-radius:3px; background:var(--line-2); overflow:hidden; min-width:70px}
+  .bar i{display:block; height:100%; background:var(--accent)}
+  .bar i.over{background:#d98a5a}
+  .pill{font-size:11px; font-weight:650; padding:2px 8px; border-radius:999px;
+    background:var(--accent-dim); color:var(--accent); white-space:nowrap}
+  .pill.warn{background:#3a2a18; color:#e0a458}
+
+  /* chips */
+  .chips{display:flex; flex-wrap:wrap; gap:7px; margin-top:18px}
+  .chip{font-family:var(--mono); font-size:12px; padding:5px 10px; border-radius:7px;
+    background:var(--panel); border:1px solid var(--line); color:var(--ink-2)}
+
+  figure{margin:34px 0 0}
+  figure svg{width:100%; height:auto; display:block}
+  figcaption{font-size:13px; color:var(--ink-3); margin-top:12px; max-width:70ch}
+
+  ul{color:var(--ink-2); padding-left:20px; max-width:70ch}
+  li{margin:7px 0}
+  li::marker{color:var(--accent)}
+
+  footer{padding:52px 0 72px; border-top:1px solid var(--line); color:var(--ink-3); font-size:13.5px}
+
+  @media (prefers-reduced-motion:no-preference){
+    .card{transition:border-color .18s ease, transform .18s ease}
+    .card:hover{border-color:var(--line-2); transform:translateY(-2px)}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ─────────── HERO ─────────── -->
+  <header class="hero">
+    <p class="eyebrow">Case study · Data platform &amp; full-stack</p>
+    <h1>A multi-channel marketing analytics platform for a 187-account agency</h1>
+    <p class="sub">
+      I designed and built the data pipeline, warehouse model and web application that replaced
+      a sprawl of Google Sheets — unifying five ad platforms and three SEO data sources into a
+      single warehouse, and giving both the agency and its clients a live view of performance,
+      budget pacing and wasted spend.
+    </p>
+    <div class="anon">Client names anonymised · figures illustrative</div>
+
+    <div class="metrics">
+      <div class="metric"><b>187</b><span>ad accounts unified</span></div>
+      <div class="metric"><b>5</b><span>ad platforms + 3 SEO sources</span></div>
+      <div class="metric"><b>10 yrs</b><span>daily history modelled</span></div>
+      <div class="metric"><b>146</b><span>warehouse tables &amp; views</span></div>
+      <div class="metric"><b>25</b><span>analysis views per account</span></div>
+    </div>
+  </header>
+
+  <!-- ─────────── PROBLEM ─────────── -->
+  <section>
+    <p class="eyebrow">The problem</p>
+    <h2>Reporting lived in spreadsheets that nobody trusted</h2>
+    <p class="big">
+      Performance data for every client sat in a chain of manually-refreshed Google Sheets. Each
+      platform had its own tab, its own owner and its own definition of “spend”. Month-end
+      reporting took days, numbers disagreed between documents, and no client could answer a
+      question without emailing someone.
+    </p>
+    <div class="grid three">
+      <div class="card">
+        <span class="k">Fragmented</span>
+        <h3>Five platforms, five truths</h3>
+        <p>Search, social, display and SEO each reported separately, with no common account key
+          to join them on.</p>
+      </div>
+      <div class="card">
+        <span class="k">Manual</span>
+        <h3>Humans as the ETL</h3>
+        <p>Refreshes depended on someone remembering. A missed run silently produced a report
+          full of stale numbers.</p>
+      </div>
+      <div class="card">
+        <span class="k">Closed</span>
+        <h3>No client self-service</h3>
+        <p>Every client question became an internal ticket, because there was no safe way to
+          expose one client's data without exposing others.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── ARCHITECTURE ─────────── -->
+  <section>
+    <p class="eyebrow">Architecture</p>
+    <h2>Batch ETL into a warehouse, with a thin read-only app on top</h2>
+    <p>
+      The core design decision: <strong>the web app never calls an ad platform.</strong> Every
+      figure it renders was written to the warehouse earlier by a scheduled job. That keeps page
+      loads fast and predictable, makes the app resilient to platform API outages, and means a
+      rate limit can never break a client's dashboard.
+    </p>
+
+    <figure>
+      <svg viewBox="0 0 960 360" role="img" aria-label="Ad platform and SEO APIs feed scheduled ETL jobs, which write to a BigQuery warehouse; a Next.js application reads the warehouse and serves agency staff, scoped client logins and an AI connector, with an operational database holding user-edited state.">
+        <defs>
+          <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#6f7d8c"/>
+          </marker>
+          <marker id="ac" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#3fb9c4"/>
+          </marker>
+        </defs>
+        <g font-family="system-ui,sans-serif">
+          <!-- sources -->
+          <text x="16" y="24" font-size="10.5" fill="#6f7d8c" font-family="ui-monospace,monospace" letter-spacing="1.4">SOURCES</text>
+          <rect x="16" y="36" width="164" height="42" rx="8" fill="#131820" stroke="#232c37"/>
+          <text x="32" y="55" font-size="12.5" fill="#e9eef4" font-weight="600">Search &amp; shopping</text>
+          <text x="32" y="70" font-size="10.5" fill="#6f7d8c">187 accounts</text>
+
+          <rect x="16" y="90" width="164" height="42" rx="8" fill="#131820" stroke="#232c37"/>
+          <text x="32" y="109" font-size="12.5" fill="#e9eef4" font-weight="600">Social &amp; display</text>
+          <text x="32" y="124" font-size="10.5" fill="#6f7d8c">4 further platforms</text>
+
+          <rect x="16" y="144" width="164" height="42" rx="8" fill="#131820" stroke="#232c37"/>
+          <text x="32" y="163" font-size="12.5" fill="#e9eef4" font-weight="600">SEO &amp; analytics</text>
+          <text x="32" y="178" font-size="10.5" fill="#6f7d8c">3 data sources</text>
+
+          <!-- etl -->
+          <text x="228" y="24" font-size="10.5" fill="#6f7d8c" font-family="ui-monospace,monospace" letter-spacing="1.4">SCHEDULED ETL</text>
+          <rect x="228" y="36" width="168" height="66" rx="8" fill="#131820" stroke="#232c37"/>
+          <text x="244" y="57" font-size="12.5" fill="#e9eef4" font-weight="600">Nightly + 4-hourly</text>
+          <text x="244" y="73" font-size="10.5" fill="#6f7d8c">incremental &amp; backfill</text>
+          <text x="244" y="89" font-size="10.5" fill="#6f7d8c">modes, chunked history</text>
+
+          <rect x="228" y="114" width="168" height="66" rx="8" fill="#131820" stroke="#232c37"/>
+          <text x="244" y="135" font-size="12.5" fill="#e9eef4" font-weight="600">Cron ingesters</text>
+          <text x="244" y="151" font-size="10.5" fill="#6f7d8c">per-platform, isolated</text>
+          <text x="244" y="167" font-size="10.5" fill="#6f7d8c">failure per account</text>
+
+          <line x1="180" y1="57" x2="222" y2="62" stroke="#6f7d8c" stroke-width="1.2" marker-end="url(#a)"/>
+          <line x1="180" y1="111" x2="222" y2="135" stroke="#6f7d8c" stroke-width="1.2" marker-end="url(#a)"/>
+          <line x1="180" y1="165" x2="222" y2="152" stroke="#6f7d8c" stroke-width="1.2" marker-end="url(#a)"/>
+
+          <!-- warehouse -->
+          <text x="446" y="24" font-size="10.5" fill="#3fb9c4" font-family="ui-monospace,monospace" letter-spacing="1.4">SYSTEM OF RECORD</text>
+          <rect x="446" y="36" width="170" height="144" rx="8" fill="#123840" stroke="#3fb9c4" stroke-width="1.5"/>
+          <text x="463" y="60" font-size="14" fill="#3fb9c4" font-weight="700">Cloud warehouse</text>
+          <text x="463" y="82" font-size="11" fill="#a4b0bd">146 tables &amp; views</text>
+          <text x="463" y="101" font-size="11" fill="#a4b0bd">daily grain</text>
+          <text x="463" y="120" font-size="11" fill="#a4b0bd">deterministic dedup</text>
+          <text x="463" y="139" font-size="11" fill="#a4b0bd">on every re-run</text>
+          <text x="463" y="164" font-size="10.5" fill="#6f7d8c">10 years of history</text>
+
+          <line x1="396" y1="66" x2="440" y2="88" stroke="#6f7d8c" stroke-width="1.2" marker-end="url(#a)"/>
+          <line x1="396" y1="148" x2="440" y2="126" stroke="#6f7d8c" stroke-width="1.2" marker-end="url(#a)"/>
+
+          <!-- app -->
+          <text x="664" y="24" font-size="10.5" fill="#6f7d8c" font-family="ui-monospace,monospace" letter-spacing="1.4">APPLICATION</text>
+          <rect x="664" y="36" width="176" height="144" rx="8" fill="#131820" stroke="#2f3a47" stroke-width="1.4"/>
+          <text x="681" y="60" font-size="14" fill="#e9eef4" font-weight="700">Web app</text>
+          <text x="681" y="82" font-size="11" fill="#a4b0bd">server-rendered</text>
+          <text x="681" y="101" font-size="11" fill="#a4b0bd">15-min query cache</text>
+          <text x="681" y="120" font-size="11" fill="#a4b0bd">role-scoped access</text>
+          <text x="681" y="139" font-size="11" fill="#a4b0bd">25 analysis views</text>
+          <text x="681" y="164" font-size="10.5" fill="#6f7d8c">read-only to the warehouse</text>
+
+          <line x1="616" y1="108" x2="658" y2="108" stroke="#3fb9c4" stroke-width="1.4" marker-end="url(#ac)"/>
+          <text x="620" y="100" font-size="10" fill="#3fb9c4" font-family="ui-monospace,monospace">reads</text>
+
+          <!-- operational db -->
+          <rect x="446" y="212" width="170" height="72" rx="8" fill="#131820" stroke="#232c37" stroke-dasharray="4 3"/>
+          <text x="463" y="235" font-size="12.5" fill="#e9eef4" font-weight="600">Operational DB</text>
+          <text x="463" y="253" font-size="10.5" fill="#6f7d8c">budget targets, overrides,</text>
+          <text x="463" y="269" font-size="10.5" fill="#6f7d8c">everything a human edits</text>
+          <line x1="664" y1="150" x2="620" y2="232" stroke="#6f7d8c" stroke-width="1.2" marker-end="url(#a)"/>
+
+          <!-- consumers -->
+          <text x="664" y="212" font-size="10.5" fill="#6f7d8c" font-family="ui-monospace,monospace" letter-spacing="1.4">CONSUMERS</text>
+          <rect x="664" y="224" width="176" height="32" rx="7" fill="#131820" stroke="#232c37"/>
+          <text x="681" y="245" font-size="12" fill="#a4b0bd">Agency staff — full access</text>
+          <rect x="664" y="264" width="176" height="32" rx="7" fill="#131820" stroke="#232c37"/>
+          <text x="681" y="285" font-size="12" fill="#a4b0bd">Clients — scoped in SQL</text>
+          <rect x="664" y="304" width="176" height="32" rx="7" fill="#131820" stroke="#232c37"/>
+          <text x="681" y="325" font-size="12" fill="#a4b0bd">AI connector — read-only</text>
+          <line x1="752" y1="180" x2="752" y2="220" stroke="#6f7d8c" stroke-width="1.2" marker-end="url(#a)"/>
+        </g>
+      </svg>
+      <figcaption>
+        Batch ingestion on the left, a single system of record in the middle, a thin read layer on
+        the right. Mutable state is deliberately kept out of the warehouse so ETL re-runs can never
+        clobber something a person typed.
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ─────────── ENGINEERING ─────────── -->
+  <section>
+    <p class="eyebrow">Engineering highlights</p>
+    <h2>Four problems worth solving properly</h2>
+    <p>The interesting work wasn't the charts — it was making the platform safe to expose,
+      cheap to run, and honest about its own health.</p>
+
+    <div class="tabs" role="tablist">
+      <button role="tab" id="t1" aria-controls="p1" aria-selected="true">Multi-tenant isolation</button>
+      <button role="tab" id="t2" aria-controls="p2" aria-selected="false">Zero-cost AI access</button>
+      <button role="tab" id="t3" aria-controls="p3" aria-selected="false">Warehouse integrity</button>
+      <button role="tab" id="t4" aria-controls="p4" aria-selected="false">Pipeline observability</button>
+    </div>
+
+    <div class="panelbox" id="p1" role="tabpanel" aria-labelledby="t1">
+      <p class="prob">The problem</p>
+      <h3>Letting clients query their own data — without trusting a prompt</h3>
+      <p>
+        The platform includes a natural-language query interface: a client asks a question in
+        English and a language model writes the SQL. The obvious risk is a model that writes SQL
+        reaching another client's rows.
+      </p>
+      <p>
+        <strong>Prompt instructions are not a security boundary.</strong> So enforcement happens in
+        SQL instead. Every client query is rewritten before execution — a shadowing common table
+        expression is injected for each referenced view, pre-filtered to that client's accounts, so
+        the view name can only ever resolve to the filtered set. The generated SQL is additionally
+        validated to reject qualified names and backticks that could escape the rewrite.
+      </p>
+      <p>
+        The result: <strong>no output the model can produce reaches another tenant's data</strong>,
+        regardless of what it writes or what a user talks it into.
+      </p>
+    </div>
+
+    <div class="panelbox" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+      <p class="prob">The problem</p>
+      <h3>Giving every client an AI analyst at no marginal cost</h3>
+      <p>
+        Clients wanted conversational access to their data. Running that through the agency's own
+        model API would mean paying per token for every client question — a cost that scales with
+        adoption and is impossible to forecast.
+      </p>
+      <p>
+        Instead I implemented a standards-based connector so clients attach the platform to
+        <strong>their own</strong> AI subscription. The server only ever answers structured tool
+        calls with scoped data; it never invokes a paid model itself. Each client login gets its own
+        revocable token, and the same SQL-level scoping applies.
+      </p>
+      <p>
+        Adoption now costs the agency <strong>nothing per query</strong>, and the analytical
+        capability improves for free as the client's own AI provider improves.
+      </p>
+    </div>
+
+    <div class="panelbox" id="p3" role="tabpanel" aria-labelledby="t3" hidden>
+      <p class="prob">The problem</p>
+      <h3>Making re-runs safe across ten years of daily data</h3>
+      <p>
+        Ad platforms restate history: conversions attribute late, spend gets adjusted days after
+        the fact. A pipeline that simply appends produces duplicates; one that deletes and rewrites
+        risks losing data if it fails midway.
+      </p>
+      <p>
+        Every fact table carries a <strong>pull timestamp stamped once per run</strong>, and every
+        read takes the most recent row per key. Re-running any window is therefore idempotent — a
+        backfill, a gap-fill and the nightly job can overlap freely without producing a single
+        double-counted metric.
+      </p>
+      <p>
+        Deep history is loaded in chunks by a separate mode, so a decade of backfill never blocks
+        the nightly refresh.
+      </p>
+    </div>
+
+    <div class="panelbox" id="p4" role="tabpanel" aria-labelledby="t4" hidden>
+      <p class="prob">The problem</p>
+      <h3>A pipeline that reports “healthy” when it has stopped</h3>
+      <p>
+        The original health check recorded success whenever an API call didn't throw. A paused
+        account and a silently broken integration produced identical green ticks — one source went
+        <strong>218 days without data</strong> while still reporting healthy.
+      </p>
+      <p>
+        I replaced it with durable run history in a database rather than ephemeral container logs,
+        recording every outcome — clean exit, non-zero exit, timeout and crash — plus a per-source
+        staleness threshold derived from its expected cadence. Anything overdue for its own schedule
+        raises an alert.
+      </p>
+      <p>
+        The monitoring is deliberately <strong>best-effort and non-blocking</strong>: if the
+        telemetry store is unreachable the job still runs and logs a warning. A monitoring outage
+        must never become a pipeline outage.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─────────── PRODUCT ─────────── -->
+  <section>
+    <p class="eyebrow">The product</p>
+    <h2>What people actually use it for</h2>
+
+    <div class="grid two">
+      <div class="card">
+        <span class="k">Performance</span>
+        <h3>25 analysis views per account</h3>
+        <p>Campaigns, keywords, search terms, ads, geography, audiences, placements, landing pages,
+          dayparting, change history and more — each with period-over-period comparison and
+          drill-down from any row.</p>
+      </div>
+      <div class="card">
+        <span class="k">Budget</span>
+        <h3>Cross-channel pacing &amp; forecasting</h3>
+        <p>Month-to-date pacing against target with schedule-aware projection, multi-month plans,
+          and a simulator for reallocating budget toward channels with evidence of room to spend.</p>
+      </div>
+      <div class="card">
+        <span class="k">Efficiency</span>
+        <h3>Wasted-spend detection</h3>
+        <p>Automated findings for spend with no return — surfaced with the evidence behind each
+          one, and actionable directly from the finding.</p>
+      </div>
+      <div class="card">
+        <span class="k">Organic</span>
+        <h3>SEO scoring</h3>
+        <p>A composite grade per site blending search console performance, backlink authority,
+          index coverage, page speed and post-click analytics.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:44px">Budget pacing — illustrative view</h3>
+    <p style="font-size:14.5px">
+      The cross-client pacing table, with anonymised names and representative figures. Pace
+      compares spend-to-date against where it should be given the days elapsed and each campaign's
+      active schedule, rather than a naive straight line.
+    </p>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr><th>Client</th><th>Channels</th><th class="n">Monthly budget</th>
+            <th class="n">Spend to date</th><th style="width:130px">Pace</th><th class="n">Projected</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Company A</td><td>Search · Social · Bing</td><td class="n">$17,500</td><td class="n">$9,240</td>
+            <td><span class="bar"><i style="width:53%"></i></span></td><td class="n">$17,180</td><td><span class="pill">On track</span></td></tr>
+          <tr><td>Company B</td><td>Search · LSA</td><td class="n">$55,000</td><td class="n">$21,300</td>
+            <td><span class="bar"><i style="width:39%"></i></span></td><td class="n">$46,900</td><td><span class="pill warn">Under pace</span></td></tr>
+          <tr><td>Company C</td><td>Search · Social</td><td class="n">$25,000</td><td class="n">$15,850</td>
+            <td><span class="bar"><i class="over" style="width:82%"></i></span></td><td class="n">$29,400</td><td><span class="pill warn">Over pace</span></td></tr>
+          <tr><td>Company D</td><td>Search · Display</td><td class="n">$9,000</td><td class="n">$4,610</td>
+            <td><span class="bar"><i style="width:51%"></i></span></td><td class="n">$8,940</td><td><span class="pill">On track</span></td></tr>
+          <tr><td>Company E</td><td>Search only</td><td class="n">$3,500</td><td class="n">$1,780</td>
+            <td><span class="bar"><i style="width:50%"></i></span></td><td class="n">$3,470</td><td><span class="pill">On track</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ─────────── AUTOMATION ─────────── -->
+  <section>
+    <p class="eyebrow">Integration work</p>
+    <h2>Meeting data where it already lives</h2>
+    <p>
+      One client group tracked budgets in a spreadsheet their team owned and could not share
+      outside their organisation — a hard constraint, not a preference. Rather than ask them to
+      change process, I inverted the direction of the integration.
+    </p>
+    <ul>
+      <li>A script running <strong>inside their own document</strong> reads the figures and pushes
+        them out, so no external access to the file is ever required.</li>
+      <li>It authenticates to a purpose-built endpoint with a shared secret, and every incoming
+        account is checked against a fixed allowlist — a leaked secret could still only ever move
+        budgets for that one client group.</li>
+      <li>Human-authored fields are read back and passed through untouched, so an automated sync can
+        never overwrite a note somebody typed.</li>
+      <li>It runs on a daily schedule and is fully idempotent.</li>
+    </ul>
+    <p>
+      Thirty client budgets across four channels now flow in automatically each morning, from a
+      source the platform is not permitted to read.
+    </p>
+  </section>
+
+  <!-- ─────────── STACK ─────────── -->
+  <section>
+    <p class="eyebrow">Stack</p>
+    <h2>Technology</h2>
+    <div class="chips">
+      <span class="chip">TypeScript</span><span class="chip">Next.js (App Router)</span>
+      <span class="chip">React</span><span class="chip">Node.js</span>
+      <span class="chip">Google BigQuery</span><span class="chip">PostgreSQL</span>
+      <span class="chip">SQL (analytic window functions)</span>
+      <span class="chip">Tailwind CSS</span><span class="chip">Recharts</span>
+      <span class="chip">OAuth 2.0</span><span class="chip">REST ad-platform APIs</span>
+      <span class="chip">Apps Script</span><span class="chip">GitHub Actions</span>
+      <span class="chip">Docker</span><span class="chip">Railway</span>
+      <span class="chip">LLM tool-calling</span>
+    </div>
+
+    <div class="grid three" style="margin-top:34px">
+      <div class="card">
+        <span class="k">Scale</span>
+        <h3>187 accounts, 10 years</h3>
+        <p>Daily-grain facts across five ad platforms and three SEO sources, in one warehouse
+          model.</p>
+      </div>
+      <div class="card">
+        <span class="k">Surface</span>
+        <h3>68 API endpoints</h3>
+        <p>Server-rendered pages plus a documented tool interface for external AI clients.</p>
+      </div>
+      <div class="card">
+        <span class="k">Operations</span>
+        <h3>Continuous deployment</h3>
+        <p>Scheduled ingestion on cron, containerised services, automatic deploys from the main
+          branch.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Case study prepared from a production system. Client names replaced with placeholders, figures
+    illustrative, and identifying account, domain and vendor details omitted throughout.
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+    function select(tab) {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        var panel = document.getElementById(t.getAttribute('aria-controls'));
+        if (panel) panel.hidden = !on;
+      });
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { select(t); });
+      t.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        var next = tabs[(i + d + tabs.length) % tabs.length];
+        next.focus(); select(next);
+      });
+    });
+  })();
+</script>
+</body>
+</html>
