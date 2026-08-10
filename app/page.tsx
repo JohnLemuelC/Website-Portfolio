@@ -40,7 +40,7 @@ const featured = [
     img: `${BASE}/images/projects/apps-script.png`,
   },
   {
-    title: "AI Receptionist (ACE)",
+    title: "ACE AI Receptionist",
     desc: "Voice AI agent on Retell AI handling inbound lead qualification and appointment scheduling 24/7 for a real estate client.",
     tags: ["Retell AI", "GoHighLevel", "Voice AI"],
     color: "rose",
@@ -81,18 +81,25 @@ const projectSections = [
         color: "amber",
       },
       {
-        title: "AI Receptionist (ACE)",
+        title: "ACE AI Receptionist",
         desc: "Voice AI agent for real estate lead qualification and appointment scheduling.",
         tags: ["Retell AI", "Voice AI", "Real Estate"],
         img: `${BASE}/images/projects/ACE.png`,
         color: "rose",
       },
       {
-        title: "GRACE + SARAH — Inbound, Outbound & SMS",
-        desc: "Full-stack AI receptionist suite for a land buying company: GRACE handles inbound seller calls 24/7, SARAH runs outbound pre-qualification, and automated SMS follows up with every lead.",
-        tags: ["Retell AI", "Voice AI", "SMS", "Land Buying"],
+        title: "Grace Inbound AI Receptionist",
+        desc: "24/7 inbound voice AI agent for a land buying company. GRACE handles incoming seller calls, qualifies leads in real time, and books appointments without human intervention.",
+        tags: ["Retell AI", "Voice AI", "Inbound", "Land Buying"],
         img: `${BASE}/images/projects/ACE.png`,
         color: "rose",
+      },
+      {
+        title: "Sarah Outbound AI Receptionist",
+        desc: "Outbound AI calling agent for a land buying company. SARAH proactively pre-qualifies seller leads via automated calls and follows up with SMS to keep every lead engaged.",
+        tags: ["Retell AI", "Voice AI", "Outbound", "SMS"],
+        img: `${BASE}/images/projects/ACE.png`,
+        color: "violet",
       },
       {
         title: "Google Analytics AI Agent",
