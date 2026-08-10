@@ -89,8 +89,8 @@ const projectSections = [
       },
       {
         title: "GRACE + SARAH — Inbound, Outbound & SMS",
-        desc: "Full-stack AI receptionist suite: GRACE handles inbound calls and qualifies leads 24/7, SARAH runs outbound pre-qualification, and automated SMS follows up with every contact.",
-        tags: ["Retell AI", "Voice AI", "SMS", "Real Estate"],
+        desc: "Full-stack AI receptionist suite for a land buying company: GRACE handles inbound seller calls 24/7, SARAH runs outbound pre-qualification, and automated SMS follows up with every lead.",
+        tags: ["Retell AI", "Voice AI", "SMS", "Land Buying"],
         img: `${BASE}/images/projects/ACE.png`,
         color: "rose",
       },
