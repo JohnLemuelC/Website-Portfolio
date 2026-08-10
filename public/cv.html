@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>John Lemuel Culinares — CV</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --accent: #2563EB;
+    --text: #0F172A;
+    --text-muted: #64748B;
+    --text-sub: #475569;
+    --border: #E2E8F0;
+    --surface: #F8FAFC;
+    --page-w: 800px;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: #fff;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: var(--page-w);
+    margin: 0 auto;
+    padding: 56px 52px 64px;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-bottom: 36px;
+    padding-bottom: 28px;
+    border-bottom: 2px solid var(--accent);
+  }
+
+  .header-left h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .header-left .title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .header-right {
+    text-align: right;
+    font-size: 12.5px;
+    color: var(--text-sub);
+    line-height: 1.8;
+    flex-shrink: 0;
+  }
+
+  .header-right a { color: var(--accent); text-decoration: none; }
+
+  /* ── Sections ── */
+  .section { margin-bottom: 28px; }
+
+  .section-title {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── Summary ── */
+  .summary {
+    font-size: 13.5px;
+    color: var(--text-sub);
+    line-height: 1.75;
+  }
+
+  /* ── Experience ── */
+  .exp-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem 1.5rem;
+    margin-bottom: 18px;
+  }
+  .exp-item:last-child { margin-bottom: 0; }
+
+  .exp-role {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .exp-company {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-top: 1px;
+    margin-bottom: 7px;
+  }
+
+  .exp-period {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    white-space: nowrap;
+    padding-top: 1px;
+    text-align: right;
+  }
+
+  .exp-period.current {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .exp-bullets {
+    list-style: none;
+    grid-column: 1 / -1;
+    margin-top: -2px;
+  }
+
+  .exp-bullets li {
+    font-size: 12.5px;
+    color: var(--text-sub);
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 3px;
+    line-height: 1.55;
+  }
+
+  .exp-bullets li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--border);
+    font-size: 11px;
+  }
+
+  /* ── Projects ── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 20px;
+  }
+
+  .proj-item { }
+
+  .proj-name {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .proj-desc {
+    font-size: 11.5px;
+    color: var(--text-sub);
+    line-height: 1.5;
+  }
+
+  .proj-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+  }
+
+  .tag {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    background: #EFF6FF;
+    border-radius: 3px;
+    padding: 1px 6px;
+  }
+
+  /* ── Skills ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 24px;
+  }
+
+  .skill-group-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .skill-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .skill-pill {
+    font-size: 10.5px;
+    color: var(--text-sub);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 7px;
+  }
+
+  /* ── Metrics ── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .metric-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+
+  .metric-n {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .metric-l {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { background: #fff; }
+    .page { padding: 32px 40px; }
+    .no-print { display: none; }
+    @page { margin: 0; size: A4; }
+  }
+
+  /* ── Print button ── */
+  .print-bar {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 100;
+  }
+
+  .btn-print {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-print:hover { background: #1d4ed8; }
+</style>
+</head>
+<body>
+
+<div class="print-bar no-print">
+  <button class="btn-print" onclick="window.print()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    Download / Print PDF
+  </button>
+</div>
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <h1>John Lemuel Culinares</h1>
+      <div class="title">AI Automation &amp; Workflow Specialist</div>
+    </div>
+    <div class="header-right">
+      j.culinares06@gmail.com<br>
+      +63 976 117 2117<br>
+      <a href="https://linkedin.com/in/john-lemuel-culinares">linkedin.com/in/john-lemuel-culinares</a><br>
+      Philippines · Remote
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section">
+    <div class="section-title">Profile</div>
+    <p class="summary">
+      AI automation specialist with 4+ years building end-to-end systems that replace manual work with intelligent pipelines. Core focus on AI agents, voice AI, n8n/Zapier workflows, and full-stack dashboards. Delivered 200+ marketing assets, deployed 24/7 AI receptionists, built multi-platform ad analytics across 187 accounts, and consistently reduced client admin overhead by 58%. Philippines-based, available for remote contracts with strong U.S. hours overlap.
+    </p>
+  </div>
+
+  <!-- Key Metrics -->
+  <div class="section">
+    <div class="section-title">Impact Highlights</div>
+    <div class="metrics-grid">
+      <div class="metric-box"><div class="metric-n">58%</div><div class="metric-l">Admin time reduced for clients</div></div>
+      <div class="metric-box"><div class="metric-n">168</div><div class="metric-l">Leads generated (B2B campaign)</div></div>
+      <div class="metric-box"><div class="metric-n">5.6%</div><div class="metric-l">Email CTR achieved</div></div>
+      <div class="metric-box"><div class="metric-n">70K</div><div class="metric-l">Facebook likes in 3 months</div></div>
+      <div class="metric-box"><div class="metric-n">28</div><div class="metric-l">Investment deals closed</div></div>
+      <div class="metric-box"><div class="metric-n">90%+</div><div class="metric-l">CSAT score, consistently</div></div>
+      <div class="metric-box"><div class="metric-n">22%</div><div class="metric-l">Increase in call show-up rate</div></div>
+      <div class="metric-box"><div class="metric-n">91%</div><div class="metric-l">On-time delivery rate</div></div>
+    </div>
+  </div>
+
+  <!-- Experience -->
+  <div class="section">
+    <div class="section-title">Work Experience</div>
+
+    <div class="exp-item">
+      <div>
+        <div class="exp-role">AI Automation &amp; Workflow Specialist</div>
+        <div class="exp-company">Contract / Project-Based</div>
+      </div>
+      <div class="exp-period current">2025 – Present</div>
+      <ul class="exp-bullets">
+        <li>Deployed 24/7 voice AI receptionists (ACE, GRACE, SARAH) for real estate and land buying clients using Retell AI</li>
+        <li>GoHighLevel CRM integrations for automated lead capture, pre-qualification workflows, and pipeline sync</li>
+        <li>Automated daily performance reporting delivered via Slack digests</li>
+        <li>n8n workflows on VPS handling webhook processing and cross-tool automation</li>
+      </ul>
+    </div>
+
+    <div class="exp-item">
+      <div>
+        <div class="exp-role">AI &amp; Automation Specialist</div>
+        <div class="exp-company">Ruskin Consulting (Full-time)</div>
+      </div>
+      <div class="exp-period">2025</div>
+      <ul class="exp-bullets">
+        <li>Built central KPI Datahub aggregating LinkedIn, Meta, and Bing ad performance across 187 accounts</li>
+        <li>Developed MCP servers for Google Ads, GA4, and Search Console exposing live data to AI agents</li>
+        <li>Delivered 5-workflow n8n blog automation pipeline (keyword research to WordPress publishing)</li>
+        <li>Contributed to AdLlama: Next.js + Python Google Ads management platform</li>
+        <li>Pipedrive CRM integrations and automated weekly Google Ads client check-ins</li>
+      </ul>
+    </div>
+
+    <div class="exp-item">
+      <div>
+        <div class="exp-role">AI Integration Specialist</div>
+        <div class="exp-company">Contract / Project-Based</div>
+      </div>
+      <div class="exp-period">2025</div>
+      <ul class="exp-bullets">
+        <li>Built Copy Chief: AI copywriting evaluator using a 7-criterion scoring rubric (Claude API)</li>
+        <li>Built AdLoop: Meta Ads + Triple Whale + Funnelish dashboard with SCALE/KILL/ITERATE decisions</li>
+        <li>Winning ads analysis loop recreating top-performing ad variations automatically</li>
+        <li>Email marketing automations across Mailchimp, ActiveCampaign, and Customer.io</li>
+      </ul>
+    </div>
+
+    <div class="exp-item">
+      <div>
+        <div class="exp-role">Marketing Associate</div>
+        <div class="exp-company">Synergy Data Investments (Remote)</div>
+      </div>
+      <div class="exp-period">2024 – 2025</div>
+      <ul class="exp-bullets">
+        <li>Created 200+ professional marketing assets; contributed to closing 28 investment deals</li>
+        <li>Built email nurture journeys in Customer.io and Mailchimp; achieved 30% engagement increase</li>
+      </ul>
+    </div>
+
+    <div class="exp-item">
+      <div>
+        <div class="exp-role">Customer Success Associate</div>
+        <div class="exp-company">SDI Living (Remote)</div>
+      </div>
+      <div class="exp-period">2024 – 2025</div>
+      <ul class="exp-bullets">
+        <li>Maintained 90%+ CSAT score; achieved 22% increase in call show-up rate</li>
+        <li>CRM data cleanup reducing duplicates by 40%</li>
+      </ul>
+    </div>
+
+    <div class="exp-item">
+      <div>
+        <div class="exp-role">Customer Service Associate</div>
+        <div class="exp-company">PeakSupport (Remote, BPO)</div>
+      </div>
+      <div class="exp-period">2023 – 2024</div>
+      <ul class="exp-bullets">
+        <li>Resolved 60+ tickets/day with 92% SLA compliance; 94% CSAT rating; 18% AHT reduction</li>
+      </ul>
+    </div>
+
+    <div class="exp-item">
+      <div>
+        <div class="exp-role">Marketing Assistant</div>
+        <div class="exp-company">Metalkin Australia (Remote)</div>
+      </div>
+      <div class="exp-period">2022 – 2023</div>
+      <ul class="exp-bullets">
+        <li>Generated 168 leads, booked 54 meetings, closed 5 deals via B2B marketing campaigns</li>
+      </ul>
+    </div>
+
+    <div class="exp-item">
+      <div>
+        <div class="exp-role">Digital Marketing Support</div>
+        <div class="exp-company">Aljay Agro-Industrial (Remote)</div>
+      </div>
+      <div class="exp-period">2021 – 2022</div>
+      <ul class="exp-bullets">
+        <li>Grew Facebook page to 70K likes in 3 months; 40% Instagram growth</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Selected Projects -->
+  <div class="section">
+    <div class="section-title">Selected Projects</div>
+    <div class="projects-grid">
+      <div class="proj-item">
+        <div class="proj-name">AdLoop</div>
+        <div class="proj-desc">Meta Ads + Triple Whale + Funnelish intelligence dashboard outputting SCALE/KILL/ITERATE decisions via Claude API.</div>
+        <div class="proj-tags"><span class="tag">Claude API</span><span class="tag">Python</span><span class="tag">Supabase</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">MER Engine</div>
+        <div class="proj-desc">Daily batch system computing Marketing Efficiency Ratio across markets, converting all spend to EUR for Supabase and Sheets.</div>
+        <div class="proj-tags"><span class="tag">Python</span><span class="tag">Supabase</span><span class="tag">Google Ads</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Marketing Dashboard</div>
+        <div class="proj-desc">Multi-channel analytics for a 187-account agency: 5 ad platforms, 3 SEO sources, 25 analysis views, budget pacing, and AI querying.</div>
+        <div class="proj-tags"><span class="tag">Next.js</span><span class="tag">BigQuery</span><span class="tag">TypeScript</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Google Ads MCP Server</div>
+        <div class="proj-desc">Open-source MCP server enabling Claude/ChatGPT to query and manage Google Ads natively via natural language.</div>
+        <div class="proj-tags"><span class="tag">MCP</span><span class="tag">Python</span><span class="tag">Google Ads API</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">ACE AI Receptionist</div>
+        <div class="proj-desc">24/7 voice AI agent on Retell AI for real estate lead qualification and appointment scheduling.</div>
+        <div class="proj-tags"><span class="tag">Retell AI</span><span class="tag">GoHighLevel</span><span class="tag">Voice AI</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">N8N Blog Automation</div>
+        <div class="proj-desc">5-workflow pipeline: keyword research → outline → draft → SEO check → WordPress publish, fully automated.</div>
+        <div class="proj-tags"><span class="tag">n8n</span><span class="tag">OpenAI</span><span class="tag">WordPress</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skills -->
+  <div class="section">
+    <div class="section-title">Technical Skills</div>
+    <div class="skills-grid">
+      <div>
+        <div class="skill-group-label">AI &amp; Agents</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Claude API</span><span class="skill-pill">OpenAI</span><span class="skill-pill">Retell AI</span><span class="skill-pill">Custom GPTs</span><span class="skill-pill">MCP Servers</span><span class="skill-pill">Prompt Engineering</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-label">Automation</div>
+        <div class="skill-pills">
+          <span class="skill-pill">n8n</span><span class="skill-pill">Zapier</span><span class="skill-pill">Make.com</span><span class="skill-pill">Google Apps Script</span><span class="skill-pill">Webhooks</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-label">Development</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Python</span><span class="skill-pill">TypeScript</span><span class="skill-pill">Next.js</span><span class="skill-pill">Node.js</span><span class="skill-pill">FastAPI</span><span class="skill-pill">Supabase</span><span class="skill-pill">PostgreSQL</span><span class="skill-pill">Railway</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-label">CRM &amp; Ops</div>
+        <div class="skill-pills">
+          <span class="skill-pill">GoHighLevel</span><span class="skill-pill">Pipedrive</span><span class="skill-pill">Salesforce</span><span class="skill-pill">Respond.io</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-label">Marketing &amp; Ads</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Google Ads</span><span class="skill-pill">Meta Ads</span><span class="skill-pill">LinkedIn Ads</span><span class="skill-pill">Google Analytics</span><span class="skill-pill">Customer.io</span><span class="skill-pill">Mailchimp</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-label">Productivity</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Slack</span><span class="skill-pill">Notion</span><span class="skill-pill">Basecamp</span><span class="skill-pill">Monday.com</span><span class="skill-pill">Google Workspace</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
