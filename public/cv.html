@@ -10,16 +10,15 @@
   :root {
     --accent: #2563EB;
     --text: #0F172A;
-    --text-muted: #64748B;
-    --text-sub: #475569;
+    --muted: #64748B;
+    --sub: #475569;
     --border: #E2E8F0;
-    --surface: #F8FAFC;
-    --page-w: 800px;
+    --bg: #F8FAFC;
   }
 
   body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    font-size: 14px;
+    font-size: 13.5px;
     color: var(--text);
     background: #fff;
     line-height: 1.6;
@@ -27,9 +26,9 @@
   }
 
   .page {
-    max-width: var(--page-w);
+    max-width: 800px;
     margin: 0 auto;
-    padding: 56px 52px 64px;
+    padding: 52px 52px 64px;
   }
 
   /* ── Header ── */
@@ -38,88 +37,131 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: 2rem;
-    margin-bottom: 36px;
-    padding-bottom: 28px;
+    padding-bottom: 24px;
     border-bottom: 2px solid var(--accent);
+    margin-bottom: 32px;
   }
 
-  .header-left h1 {
-    font-size: 28px;
+  .header h1 {
+    font-size: 26px;
     font-weight: 800;
     letter-spacing: -0.03em;
     color: var(--text);
-    line-height: 1;
-    margin-bottom: 6px;
+    line-height: 1.1;
+    margin-bottom: 4px;
   }
 
-  .header-left .title {
-    font-size: 14px;
-    font-weight: 600;
+  .header .title {
+    font-size: 12px;
+    font-weight: 700;
     color: var(--accent);
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
   }
 
-  .header-right {
+  .header-contact {
     text-align: right;
-    font-size: 12.5px;
-    color: var(--text-sub);
-    line-height: 1.8;
+    font-size: 12px;
+    color: var(--sub);
+    line-height: 1.9;
     flex-shrink: 0;
   }
 
-  .header-right a { color: var(--accent); text-decoration: none; }
-
-  /* ── Sections ── */
-  .section { margin-bottom: 28px; }
-
-  .section-title {
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+  .header-contact a {
     color: var(--accent);
-    margin-bottom: 12px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid var(--border);
+    text-decoration: none;
   }
 
-  /* ── Summary ── */
-  .summary {
-    font-size: 13.5px;
-    color: var(--text-sub);
+  /* ── Section ── */
+  .section {
+    margin-bottom: 26px;
+  }
+
+  .section-title {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 14px;
+  }
+
+  /* ── Profile ── */
+  .profile {
+    font-size: 13px;
+    color: var(--sub);
     line-height: 1.75;
+  }
+
+  /* ── Metrics ── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .metric-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 9px 10px;
+    text-align: center;
+  }
+
+  .metric-n {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .metric-l {
+    font-size: 9.5px;
+    color: var(--muted);
+    margin-top: 3px;
+    line-height: 1.35;
   }
 
   /* ── Experience ── */
   .exp-item {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 0.5rem 1.5rem;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
-  .exp-item:last-child { margin-bottom: 0; }
+
+  .exp-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 5px;
+  }
 
   .exp-role {
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 700;
     color: var(--text);
   }
 
   .exp-company {
-    font-size: 12.5px;
-    color: var(--text-muted);
+    font-size: 12px;
+    color: var(--muted);
     margin-top: 1px;
-    margin-bottom: 7px;
   }
 
   .exp-period {
     font-size: 11.5px;
     font-weight: 600;
-    color: var(--text-muted);
+    color: var(--muted);
     white-space: nowrap;
-    padding-top: 1px;
-    text-align: right;
+    flex-shrink: 0;
   }
 
   .exp-period.current {
@@ -129,35 +171,51 @@
 
   .exp-bullets {
     list-style: none;
-    grid-column: 1 / -1;
-    margin-top: -2px;
+    margin-top: 5px;
   }
 
   .exp-bullets li {
     font-size: 12.5px;
-    color: var(--text-sub);
-    padding-left: 14px;
+    color: var(--sub);
+    padding-left: 13px;
     position: relative;
     margin-bottom: 3px;
-    line-height: 1.55;
+    line-height: 1.5;
   }
 
   .exp-bullets li::before {
-    content: '—';
+    content: '–';
     position: absolute;
     left: 0;
     color: var(--border);
-    font-size: 11px;
   }
 
   /* ── Projects ── */
+  .proj-category {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 14px 0 9px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .proj-category:first-child {
+    margin-top: 0;
+  }
+
   .projects-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px 20px;
+    gap: 9px 22px;
   }
 
-  .proj-item { }
+  .proj-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 
   .proj-name {
     font-size: 12.5px;
@@ -168,38 +226,38 @@
 
   .proj-desc {
     font-size: 11.5px;
-    color: var(--text-sub);
+    color: var(--sub);
     line-height: 1.5;
   }
 
   .proj-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
+    gap: 3px;
     margin-top: 4px;
   }
 
   .tag {
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 600;
     color: var(--accent);
     background: #EFF6FF;
     border-radius: 3px;
-    padding: 1px 6px;
+    padding: 1px 5px;
   }
 
   /* ── Skills ── */
   .skills-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px 24px;
+    gap: 10px 28px;
   }
 
   .skill-group-label {
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 700;
     color: var(--text);
-    margin-bottom: 4px;
+    margin-bottom: 5px;
   }
 
   .skill-pills {
@@ -210,62 +268,11 @@
 
   .skill-pill {
     font-size: 10.5px;
-    color: var(--text-sub);
-    background: var(--surface);
+    color: var(--sub);
+    background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 4px;
     padding: 2px 7px;
-  }
-
-  /* ── Metrics ── */
-  .metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-  }
-
-  .metric-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    text-align: center;
-  }
-
-  .metric-n {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--accent);
-    letter-spacing: -0.03em;
-    line-height: 1;
-  }
-
-  .metric-l {
-    font-size: 10px;
-    color: var(--text-muted);
-    margin-top: 4px;
-    line-height: 1.4;
-  }
-
-  /* ── Project category label ── */
-  .proj-category {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin: 16px 0 10px;
-    padding-bottom: 4px;
-    border-bottom: 1px dashed var(--border);
-  }
-  .proj-category:first-of-type { margin-top: 0; }
-
-  /* ── Print ── */
-  @media print {
-    body { background: #fff; }
-    .page { padding: 32px 40px; }
-    .no-print { display: none; }
-    @page { margin: 0; size: A4; }
   }
 
   /* ── Print button ── */
@@ -280,25 +287,34 @@
     background: var(--accent);
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 7px;
     padding: 9px 18px;
     font-size: 13px;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+    box-shadow: 0 2px 8px rgba(37,99,235,0.25);
     display: flex;
     align-items: center;
     gap: 6px;
   }
 
   .btn-print:hover { background: #1d4ed8; }
+
+  /* ── Print ── */
+  @media print {
+    body { background: #fff; font-size: 12px; }
+    .page { padding: 28px 36px; max-width: 100%; }
+    .print-bar { display: none; }
+    .section { margin-bottom: 20px; }
+    @page { margin: 0; size: A4; }
+  }
 </style>
 </head>
 <body>
 
-<div class="print-bar no-print">
+<div class="print-bar">
   <button class="btn-print" onclick="window.print()">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
     Download / Print PDF
   </button>
 </div>
@@ -307,38 +323,62 @@
 
   <!-- Header -->
   <div class="header">
-    <div class="header-left">
+    <div>
       <h1>John Lemuel Culinares</h1>
       <div class="title">AI Automation &amp; Workflow Specialist</div>
     </div>
-    <div class="header-right">
+    <div class="header-contact">
       j.culinares06@gmail.com<br>
       +63 976 117 2117<br>
       <a href="https://linkedin.com/in/john-lemuel-culinares">linkedin.com/in/john-lemuel-culinares</a><br>
-      Philippines · Remote
+      Philippines &middot; Remote
     </div>
   </div>
 
-  <!-- Summary -->
+  <!-- Profile -->
   <div class="section">
     <div class="section-title">Profile</div>
-    <p class="summary">
-      AI automation specialist with 4+ years building end-to-end systems that replace manual work with intelligent pipelines. Core focus on AI agents, voice AI, n8n/Zapier workflows, and full-stack dashboards. Delivered 200+ marketing assets, deployed 24/7 AI receptionists, built multi-platform ad analytics across 187 accounts, and consistently reduced client admin overhead by 58%. Philippines-based, available for remote contracts with strong U.S. hours overlap.
+    <p class="profile">
+      I build AI systems and automation tools for remote clients — voice agents, ad analytics dashboards, n8n/Zapier pipelines, and CRM integrations. Four years in, with work across real estate, e-commerce, and marketing agencies. Recent projects include a 187-account analytics platform, three 24/7 AI receptionists, and an MER engine tracking spend across markets daily. Open to full-time remote roles and project contracts, with solid U.S. hours availability.
     </p>
   </div>
 
-  <!-- Key Metrics -->
+  <!-- Metrics -->
   <div class="section">
-    <div class="section-title">Impact Highlights</div>
+    <div class="section-title">Impact</div>
     <div class="metrics-grid">
-      <div class="metric-box"><div class="metric-n">58%</div><div class="metric-l">Admin time reduced for clients</div></div>
-      <div class="metric-box"><div class="metric-n">168</div><div class="metric-l">Leads generated (B2B campaign)</div></div>
-      <div class="metric-box"><div class="metric-n">5.6%</div><div class="metric-l">Email CTR achieved</div></div>
-      <div class="metric-box"><div class="metric-n">70K</div><div class="metric-l">Facebook likes in 3 months</div></div>
-      <div class="metric-box"><div class="metric-n">28</div><div class="metric-l">Investment deals closed</div></div>
-      <div class="metric-box"><div class="metric-n">90%+</div><div class="metric-l">CSAT score, consistently</div></div>
-      <div class="metric-box"><div class="metric-n">22%</div><div class="metric-l">Increase in call show-up rate</div></div>
-      <div class="metric-box"><div class="metric-n">91%</div><div class="metric-l">On-time delivery rate</div></div>
+      <div class="metric-box">
+        <div class="metric-n">58%</div>
+        <div class="metric-l">Admin time cut for clients</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-n">168</div>
+        <div class="metric-l">B2B leads generated</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-n">5.6%</div>
+        <div class="metric-l">Email CTR achieved</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-n">70K</div>
+        <div class="metric-l">Facebook likes in 3 months</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-n">28</div>
+        <div class="metric-l">Investment deals closed</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-n">90%+</div>
+        <div class="metric-l">CSAT, consistently</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-n">22%</div>
+        <div class="metric-l">Call show-up rate increase</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-n">91%</div>
+        <div class="metric-l">On-time delivery rate</div>
+      </div>
     </div>
   </div>
 
@@ -347,102 +387,117 @@
     <div class="section-title">Work Experience</div>
 
     <div class="exp-item">
-      <div>
-        <div class="exp-role">AI Automation &amp; Workflow Specialist</div>
-        <div class="exp-company">Contract / Project-Based</div>
+      <div class="exp-header">
+        <div>
+          <div class="exp-role">AI Automation &amp; Workflow Specialist</div>
+          <div class="exp-company">Contract / Project-Based</div>
+        </div>
+        <div class="exp-period current">2025 – Present</div>
       </div>
-      <div class="exp-period current">2025 – Present</div>
       <ul class="exp-bullets">
-        <li>Deployed 24/7 voice AI receptionists (ACE, GRACE, SARAH) for real estate and land buying clients using Retell AI</li>
-        <li>GoHighLevel CRM integrations for automated lead capture, pre-qualification workflows, and pipeline sync</li>
-        <li>Automated daily performance reporting delivered via Slack digests</li>
-        <li>n8n workflows on VPS handling webhook processing and cross-tool automation</li>
+        <li>Built three AI receptionists (ACE, GRACE, SARAH) on Retell AI — real estate qualification, inbound land buying calls, and outbound pre-qualification with SMS follow-up</li>
+        <li>GoHighLevel CRM setup: pre-qualification workflows, form builder, lead pipeline, and custom fields</li>
+        <li>n8n workflows on VPS for webhook handling and cross-tool automation</li>
+        <li>Automated daily reporting sent to client Slack channels</li>
       </ul>
     </div>
 
     <div class="exp-item">
-      <div>
-        <div class="exp-role">AI &amp; Automation Specialist</div>
-        <div class="exp-company">Ruskin Consulting (Full-time)</div>
+      <div class="exp-header">
+        <div>
+          <div class="exp-role">AI &amp; Automation Specialist</div>
+          <div class="exp-company">Ruskin Consulting (Full-time)</div>
+        </div>
+        <div class="exp-period">2025</div>
       </div>
-      <div class="exp-period">2025</div>
       <ul class="exp-bullets">
-        <li>Built central KPI Datahub aggregating LinkedIn, Meta, and Bing ad performance across 187 accounts</li>
-        <li>Developed MCP servers for Google Ads, GA4, and Search Console exposing live data to AI agents</li>
-        <li>Delivered 5-workflow n8n blog automation pipeline (keyword research to WordPress publishing)</li>
-        <li>Contributed to AdLlama: Next.js + Python Google Ads management platform</li>
-        <li>Pipedrive CRM integrations and automated weekly Google Ads client check-ins</li>
+        <li>Central KPI Datahub pulling from LinkedIn, Meta, and Bing across 187 accounts</li>
+        <li>MCP servers for Google Ads, GA4, and Search Console — exposing live data to AI agents</li>
+        <li>5-workflow n8n blog pipeline: keyword research through WordPress publishing, no manual steps</li>
+        <li>AdLlama contributions: Keyword Planner API and Ad Copy Validation (Next.js + Python)</li>
+        <li>Pipedrive integrations and automated weekly Google Ads client check-ins</li>
       </ul>
     </div>
 
     <div class="exp-item">
-      <div>
-        <div class="exp-role">AI Integration Specialist</div>
-        <div class="exp-company">Contract / Project-Based</div>
+      <div class="exp-header">
+        <div>
+          <div class="exp-role">AI Integration Specialist</div>
+          <div class="exp-company">Contract / Project-Based</div>
+        </div>
+        <div class="exp-period">2025</div>
       </div>
-      <div class="exp-period">2025</div>
       <ul class="exp-bullets">
-        <li>Built Copy Chief: AI copywriting evaluator using a 7-criterion scoring rubric (Claude API)</li>
-        <li>Built AdLoop: Meta Ads + Triple Whale + Funnelish dashboard with SCALE/KILL/ITERATE decisions</li>
-        <li>Winning ads analysis loop recreating top-performing ad variations automatically</li>
-        <li>Email marketing automations across Mailchimp, ActiveCampaign, and Customer.io</li>
+        <li>Copy Chief: Claude-powered evaluator scoring ad copy on a 7-criterion rubric</li>
+        <li>AdLoop: Meta Ads + Triple Whale + Funnelish dashboard with SCALE/KILL/ITERATE decisions</li>
+        <li>Winning ads loop that recreates top-performing variations from live campaign data</li>
+        <li>Email automations across Mailchimp, ActiveCampaign, and Customer.io</li>
       </ul>
     </div>
 
     <div class="exp-item">
-      <div>
-        <div class="exp-role">Marketing Associate</div>
-        <div class="exp-company">Synergy Data Investments (Remote)</div>
+      <div class="exp-header">
+        <div>
+          <div class="exp-role">Marketing Associate</div>
+          <div class="exp-company">Synergy Data Investments (Remote)</div>
+        </div>
+        <div class="exp-period">2024 – 2025</div>
       </div>
-      <div class="exp-period">2024 – 2025</div>
       <ul class="exp-bullets">
-        <li>Created 200+ professional marketing assets; contributed to closing 28 investment deals</li>
-        <li>Built email nurture journeys in Customer.io and Mailchimp; achieved 30% engagement increase</li>
+        <li>200+ marketing assets; contributed to closing 28 investment deals</li>
+        <li>Email nurture journeys in Customer.io and Mailchimp; 30% engagement increase</li>
       </ul>
     </div>
 
     <div class="exp-item">
-      <div>
-        <div class="exp-role">Customer Success Associate</div>
-        <div class="exp-company">SDI Living (Remote)</div>
+      <div class="exp-header">
+        <div>
+          <div class="exp-role">Customer Success Associate</div>
+          <div class="exp-company">SDI Living (Remote)</div>
+        </div>
+        <div class="exp-period">2024 – 2025</div>
       </div>
-      <div class="exp-period">2024 – 2025</div>
       <ul class="exp-bullets">
-        <li>Maintained 90%+ CSAT score; achieved 22% increase in call show-up rate</li>
-        <li>CRM data cleanup reducing duplicates by 40%</li>
+        <li>90%+ CSAT; 22% increase in call show-up rate; CRM cleanup cut duplicates by 40%</li>
       </ul>
     </div>
 
     <div class="exp-item">
-      <div>
-        <div class="exp-role">Customer Service Associate</div>
-        <div class="exp-company">PeakSupport (Remote, BPO)</div>
+      <div class="exp-header">
+        <div>
+          <div class="exp-role">Customer Service Associate</div>
+          <div class="exp-company">PeakSupport (Remote, BPO)</div>
+        </div>
+        <div class="exp-period">2023 – 2024</div>
       </div>
-      <div class="exp-period">2023 – 2024</div>
       <ul class="exp-bullets">
-        <li>Resolved 60+ tickets/day with 92% SLA compliance; 94% CSAT rating; 18% AHT reduction</li>
+        <li>60+ tickets/day at 92% SLA compliance; 94% CSAT; 18% handling time reduction</li>
       </ul>
     </div>
 
     <div class="exp-item">
-      <div>
-        <div class="exp-role">Marketing Assistant</div>
-        <div class="exp-company">Metalkin Australia (Remote)</div>
+      <div class="exp-header">
+        <div>
+          <div class="exp-role">Marketing Assistant</div>
+          <div class="exp-company">Metalkin Australia (Remote)</div>
+        </div>
+        <div class="exp-period">2022 – 2023</div>
       </div>
-      <div class="exp-period">2022 – 2023</div>
       <ul class="exp-bullets">
-        <li>Generated 168 leads, booked 54 meetings, closed 5 deals via B2B marketing campaigns</li>
+        <li>168 leads generated, 54 meetings booked, 5 deals closed via B2B campaigns</li>
       </ul>
     </div>
 
     <div class="exp-item">
-      <div>
-        <div class="exp-role">Digital Marketing Support</div>
-        <div class="exp-company">Aljay Agro-Industrial (Remote)</div>
+      <div class="exp-header">
+        <div>
+          <div class="exp-role">Digital Marketing Support</div>
+          <div class="exp-company">Aljay Agro-Industrial (Remote)</div>
+        </div>
+        <div class="exp-period">2021 – 2022</div>
       </div>
-      <div class="exp-period">2021 – 2022</div>
       <ul class="exp-bullets">
-        <li>Grew Facebook page to 70K likes in 3 months; 40% Instagram growth</li>
+        <li>Grew Facebook to 70K likes in 3 months; 40% Instagram growth</li>
       </ul>
     </div>
   </div>
@@ -455,48 +510,48 @@
     <div class="projects-grid">
       <div class="proj-item">
         <div class="proj-name">AdLoop</div>
-        <div class="proj-desc">Meta Ads + Triple Whale + Funnelish intelligence dashboard outputting SCALE/KILL/ITERATE decisions via Claude API.</div>
+        <div class="proj-desc">Meta Ads + Triple Whale + Funnelish dashboard with SCALE/KILL/ITERATE decisions via Claude API.</div>
         <div class="proj-tags"><span class="tag">Claude API</span><span class="tag">Python</span><span class="tag">Supabase</span></div>
       </div>
       <div class="proj-item">
         <div class="proj-name">MER Engine</div>
-        <div class="proj-desc">Daily batch system computing Marketing Efficiency Ratio across markets, converting all spend to EUR for Supabase and Sheets.</div>
+        <div class="proj-desc">Daily batch job computing Marketing Efficiency Ratio across markets, normalised to EUR, fed into Supabase and Sheets.</div>
         <div class="proj-tags"><span class="tag">Python</span><span class="tag">Supabase</span><span class="tag">Google Ads</span></div>
       </div>
       <div class="proj-item">
         <div class="proj-name">Google Ads MCP Server</div>
-        <div class="proj-desc">Open-source MCP server enabling Claude/ChatGPT to query and manage Google Ads natively via natural language.</div>
+        <div class="proj-desc">Open-source MCP server letting Claude and ChatGPT query and manage Google Ads via natural language.</div>
         <div class="proj-tags"><span class="tag">MCP</span><span class="tag">Python</span><span class="tag">Google Ads API</span></div>
       </div>
       <div class="proj-item">
         <div class="proj-name">AdLlama</div>
-        <div class="proj-desc">Next.js + Python platform for managing Google Ads via Claude-powered chat. Built Keyword Planner API and Ad Copy Validation.</div>
+        <div class="proj-desc">Next.js + Python platform for Google Ads management via Claude chat. Includes Keyword Planner API and ad copy validation.</div>
         <div class="proj-tags"><span class="tag">Next.js</span><span class="tag">Python</span><span class="tag">Claude API</span></div>
       </div>
       <div class="proj-item">
-        <div class="proj-name">Google Ads AI Agent</div>
-        <div class="proj-desc">Custom GPT + MCP server pulling all Google Ads metrics conversationally.</div>
-        <div class="proj-tags"><span class="tag">Custom GPT</span><span class="tag">MCP</span><span class="tag">Google Ads</span></div>
-      </div>
-      <div class="proj-item">
-        <div class="proj-name">Ad Writing AI GPT</div>
-        <div class="proj-desc">Self-learning agent writing Google Ad copy from live campaign data with CTA optimization.</div>
-        <div class="proj-tags"><span class="tag">Custom GPT</span><span class="tag">Google Ads</span><span class="tag">AI</span></div>
-      </div>
-      <div class="proj-item">
         <div class="proj-name">ACE AI Receptionist</div>
-        <div class="proj-desc">24/7 voice AI agent on Retell AI for real estate lead qualification and appointment scheduling.</div>
+        <div class="proj-desc">24/7 voice AI agent on Retell AI handling real estate lead qualification and appointment booking.</div>
         <div class="proj-tags"><span class="tag">Retell AI</span><span class="tag">GoHighLevel</span><span class="tag">Voice AI</span></div>
       </div>
       <div class="proj-item">
         <div class="proj-name">Grace Inbound AI Receptionist</div>
-        <div class="proj-desc">24/7 inbound voice AI for a land buying company. Handles incoming seller calls, qualifies leads, and books appointments.</div>
+        <div class="proj-desc">Inbound voice AI for a land buying company. Handles seller calls, qualifies leads, and books appointments without human involvement.</div>
         <div class="proj-tags"><span class="tag">Retell AI</span><span class="tag">Voice AI</span><span class="tag">Inbound</span></div>
       </div>
       <div class="proj-item">
         <div class="proj-name">Sarah Outbound AI Receptionist</div>
-        <div class="proj-desc">Outbound AI calling agent pre-qualifying seller leads with automated SMS follow-up for a land buying company.</div>
+        <div class="proj-desc">Outbound calling agent pre-qualifying seller leads, with automated SMS follow-up for a land buying company.</div>
         <div class="proj-tags"><span class="tag">Retell AI</span><span class="tag">Voice AI</span><span class="tag">SMS</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Copy Chief AI</div>
+        <div class="proj-desc">Ad copy evaluator scoring submissions against a 7-criterion rubric using Claude API.</div>
+        <div class="proj-tags"><span class="tag">Claude API</span><span class="tag">Copywriting</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Google Ads AI Agent</div>
+        <div class="proj-desc">Custom GPT + MCP server for querying all Google Ads metrics conversationally.</div>
+        <div class="proj-tags"><span class="tag">Custom GPT</span><span class="tag">MCP</span><span class="tag">Google Ads</span></div>
       </div>
       <div class="proj-item">
         <div class="proj-name">Google Analytics AI Agent</div>
@@ -504,14 +559,14 @@
         <div class="proj-tags"><span class="tag">Custom GPT</span><span class="tag">MCP</span><span class="tag">GA4</span></div>
       </div>
       <div class="proj-item">
-        <div class="proj-name">Basecamp AI Agent</div>
-        <div class="proj-desc">Full Basecamp workspace made conversational via MCP, with daily Slack briefings.</div>
-        <div class="proj-tags"><span class="tag">Zapier</span><span class="tag">ChatGPT</span><span class="tag">Slack</span></div>
+        <div class="proj-name">Ad Writing AI GPT</div>
+        <div class="proj-desc">Self-improving agent writing Google Ad copy from live campaign data with CTA optimisation.</div>
+        <div class="proj-tags"><span class="tag">Custom GPT</span><span class="tag">Google Ads</span></div>
       </div>
       <div class="proj-item">
-        <div class="proj-name">Copy Chief AI</div>
-        <div class="proj-desc">AI copywriting evaluator using a 7-criterion scoring rubric powered by Claude API.</div>
-        <div class="proj-tags"><span class="tag">Claude API</span><span class="tag">Copywriting</span><span class="tag">Evaluation</span></div>
+        <div class="proj-name">Basecamp AI Agent</div>
+        <div class="proj-desc">Basecamp workspace made conversational via MCP, with daily Slack briefings on project status.</div>
+        <div class="proj-tags"><span class="tag">Zapier</span><span class="tag">ChatGPT</span><span class="tag">Slack</span></div>
       </div>
     </div>
 
@@ -519,7 +574,7 @@
     <div class="projects-grid">
       <div class="proj-item">
         <div class="proj-name">N8N Blog Automation</div>
-        <div class="proj-desc">5-workflow pipeline: keyword research → outline → draft → SEO check → WordPress publish, fully automated.</div>
+        <div class="proj-desc">5-workflow pipeline: keyword research to WordPress publish with no manual steps.</div>
         <div class="proj-tags"><span class="tag">n8n</span><span class="tag">OpenAI</span><span class="tag">WordPress</span></div>
       </div>
       <div class="proj-item">
@@ -528,33 +583,33 @@
         <div class="proj-tags"><span class="tag">Apps Script</span><span class="tag">APIs</span><span class="tag">Discord</span></div>
       </div>
       <div class="proj-item">
+        <div class="proj-name">Customer.io Email Automation</div>
+        <div class="proj-desc">90-day nurture sequences, A/B outreach, and re-engagement flows. Achieved 5.6% CTR.</div>
+        <div class="proj-tags"><span class="tag">Customer.io</span><span class="tag">Email</span></div>
+      </div>
+      <div class="proj-item">
+        <div class="proj-name">Pipedrive to Google Ads</div>
+        <div class="proj-desc">n8n workflow mapping Pipedrive deal stages to Google Ads offline conversion events.</div>
+        <div class="proj-tags"><span class="tag">n8n</span><span class="tag">Pipedrive</span><span class="tag">Google Ads</span></div>
+      </div>
+      <div class="proj-item">
         <div class="proj-name">FB Lead Capture Pipeline</div>
-        <div class="proj-desc">Facebook Lead Ads to Google Sheets with automated email notifications.</div>
+        <div class="proj-desc">Facebook Lead Ads routed to Google Sheets with automated email notifications.</div>
         <div class="proj-tags"><span class="tag">Zapier</span><span class="tag">Facebook</span><span class="tag">Sheets</span></div>
       </div>
       <div class="proj-item">
         <div class="proj-name">LinkedIn Ads to HubSpot</div>
-        <div class="proj-desc">Routes LinkedIn leads and creates HubSpot engagement records automatically.</div>
+        <div class="proj-desc">Routes LinkedIn leads and creates engagement records in HubSpot automatically.</div>
         <div class="proj-tags"><span class="tag">Zapier</span><span class="tag">LinkedIn</span><span class="tag">HubSpot</span></div>
       </div>
       <div class="proj-item">
-        <div class="proj-name">Customer.io Email Automation</div>
-        <div class="proj-desc">90-day nurture sequences, A/B tested outreach, and re-engagement flows. Achieved 5.6% CTR.</div>
-        <div class="proj-tags"><span class="tag">Customer.io</span><span class="tag">Email</span><span class="tag">Automation</span></div>
-      </div>
-      <div class="proj-item">
         <div class="proj-name">Pipeline to Webinar Registration</div>
-        <div class="proj-desc">Auto-registers contacts for Zoom when they reach a specific CRM pipeline stage.</div>
+        <div class="proj-desc">Auto-registers CRM contacts in Zoom when they hit a specific pipeline stage.</div>
         <div class="proj-tags"><span class="tag">Zapier</span><span class="tag">CRM</span><span class="tag">Zoom</span></div>
       </div>
       <div class="proj-item">
-        <div class="proj-name">Pipedrive to Google Ads</div>
-        <div class="proj-desc">n8n workflow mapping Pipedrive deal stages to Google Ads offline conversion events for pipeline attribution.</div>
-        <div class="proj-tags"><span class="tag">n8n</span><span class="tag">Pipedrive</span><span class="tag">Google Ads</span></div>
-      </div>
-      <div class="proj-item">
         <div class="proj-name">LinkedIn Lead Alert</div>
-        <div class="proj-desc">Instant email notifications for new LinkedIn Lead Gen Form responses.</div>
+        <div class="proj-desc">Instant email notifications for new LinkedIn Lead Gen Form submissions.</div>
         <div class="proj-tags"><span class="tag">Zapier</span><span class="tag">LinkedIn</span><span class="tag">Email</span></div>
       </div>
     </div>
@@ -563,27 +618,27 @@
     <div class="projects-grid">
       <div class="proj-item">
         <div class="proj-name">Marketing Dashboard</div>
-        <div class="proj-desc">Multi-channel analytics for a 187-account agency: 5 ad platforms, 3 SEO sources, 25 analysis views, budget pacing, and AI querying.</div>
+        <div class="proj-desc">Analytics platform for a 187-account agency: 5 ad platforms, 3 SEO sources, 25 views, budget pacing, and AI querying.</div>
         <div class="proj-tags"><span class="tag">Next.js</span><span class="tag">BigQuery</span><span class="tag">TypeScript</span><span class="tag">Python</span></div>
       </div>
       <div class="proj-item">
         <div class="proj-name">GHL Dashboard</div>
-        <div class="proj-desc">Custom GoHighLevel CRM with pre-qualification workflows, multi-step form builder, and custom fields for a real estate company.</div>
+        <div class="proj-desc">GoHighLevel CRM build for a real estate company: pre-qual workflows, form builder, and custom fields.</div>
         <div class="proj-tags"><span class="tag">GoHighLevel</span><span class="tag">CRM</span><span class="tag">Automation</span></div>
       </div>
       <div class="proj-item">
         <div class="proj-name">Blog Automation Web App</div>
-        <div class="proj-desc">Full UI for SEO-optimized blog content generation and management.</div>
+        <div class="proj-desc">UI for generating and managing SEO-optimised blog content end to end.</div>
         <div class="proj-tags"><span class="tag">Web App</span><span class="tag">SEO</span><span class="tag">AI</span></div>
       </div>
       <div class="proj-item">
         <div class="proj-name">Canva Listing Automation</div>
-        <div class="proj-desc">Real estate branded graphics generated from property data with batch CSV support.</div>
+        <div class="proj-desc">Real estate branded graphics from property data, with batch CSV support.</div>
         <div class="proj-tags"><span class="tag">Canva API</span><span class="tag">Real Estate</span></div>
       </div>
       <div class="proj-item">
         <div class="proj-name">Video AI Merger</div>
-        <div class="proj-desc">6-step video pipeline with AI voiceovers and automated editing.</div>
+        <div class="proj-desc">6-step pipeline producing finished videos with AI voiceovers and automated editing.</div>
         <div class="proj-tags"><span class="tag">AI Voice</span><span class="tag">Video</span></div>
       </div>
     </div>
@@ -592,22 +647,22 @@
     <div class="projects-grid">
       <div class="proj-item">
         <div class="proj-name">Synergy Data Investments</div>
-        <div class="proj-desc">200+ marketing assets, 30% engagement increase, 28 investment deals closed.</div>
-        <div class="proj-tags"><span class="tag">Marketing</span><span class="tag">Content</span><span class="tag">Investment</span></div>
+        <div class="proj-desc">200+ assets across campaigns; 30% engagement increase; 28 investment deals closed.</div>
+        <div class="proj-tags"><span class="tag">Marketing</span><span class="tag">Content</span></div>
       </div>
       <div class="proj-item">
         <div class="proj-name">Synergy Estates</div>
-        <div class="proj-desc">62% faster production, 91% on-time delivery rate achieved across campaigns.</div>
+        <div class="proj-desc">62% faster content production; 91% on-time delivery rate.</div>
         <div class="proj-tags"><span class="tag">Marketing</span><span class="tag">Real Estate</span></div>
       </div>
       <div class="proj-item">
         <div class="proj-name">Metalkin Australia</div>
-        <div class="proj-desc">168 leads generated, 54 meetings booked, 5 deals closed via B2B marketing.</div>
-        <div class="proj-tags"><span class="tag">Marketing</span><span class="tag">Lead Gen</span><span class="tag">B2B</span></div>
+        <div class="proj-desc">168 leads generated, 54 meetings booked, 5 deals closed.</div>
+        <div class="proj-tags"><span class="tag">Lead Gen</span><span class="tag">B2B</span></div>
       </div>
       <div class="proj-item">
         <div class="proj-name">Aljay Agro-Industrial</div>
-        <div class="proj-desc">Grew Facebook page to 70K likes in 3 months; 40% Instagram growth.</div>
+        <div class="proj-desc">Facebook grew to 70K likes in 3 months; 40% Instagram growth.</div>
         <div class="proj-tags"><span class="tag">Social Media</span><span class="tag">Marketing</span></div>
       </div>
       <div class="proj-item">
@@ -617,7 +672,7 @@
       </div>
       <div class="proj-item">
         <div class="proj-name">Synergy Estates Website</div>
-        <div class="proj-desc">Property investment platform with UK news, rankings, and guides.</div>
+        <div class="proj-desc">Property platform with UK news, market rankings, and investment guides.</div>
         <div class="proj-tags"><span class="tag">WordPress</span><span class="tag">Real Estate</span></div>
       </div>
     </div>
@@ -630,37 +685,67 @@
       <div>
         <div class="skill-group-label">AI &amp; Agents</div>
         <div class="skill-pills">
-          <span class="skill-pill">Claude API</span><span class="skill-pill">OpenAI</span><span class="skill-pill">Retell AI</span><span class="skill-pill">Custom GPTs</span><span class="skill-pill">MCP Servers</span><span class="skill-pill">Prompt Engineering</span>
+          <span class="skill-pill">Claude API</span>
+          <span class="skill-pill">OpenAI</span>
+          <span class="skill-pill">Retell AI</span>
+          <span class="skill-pill">Custom GPTs</span>
+          <span class="skill-pill">MCP Servers</span>
+          <span class="skill-pill">Prompt Engineering</span>
         </div>
       </div>
       <div>
         <div class="skill-group-label">Automation</div>
         <div class="skill-pills">
-          <span class="skill-pill">n8n</span><span class="skill-pill">Zapier</span><span class="skill-pill">Make.com</span><span class="skill-pill">Google Apps Script</span><span class="skill-pill">Webhooks</span>
+          <span class="skill-pill">n8n</span>
+          <span class="skill-pill">Zapier</span>
+          <span class="skill-pill">Make.com</span>
+          <span class="skill-pill">Google Apps Script</span>
+          <span class="skill-pill">Webhooks</span>
         </div>
       </div>
       <div>
         <div class="skill-group-label">Development</div>
         <div class="skill-pills">
-          <span class="skill-pill">Python</span><span class="skill-pill">TypeScript</span><span class="skill-pill">Next.js</span><span class="skill-pill">Node.js</span><span class="skill-pill">FastAPI</span><span class="skill-pill">Supabase</span><span class="skill-pill">PostgreSQL</span><span class="skill-pill">Railway</span>
+          <span class="skill-pill">Python</span>
+          <span class="skill-pill">TypeScript</span>
+          <span class="skill-pill">Next.js</span>
+          <span class="skill-pill">Node.js</span>
+          <span class="skill-pill">FastAPI</span>
+          <span class="skill-pill">Supabase</span>
+          <span class="skill-pill">PostgreSQL</span>
+          <span class="skill-pill">Railway</span>
         </div>
       </div>
       <div>
         <div class="skill-group-label">CRM &amp; Ops</div>
         <div class="skill-pills">
-          <span class="skill-pill">GoHighLevel</span><span class="skill-pill">Pipedrive</span><span class="skill-pill">Salesforce</span><span class="skill-pill">Respond.io</span>
+          <span class="skill-pill">GoHighLevel</span>
+          <span class="skill-pill">Pipedrive</span>
+          <span class="skill-pill">Salesforce</span>
+          <span class="skill-pill">Respond.io</span>
         </div>
       </div>
       <div>
         <div class="skill-group-label">Marketing &amp; Ads</div>
         <div class="skill-pills">
-          <span class="skill-pill">Google Ads</span><span class="skill-pill">Meta Ads</span><span class="skill-pill">LinkedIn Ads</span><span class="skill-pill">Google Analytics</span><span class="skill-pill">Customer.io</span><span class="skill-pill">Mailchimp</span>
+          <span class="skill-pill">Google Ads</span>
+          <span class="skill-pill">Meta Ads</span>
+          <span class="skill-pill">LinkedIn Ads</span>
+          <span class="skill-pill">Google Analytics</span>
+          <span class="skill-pill">Customer.io</span>
+          <span class="skill-pill">Mailchimp</span>
         </div>
       </div>
       <div>
         <div class="skill-group-label">Productivity</div>
         <div class="skill-pills">
-          <span class="skill-pill">Slack</span><span class="skill-pill">Basecamp</span><span class="skill-pill">Monday.com</span><span class="skill-pill">ClickUp</span><span class="skill-pill">Wrike</span><span class="skill-pill">Zoho</span><span class="skill-pill">Google Workspace</span>
+          <span class="skill-pill">Slack</span>
+          <span class="skill-pill">Basecamp</span>
+          <span class="skill-pill">Monday.com</span>
+          <span class="skill-pill">ClickUp</span>
+          <span class="skill-pill">Wrike</span>
+          <span class="skill-pill">Zoho</span>
+          <span class="skill-pill">Google Workspace</span>
         </div>
       </div>
     </div>
