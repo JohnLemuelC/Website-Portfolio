@@ -7,7 +7,7 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const BUILD = [
   {
     n: "01",
-    title: "AI & automation",
+    title: "Voice agents & automation",
     lead: "Put the agents on the work that is eating your week.",
     body: "Voice agents that answer and qualify calls around the clock, and workflows that carry a lead from first contact to booked appointment without anyone retyping it.",
     points: ["Voice AI receptionists on Retell", "n8n and Zapier pipelines", "Missed-call text-back and follow-up"],
@@ -15,7 +15,7 @@ const BUILD = [
   },
   {
     n: "02",
-    title: "Custom software",
+    title: "Internal tools & portals",
     lead: "The tool your business needs and nobody sells.",
     body: "Client portals, internal dashboards and the small apps that remove a spreadsheet from your process. Built to be handed over, documented, and run without me.",
     points: ["Client portals and internal tools", "Next.js, Python, Supabase", "Tested and documented on handover"],
@@ -23,7 +23,7 @@ const BUILD = [
   },
   {
     n: "03",
-    title: "Integrations",
+    title: "Connected systems",
     lead: "Stop typing the same record into two systems.",
     body: "Two-way syncs between the tools you already pay for, with the boring parts handled: duplicate matching, conflict holds, retries, and an alert when something genuinely breaks.",
     points: ["CRM, accounting and ad platforms", "Two-way sync with conflict handling", "Webhooks, REST APIs, MCP servers"],
@@ -31,8 +31,8 @@ const BUILD = [
   },
   {
     n: "04",
-    title: "Data into decisions",
-    lead: "Reporting that tells you what to do next.",
+    title: "Reporting that decides",
+    lead: "Numbers that tell you what to do next.",
     body: "Numbers pulled from every platform into one place, then an AI layer on top that returns a decision instead of another chart nobody opens.",
     points: ["Multi-platform ad and SEO reporting", "Scale, kill or iterate calls per ad", "Daily batch jobs and Slack digests"],
     art: "data",
@@ -84,15 +84,15 @@ const DELIVER = [
 
 const FAQ = [
   {
-    q: "Where are you based?",
-    a: "The Philippines, working fully remote. My hours are 1PM to 9PM UK time, which covers the UK working afternoon and the US Eastern morning. Most of my clients have been UK or US based.",
+    q: "What hours do you work?",
+    a: "1PM to 9PM UK time, which covers the UK working afternoon and the US Eastern morning. I am in the Philippines and fully remote, and most of my clients have been UK or US based, so the overlap is the part I plan around.",
   },
   {
-    q: "Who is this for?",
+    q: "Is this a fit for my business?",
     a: "Owner-led businesses and small teams carrying work that should not need a person: chasing leads, retyping records between systems, pulling the same report every Monday. If you have staff doing that, there is something here.",
   },
   {
-    q: "How do projects start?",
+    q: "What happens on the first call?",
     a: "A short call about the problem, not the software. I come back with what I would build first, what it costs and how long it takes. If the honest answer is that you do not need me, I will say so.",
   },
   {
@@ -171,25 +171,25 @@ export default function Home() {
         <CubeCanvas />
 
         <h2 className="hero-h2">
-          The hard part is knowing what to hand over <em>first</em>.
+          Knowing which part to hand over <em>first</em> is the real problem.
         </h2>
         <p className="hero-body">
           Four years building the systems that do it: voice agents that answer every call, pipelines that kill the
           retyping, reporting that makes the decision for you. I will tell you where to start.
         </p>
         <p className="hero-link">
-          So where do you start? <a href="#build">Scroll and find out</a>.
+          Not sure which part that is? <a href="#build">Keep scrolling</a>.
         </p>
-        <a className="hero-cue" href="#build" aria-label="Scroll to what I build">
+        <a className="hero-cue" href="#build" aria-label="Scroll to the next section">
           <span />
         </a>
       </section>
 
-      {/* WHAT I BUILD */}
+      {/* SERVICES */}
       <section id="build" className="section">
         <div className="wrap">
           <Reveal>
-            <h2 className="h2">What I build</h2>
+            <h2 className="h2">What I take off your plate</h2>
             <p className="lede">Four things, concretely. Not &quot;digital transformation&quot;.</p>
           </Reveal>
 
@@ -228,8 +228,8 @@ export default function Home() {
       <section id="proof" className="section">
         <div className="wrap">
           <Reveal>
-            <h2 className="h2">Proof, not promises</h2>
-            <p className="lede">Three systems running in production right now.</p>
+            <h2 className="h2">Already running</h2>
+            <p className="lede">Three systems in production right now, not mockups.</p>
           </Reveal>
 
           <div className="proof-grid">
@@ -258,11 +258,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* HOW I DELIVER */}
+      {/* PROCESS */}
       <section id="deliver" className="section">
         <div className="wrap">
           <Reveal>
-            <h2 className="h2">How I deliver</h2>
+            <h2 className="h2">How a project runs</h2>
             <p className="lede">Same four steps every time.</p>
           </Reveal>
           <div className="deliver-grid">
@@ -346,7 +346,7 @@ export default function Home() {
         <div className="wrap wrap-narrow">
           <Reveal>
             <h2 className="h2 contact-h2">
-              Tell me what is <em>slowing you down</em>.
+              Tell me <em>where the time goes</em>.
             </h2>
             <p className="lede center">
               One call, no pitch. If I am not the right person for it, I will tell you that too.

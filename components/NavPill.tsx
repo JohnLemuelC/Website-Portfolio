@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 const LINKS = [
-  { label: "What I build", href: "#build" },
+  { label: "The work", href: "#build" },
   { label: "Proof", href: "#proof" },
-  { label: "How I deliver", href: "#deliver" },
+  { label: "Process", href: "#deliver" },
   { label: "Questions", href: "#faq" },
   { label: "CV", href: `${BASE}/cv.html`, external: true },
 ];

@@ -231,7 +231,7 @@ export default function CubeCanvas() {
         <canvas ref={canvasRef} className="cube-canvas" aria-hidden="true" />
       </div>
       <div className="cube-slot" ref={slotRef} aria-hidden="true">
-        <p className="hero-hint">Press and hold the box</p>
+        <p className="hero-hint">Hold to break it apart</p>
       </div>
     </>
   );
