@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img" aria-label="Diagram: client portal synchronised in both directions with Zoho CRM">
+  <defs>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#151C2B"/>
+      <stop offset="1" stop-color="#0E1420"/>
+    </linearGradient>
+    <linearGradient id="down" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5B96FF" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#5B96FF" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="up" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#2EE6D6" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#2EE6D6" stop-opacity="0.9"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#94AAD2" stroke-opacity="0.07" stroke-width="1"/>
+    </pattern>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 10 5 0 10z" fill="#5B96FF"/>
+    </marker>
+    <marker id="arrowCyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 10 5 0 10z" fill="#2EE6D6"/>
+    </marker>
+  </defs>
+
+  <rect width="600" height="600" rx="28" fill="#0B0F19"/>
+  <rect width="600" height="600" rx="28" fill="url(#grid)"/>
+  <rect x="0.5" y="0.5" width="599" height="599" rx="28" fill="none" stroke="#94AAD2" stroke-opacity="0.14"/>
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+    <!-- portal -->
+    <rect x="70" y="58" width="460" height="140" rx="18" fill="url(#panel)" stroke="#5B96FF" stroke-opacity="0.35"/>
+    <circle cx="104" cy="96" r="6" fill="#5B96FF"/>
+    <text x="124" y="102" fill="#E7ECF5" font-size="27" font-weight="600">CLIENT PORTAL</text>
+    <text x="104" y="141" fill="#9AA6BD" font-size="18">owners submit · providers shortlist</text>
+    <text x="104" y="171" fill="#717D96" font-size="18">28 screens · invite-only access</text>
+
+    <!-- sync badge -->
+    <rect x="196" y="275" width="208" height="50" rx="25" fill="#2EE6D6" fill-opacity="0.08" stroke="#2EE6D6" stroke-opacity="0.4"/>
+    <text x="300" y="306" fill="#2EE6D6" font-size="20" font-weight="600" text-anchor="middle" letter-spacing="1.5">TWO-WAY SYNC</text>
+
+    <!-- arrows -->
+    <path id="pathDown" d="M150 206 L150 394" stroke="url(#down)" stroke-width="3" fill="none" marker-end="url(#arrowBlue)"/>
+    <path id="pathUp" d="M450 394 L450 206" stroke="url(#up)" stroke-width="3" fill="none" marker-end="url(#arrowCyan)"/>
+    <circle r="5" fill="#8DB6FF">
+      <animateMotion dur="2.6s" repeatCount="indefinite" path="M150 206 L150 394"/>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2.6s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="5" fill="#2EE6D6">
+      <animateMotion dur="2.6s" begin="1.3s" repeatCount="indefinite" path="M450 394 L450 206"/>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2.6s" begin="1.3s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- crm -->
+    <rect x="70" y="402" width="460" height="140" rx="18" fill="url(#panel)" stroke="#2EE6D6" stroke-opacity="0.35"/>
+    <circle cx="104" cy="440" r="6" fill="#2EE6D6"/>
+    <text x="124" y="446" fill="#E7ECF5" font-size="27" font-weight="600">ZOHO CRM</text>
+    <text x="104" y="485" fill="#9AA6BD" font-size="18">properties · accounts · deals</text>
+    <text x="104" y="515" fill="#717D96" font-size="18">pipeline stages · invoicing</text>
+  </g>
+</svg>

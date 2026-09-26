@@ -1,987 +1,378 @@
-"use client";
-
-import React, { useState } from "react";
+import CubeCanvas from "@/components/CubeCanvas";
+import Starfield from "@/components/Starfield";
+import Reveal from "@/components/Reveal";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
-// ---- DATA ----
-
-const stats = [
-  { value: "4+", label: "Years Experience", sub: "Since 2021" },
-  { value: "200+", label: "Marketing Assets", sub: "Built & delivered" },
-  { value: "62%", label: "Faster Production", sub: "Avg turnaround gain" },
-  { value: "70K", label: "Facebook Likes", sub: "Grown in 3 months" },
-];
-
-const metrics = [
-  { n: "58%", label: "Admin time reduced for clients" },
-  { n: "42%", label: "Fewer missed follow-ups" },
-  { n: "5.6%", label: "Email CTR achieved" },
-  { n: "90%+", label: "CSAT score, consistently" },
-  { n: "28", label: "Investment deals closed" },
-  { n: "168", label: "Leads generated" },
-  { n: "91%", label: "On-time delivery rate" },
-  { n: "22%", label: "Increase in call show-up rate" },
-];
-
-const featured = [
+const BUILD = [
   {
-    title: "AdLoop",
-    desc: "Meta Ads + Triple Whale + Funnelish intelligence dashboard. Uses Claude to output SCALE / KILL / ITERATE decisions for e-commerce brands.",
-    tags: ["Claude API", "Python", "Supabase"],
-    color: "violet",
-    img: `${BASE}/images/projects/Adloop.png`,
+    n: "01",
+    title: "AI & automation",
+    lead: "Put the agents on the work that is eating your week.",
+    body: "Voice agents that answer and qualify calls around the clock, and workflows that carry a lead from first contact to booked appointment without anyone retyping it.",
+    points: ["Voice AI receptionists on Retell", "n8n and Zapier pipelines", "Missed-call text-back and follow-up"],
+    art: "agents",
   },
   {
-    title: "MER Engine",
-    desc: "Daily batch system computing Marketing Efficiency Ratio across multiple markets. Converts all ad spend to EUR and feeds Supabase and Google Sheets.",
-    tags: ["Python", "Supabase", "Google Ads"],
-    color: "emerald",
-    img: `${BASE}/images/projects/mer-engine.png`,
+    n: "02",
+    title: "Custom software",
+    lead: "The tool your business needs and nobody sells.",
+    body: "Client portals, internal dashboards and the small apps that remove a spreadsheet from your process. Built to be handed over, documented, and run without me.",
+    points: ["Client portals and internal tools", "Next.js, Python, Supabase", "Tested and documented on handover"],
+    art: "software",
   },
   {
-    title: "ACE AI Receptionist",
-    desc: "Voice AI agent on Retell AI handling inbound lead qualification and appointment scheduling 24/7 for a real estate client.",
-    tags: ["Retell AI", "GoHighLevel", "Voice AI"],
-    color: "rose",
-    img: `${BASE}/images/projects/ACE.png`,
+    n: "03",
+    title: "Integrations",
+    lead: "Stop typing the same record into two systems.",
+    body: "Two-way syncs between the tools you already pay for, with the boring parts handled: duplicate matching, conflict holds, retries, and an alert when something genuinely breaks.",
+    points: ["CRM, accounting and ad platforms", "Two-way sync with conflict handling", "Webhooks, REST APIs, MCP servers"],
+    art: "integrations",
+  },
+  {
+    n: "04",
+    title: "Data into decisions",
+    lead: "Reporting that tells you what to do next.",
+    body: "Numbers pulled from every platform into one place, then an AI layer on top that returns a decision instead of another chart nobody opens.",
+    points: ["Multi-platform ad and SEO reporting", "Scale, kill or iterate calls per ad", "Daily batch jobs and Slack digests"],
+    art: "data",
   },
 ];
 
-const projectSections = [
-  {
-    label: "AI Agents",
-    projects: [
-      {
-        title: "Google Ads MCP Server",
-        desc: "Open-source MCP server enabling Claude/ChatGPT to query and manage Google Ads natively.",
-        tags: ["MCP", "Python", "Google Ads API"],
-        img: `${BASE}/images/projects/Google Ads MCP Server.png`,
-        color: "emerald",
-      },
-      {
-        title: "AdLlama",
-        desc: "Next.js + Python platform for managing Google Ads via Claude-powered chat. Built Keyword Planner API and Ad Copy Validation.",
-        tags: ["Next.js", "Python", "Claude API"],
-        img: `${BASE}/images/projects/Adllama-logo.png`,
-        color: "violet",
-      },
-      {
-        title: "Google Ads AI Agent",
-        desc: "Custom GPT + MCP server pulling all Google Ads metrics conversationally.",
-        tags: ["Custom GPT", "MCP", "Google Ads"],
-        img: `${BASE}/images/projects/Gemini_Generated_Image_330ieb330ieb330i.png`,
-        color: "cyan",
-      },
-      {
-        title: "Ad Writing AI GPT",
-        desc: "Self-learning agent writing Google Ad copy from live campaign data with CTA optimization.",
-        tags: ["Custom GPT", "Google Ads", "AI"],
-        img: `${BASE}/images/projects/Gemini_Generated_Image_dcpnjzdcpnjzdcpn.png`,
-        color: "amber",
-      },
-      {
-        title: "ACE AI Receptionist",
-        desc: "Voice AI agent for real estate lead qualification and appointment scheduling.",
-        tags: ["Retell AI", "Voice AI", "Real Estate"],
-        img: `${BASE}/images/projects/ACE.png`,
-        color: "rose",
-      },
-      {
-        title: "Grace Inbound AI Receptionist",
-        desc: "24/7 inbound voice AI agent for a land buying company. GRACE handles incoming seller calls, qualifies leads in real time, and books appointments without human intervention.",
-        tags: ["Retell AI", "Voice AI", "Inbound", "Land Buying"],
-        img: `${BASE}/images/projects/Grace.png`,
-        color: "rose",
-      },
-      {
-        title: "Sarah Outbound AI Receptionist",
-        desc: "Outbound AI calling agent for a land buying company. SARAH proactively pre-qualifies seller leads via automated calls and follows up with SMS to keep every lead engaged.",
-        tags: ["Retell AI", "Voice AI", "Outbound", "SMS"],
-        img: `${BASE}/images/projects/Sarah.png`,
-        color: "violet",
-      },
-      {
-        title: "Google Analytics AI Agent",
-        desc: "Custom GPT + MCP server for GA4 data queries via natural language.",
-        tags: ["Custom GPT", "MCP", "GA4"],
-        img: `${BASE}/images/projects/Gemini_Generated_Image_rpkijmrpkijmrpki.png`,
-        color: "emerald",
-      },
-      {
-        title: "Basecamp AI Agent",
-        desc: "Full Basecamp workspace made conversational via MCP, with daily Slack briefings.",
-        tags: ["Zapier", "ChatGPT", "Slack"],
-        img: `${BASE}/images/projects/zapier-basecamp-chatgpt-slack.png`,
-        color: "cyan",
-      },
-      {
-        title: "Copy Chief AI",
-        desc: "AI copywriting evaluator using a 7-criterion scoring rubric.",
-        tags: ["Claude API", "Copywriting", "Evaluation"],
-        img: `${BASE}/images/projects/copy-chief.png`,
-        color: "violet",
-      },
-    ],
-  },
-  {
-    label: "Workflows & Automation",
-    projects: [
-      {
-        title: "N8N Blog Automation",
-        desc: "5-workflow system: keyword research to WordPress publishing, fully automated.",
-        tags: ["N8N", "OpenAI", "WordPress"],
-        img: `${BASE}/images/projects/n8n-workflows.png`,
-        color: "emerald",
-      },
-      {
-        title: "KPI Data Manager",
-        desc: "Apps Script aggregating KPIs from LinkedIn, Meta, Bing, StackAdapt with Discord alerts.",
-        tags: ["Apps Script", "APIs", "Discord"],
-        img: `${BASE}/images/projects/apps-script.png`,
-        color: "amber",
-      },
-      {
-        title: "FB Lead Capture Pipeline",
-        desc: "Facebook Lead Ads to Google Sheets with automated email notifications.",
-        tags: ["Zapier", "Facebook", "Sheets"],
-        img: `${BASE}/images/projects/zapier-facebook-sheets-email.png`,
-        color: "violet",
-      },
-      {
-        title: "LinkedIn Ads to HubSpot",
-        desc: "Routes LinkedIn leads and creates HubSpot engagement records automatically.",
-        tags: ["Zapier", "LinkedIn", "HubSpot"],
-        img: `${BASE}/images/projects/zapier-linkedin-hubspot.png`,
-        color: "rose",
-      },
-      {
-        title: "Customer.io Email Automation",
-        desc: "90-day nurture sequences, A/B tested outreach, re-engagement flows. 5.6% CTR.",
-        tags: ["Customer.io", "Email", "Automation"],
-        img: `${BASE}/images/projects/CIO1.png`,
-        color: "violet",
-      },
-      {
-        title: "Pipeline to Webinar Registration",
-        desc: "Auto-registers contacts for Zoom when they reach a pipeline stage.",
-        tags: ["Zapier", "CRM", "Zoom"],
-        img: `${BASE}/images/projects/zapier-leadconnector-zoom.png`,
-        color: "cyan",
-      },
-      {
-        title: "Pipedrive to Google Ads",
-        desc: "n8n workflow mapping Pipedrive deal stages to Google Ads offline conversion events.",
-        tags: ["n8n", "Pipedrive", "Google Ads"],
-        img: `${BASE}/images/projects/n8n-workflows.png`,
-        color: "emerald",
-      },
-      {
-        title: "LinkedIn Lead Alert",
-        desc: "Instant email notifications for new LinkedIn Lead Gen Form responses.",
-        tags: ["Zapier", "LinkedIn", "Email"],
-        img: `${BASE}/images/projects/zapier-linkedin-email.png`,
-        color: "cyan",
-      },
-    ],
-  },
-  {
-    label: "Web Apps",
-    projects: [
-      {
-        title: "Marketing Dashboard",
-        desc: "Multi-channel analytics platform for a 187-account agency. Unified 5 ad platforms + 3 SEO sources into a cloud warehouse with 25 analysis views, budget pacing, wasted-spend detection, and AI-powered querying.",
-        tags: ["Next.js", "BigQuery", "TypeScript", "Python"],
-        img: `${BASE}/images/projects/marketing-sdi.png`,
-        color: "cyan",
-        demo: `${BASE}/demos/marketing-dashboard-demo.html`,
-        casestudy: `${BASE}/demos/marketing-dashboard-casestudy.html`,
-      },
-      {
-        title: "GHL Dashboard",
-        desc: "Custom GoHighLevel CRM setup for a real estate company. Includes automated pre-qualification workflows, a multi-step form builder, and tailored custom fields to track and convert inbound leads.",
-        tags: ["GoHighLevel", "CRM", "Automation", "Real Estate"],
-        img: `${BASE}/images/projects/ghl/01_workflows_clean.png`,
-        images: [
-          `${BASE}/images/projects/ghl/01_workflows_clean.png`,
-          `${BASE}/images/projects/ghl/02_prequal_workflows_clean.png`,
-          `${BASE}/images/projects/ghl/03_builder_clean.png`,
-          `${BASE}/images/projects/ghl/05_custom_fields_clean.png`,
-        ],
-        color: "violet",
-      },
-      {
-        title: "Blog Automation Web App",
-        desc: "Full UI for SEO-optimized blog content generation and management.",
-        tags: ["Web App", "SEO", "AI"],
-        img: `${BASE}/images/projects/blog-app.png`,
-        color: "violet",
-      },
-      {
-        title: "Canva Listing Automation",
-        desc: "Real estate branded graphics from property data with batch CSV support.",
-        tags: ["Web App", "Canva API", "Real Estate"],
-        img: `${BASE}/images/projects/canva-listing.png`,
-        color: "cyan",
-      },
-      {
-        title: "Video AI Merger",
-        desc: "6-step video pipeline with AI voiceovers and automated editing.",
-        tags: ["Web App", "AI Voice", "Video"],
-        img: `${BASE}/images/projects/video-merger.png`,
-        color: "amber",
-      },
-    ],
-  },
-  {
-    label: "Marketing",
-    projects: [
-      {
-        title: "Synergy Data Investments",
-        desc: "200+ marketing assets, 30% engagement increase, 28 deals closed.",
-        tags: ["Marketing", "Content", "Investment"],
-        img: `${BASE}/images/projects/marketing-sdi.png`,
-        color: "rose",
-      },
-      {
-        title: "Synergy Estates",
-        desc: "62% faster production, 91% on-time delivery rate achieved.",
-        tags: ["Marketing", "Real Estate", "Content"],
-        img: `${BASE}/images/projects/marketing-synergy-estates.png`,
-        color: "emerald",
-      },
-      {
-        title: "Metalkin Australia",
-        desc: "168 leads generated, 54 meetings booked, 5 deals closed.",
-        tags: ["Marketing", "Lead Gen", "B2B"],
-        img: `${BASE}/images/projects/marketing-metalkin.png`,
-        color: "violet",
-      },
-      {
-        title: "Aljay Agro-Industrial",
-        desc: "70K Facebook likes in 3 months, 40% Instagram growth.",
-        tags: ["Marketing", "Social Media", "Agriculture"],
-        img: `${BASE}/images/projects/marketing-yfarmers.png`,
-        color: "cyan",
-      },
-    ],
-  },
-  {
-    label: "Websites",
-    projects: [
-      {
-        title: "Synergy Data Investments Website",
-        desc: "Investment company site with portfolios, investor tools, and guides.",
-        tags: ["Website", "Finance", "WordPress"],
-        img: `${BASE}/images/projects/webdesign-sdi.png`,
-        color: "amber",
-      },
-      {
-        title: "Synergy Estates Website",
-        desc: "Property investment platform with UK News, rankings, and guides.",
-        tags: ["Website", "Real Estate", "WordPress"],
-        img: `${BASE}/images/projects/webdesign-synergy.png`,
-        color: "rose",
-      },
-    ],
-  },
-];
-
-const experiences = [
-  {
-    role: "AI Automation & Workflow Specialist",
-    company: "Contract / Project-Based",
-    period: "2025 - Present",
-    status: "current",
-    highlights: [
-      "AI Receptionist: 24/7 voice AI agent for real estate lead qualification",
-      "GoHighLevel integrations for automated lead capture and CRM sync",
-      "Automated daily reporting delivered via Slack digests",
-      "n8n workflows on VPS for webhook processing and cross-tool automation",
-    ],
-  },
-  {
-    role: "AI & Automation Specialist",
-    company: "Ruskin Consulting (Full-time)",
-    period: "2025",
-    status: "prev",
-    highlights: [
-      "Central KPI Datahub aggregating LinkedIn, Meta, and Bing ad performance",
-      "MCP servers for Google Ads, GA4, and Search Console exposing live data to AI agents",
-      "5-workflow n8n blog automation pipeline (keyword research to WordPress)",
-      "AdLlama contributions: Next.js + Python Google Ads platform",
-      "Pipedrive CRM integrations and automated weekly Google Ads client check-ins",
-    ],
-  },
-  {
-    role: "AI Integration Specialist",
-    company: "Contract / Project-Based",
-    period: "2025",
-    status: "prev",
-    highlights: [
-      "Copy Chief: AI copywriting evaluator using a 7-criterion scoring rubric",
-      "AdLoop: Meta Ads + Triple Whale + Funnelish dashboard with SCALE/KILL/ITERATE analysis",
-      "Winning ads analysis loop that recreates top-performing ad variations",
-      "Email marketing automations across Mailchimp, ActiveCampaign, and Customer.io",
-    ],
-  },
-  {
-    role: "Marketing Associate",
-    company: "Synergy Data Investments (Remote)",
-    period: "2024 - 2025",
-    status: "prev",
-    highlights: [
-      "Created 200+ professional marketing assets",
-      "Built email nurture journeys in Customer.io and Mailchimp",
-      "Contributed to closing 28 investment deals",
-      "30% engagement increase across campaigns",
-    ],
-  },
-  {
-    role: "Customer Success Associate",
-    company: "SDI Living (Remote)",
-    period: "2024 - 2025",
-    status: "prev",
-    highlights: [
-      "Maintained 90%+ CSAT score consistently",
-      "22% increase in call show-up rate",
-      "CRM data cleanup cutting duplicates by 40%",
-    ],
-  },
-  {
-    role: "Customer Service Associate",
-    company: "PeakSupport (Remote, BPO)",
-    period: "2023 - 2024",
-    status: "prev",
-    highlights: [
-      "Resolved 60+ tickets/day with 92% SLA compliance",
-      "18% average handling time reduction",
-      "94% CSAT rating",
-    ],
-  },
-  {
-    role: "Marketing Assistant",
-    company: "Metalkin Australia (Remote)",
-    period: "2022 - 2023",
-    status: "prev",
-    highlights: [
-      "Generated 168 leads, booked 54 meetings, closed 5 deals",
-      "B2B marketing campaign management",
-    ],
-  },
-  {
-    role: "Digital Marketing Support",
-    company: "Aljay Agro-Industrial (Remote)",
-    period: "2021 - 2022",
-    status: "prev",
-    highlights: [
-      "Grew Facebook page to 70K likes in 3 months",
-      "40% Instagram growth, 28% branded search volume increase",
-    ],
-  },
-];
-
-const toolGroups = [
-  {
-    label: "AI & Agents",
-    tools: ["Claude API", "OpenAI", "Retell AI", "Custom GPTs", "MCP Servers", "Prompt Engineering"],
-  },
-  {
-    label: "Automation",
-    tools: ["n8n", "Zapier", "Make.com", "Google Apps Script", "Webhooks"],
-  },
-  {
-    label: "Development",
-    tools: ["Python", "TypeScript", "Node.js", "Next.js", "FastAPI", "Supabase", "PostgreSQL", "REST APIs", "GitHub", "Railway", "Vercel"],
-  },
-  {
-    label: "CRM & Ops",
-    tools: ["GoHighLevel", "Pipedrive", "Salesforce", "Respond.io", "LeadConnector"],
-  },
-  {
-    label: "Marketing & Ads",
-    tools: ["Google Ads", "Meta Ads", "Google Analytics", "LinkedIn Ads", "Bing Ads", "StackAdapt", "Customer.io", "Mailchimp", "ActiveCampaign", "Unbounce"],
-  },
-  {
-    label: "Productivity",
-    tools: ["Google Workspace", "Microsoft 365", "Slack", "Discord", "Basecamp", "Monday.com", "ClickUp", "Wrike", "Zoho", "Calendly"],
-  },
-  {
-    label: "Design & Content",
-    tools: ["Canva", "Photoshop", "CapCut"],
-  },
-];
-
-const filterLabels = ["All", "AI Agents", "Workflows & Automation", "Web Apps", "Marketing", "Websites"];
-
-type Project = {
+const PROOF: {
+  kicker: string;
   title: string;
-  desc: string;
-  tags: string[];
-  img: string;
-  images?: string[];
-  color: string;
-  demo?: string;
-  casestudy?: string;
-};
+  body: string;
+  metric: string;
+  metricLabel: string;
+  href?: string;
+  linkLabel?: string;
+}[] = [
+  {
+    kicker: "Voice AI",
+    title: "Three receptionists answering real calls",
+    body: "ACE qualifies inbound real estate leads. GRACE takes inbound seller calls. SARAH runs outbound pre-qualification with SMS follow-up. All live, all handing clean records to the CRM.",
+    metric: "24/7",
+    metricLabel: "call coverage, no human on the line",
+    href: `${BASE}/demos/cascade-land-buyers-dashboard-demo.html`,
+    linkLabel: "Open the dashboard demo",
+  },
+  {
+    kicker: "Integrations",
+    title: "A portal and a CRM that never disagree",
+    body: "A client portal for a UK property group, synced two ways with Zoho CRM. Address matching killed the duplicates, conflicts get held for a human, and 650+ tests keep it honest.",
+    metric: "264 → 252",
+    metricLabel: "records after 12 duplicate pairs merged",
+  },
+  {
+    kicker: "Data",
+    title: "187 accounts in one place",
+    body: "Five ad platforms and three SEO sources unified into a warehouse with 25 analysis views, budget pacing and wasted-spend detection, then queried in plain English.",
+    metric: "187",
+    metricLabel: "client accounts reporting daily",
+    href: `${BASE}/demos/marketing-dashboard-demo.html`,
+    linkLabel: "Open the live demo",
+  },
+];
 
-function CardImage({ img, images, alt, imgStyle }: { img: string; images?: string[]; alt: string; imgStyle?: React.CSSProperties }) {
-  const all = images && images.length > 1 ? images : [img];
-  const [idx, setIdx] = useState(0);
-  const multi = all.length > 1;
-  const btnStyle: React.CSSProperties = {
-    position: "absolute", top: "50%", transform: "translateY(-50%)",
-    background: "rgba(0,0,0,0.5)", border: "none", borderRadius: "50%",
-    width: "28px", height: "28px", color: "#fff", cursor: "pointer",
-    display: "flex", alignItems: "center", justifyContent: "center",
-    fontSize: "1.1rem", lineHeight: "1", zIndex: 2,
-  };
+const DELIVER = [
+  { n: "01", title: "Find the bottleneck", body: "A call, then I go looking at where the time actually goes. Usually it is not the thing you think it is." },
+  { n: "02", title: "Build the smallest version that works", body: "One workflow, one agent, one screen. Something you can judge in a week rather than a quarter." },
+  { n: "03", title: "Test it against real data", body: "Edge cases, bad input, the call that goes sideways. If it cannot survive your worst Tuesday it is not finished." },
+  { n: "04", title: "Hand it over documented", body: "SOPs and a walkthrough so your team runs it. When the project ends you are not tied to me." },
+];
+
+const FAQ = [
+  {
+    q: "Where are you based?",
+    a: "The Philippines, working fully remote. My hours are 1PM to 9PM UK time, which covers the UK working afternoon and the US Eastern morning. Most of my clients have been UK or US based.",
+  },
+  {
+    q: "Who is this for?",
+    a: "Owner-led businesses and small teams carrying work that should not need a person: chasing leads, retyping records between systems, pulling the same report every Monday. If you have staff doing that, there is something here.",
+  },
+  {
+    q: "How do projects start?",
+    a: "A short call about the problem, not the software. I come back with what I would build first, what it costs and how long it takes. If the honest answer is that you do not need me, I will say so.",
+  },
+  {
+    q: "What does it cost?",
+    a: "Either a project rate agreed before work starts, or hourly against a cap you set. Anything outside the agreed scope gets discussed before I touch it, never after.",
+  },
+  {
+    q: "Do I get locked in?",
+    a: "No. Everything ships documented, in your accounts, on your infrastructure. The whole point of the handover is that your team can run it without me.",
+  },
+];
+
+function Art({ kind }: { kind: string }) {
+  if (kind === "agents")
+    return (
+      <svg viewBox="0 0 220 160" className="card-art" aria-hidden="true">
+        <circle cx="110" cy="80" r="26" className="a-fill" />
+        <path d="M110 66v28M100 72v16M120 72v16M92 78v4M128 78v4" className="a-line" />
+        <circle cx="42" cy="44" r="15" className="a-ghost" />
+        <circle cx="178" cy="44" r="15" className="a-ghost" />
+        <circle cx="42" cy="122" r="15" className="a-ghost" />
+        <circle cx="178" cy="122" r="15" className="a-ghost" />
+        <path d="M56 51l28 16M164 51l-28 16M56 115l28-16M164 115l-28-16" className="a-dash" />
+      </svg>
+    );
+  if (kind === "software")
+    return (
+      <svg viewBox="0 0 220 160" className="card-art" aria-hidden="true">
+        <rect x="26" y="26" width="168" height="108" rx="10" className="a-stroke" />
+        <path d="M26 52h168" className="a-stroke" />
+        <circle cx="42" cy="39" r="3.4" className="a-soft" />
+        <circle cx="54" cy="39" r="3.4" className="a-soft" />
+        <circle cx="66" cy="39" r="3.4" className="a-soft" />
+        <rect x="40" y="66" width="52" height="52" rx="7" className="a-fill" />
+        <rect x="102" y="66" width="78" height="14" rx="5" className="a-soft" />
+        <rect x="102" y="88" width="60" height="10" rx="4" className="a-soft" />
+        <rect x="102" y="104" width="72" height="10" rx="4" className="a-soft" />
+      </svg>
+    );
+  if (kind === "integrations")
+    return (
+      <svg viewBox="0 0 220 160" className="card-art" aria-hidden="true">
+        <rect x="16" y="34" width="56" height="30" rx="8" className="a-stroke" />
+        <rect x="16" y="94" width="56" height="30" rx="8" className="a-stroke" />
+        <rect x="148" y="34" width="56" height="30" rx="8" className="a-stroke" />
+        <rect x="148" y="94" width="56" height="30" rx="8" className="a-stroke" />
+        <circle cx="110" cy="80" r="20" className="a-fill" />
+        <path d="M72 49h18a8 8 0 0 1 8 8v12M72 109h18a8 8 0 0 0 8-8V89M148 49h-18a8 8 0 0 0-8 8v12M148 109h-18a8 8 0 0 1-8-8V89" className="a-dash" />
+      </svg>
+    );
   return (
-    <div style={{ position: "relative" }}>
-      <img className="proj-img" style={imgStyle} src={all[idx]} alt={alt} />
-      {multi && (
-        <>
-          <button style={{ ...btnStyle, left: "8px" }}
-            onClick={(e) => { e.stopPropagation(); setIdx((idx - 1 + all.length) % all.length); }}>&#8249;</button>
-          <button style={{ ...btnStyle, right: "8px" }}
-            onClick={(e) => { e.stopPropagation(); setIdx((idx + 1) % all.length); }}>&#8250;</button>
-          <div style={{ position: "absolute", bottom: "8px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "4px", zIndex: 2 }}>
-            {all.map((_, i) => (
-              <div key={i} style={{ width: "5px", height: "5px", borderRadius: "50%", background: i === idx ? "#fff" : "rgba(255,255,255,0.45)" }} />
-            ))}
-          </div>
-        </>
-      )}
-    </div>
+    <svg viewBox="0 0 220 160" className="card-art" aria-hidden="true">
+      <path d="M30 128h160" className="a-stroke" />
+      <rect x="44" y="92" width="20" height="36" rx="4" className="a-soft" />
+      <rect x="76" y="74" width="20" height="54" rx="4" className="a-soft" />
+      <rect x="108" y="86" width="20" height="42" rx="4" className="a-soft" />
+      <rect x="140" y="48" width="20" height="80" rx="4" className="a-fill" />
+      <path d="M54 88 86 68l32 12 32-34" className="a-line" />
+      <circle cx="150" cy="46" r="5" className="a-dot" />
+    </svg>
   );
 }
 
-// ---- PAGE ----
-
 export default function Home() {
-  const [filter, setFilter] = useState("All");
-  const [selected, setSelected] = useState<Project | null>(null);
-
-  const visibleSections = filter === "All" ? projectSections : projectSections.filter((s) => s.label === filter);
-
   return (
-    <>
-      {/* BACKGROUND VIDEO */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        style={{
-          position: "fixed",
-          top: 0, left: 0,
-          width: "100%", height: "100%",
-          objectFit: "cover",
-          opacity: 0.3,
-          zIndex: -1,
-          pointerEvents: "none",
-        }}
-      >
-        <source src={`${BASE}/videos/bg.mp4`} type="video/mp4" />
-      </video>
+    <main id="top">
+      <Starfield />
 
       {/* HERO */}
-      <section id="hero" className="hero-section">
-        <div className="hero-inner">
-          <div className="hero-copy">
-            <div className="hero-eyebrow">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                <circle cx="12" cy="12" r="5" />
-              </svg>
-              Available for new projects
-            </div>
-            <h1 className="hero-name">John Lemuel<br />Culinares</h1>
-            <p className="hero-title">AI Automation Specialist · Claude Expert · Workflow Engineer</p>
-            <p className="hero-bio">
-              I build production AI systems for real businesses. Agents, automations, and data pipelines that run live and deliver measurable results. Every system I ship is documented so the client's team can operate it without me.
-            </p>
-            <div className="hero-ctas">
-              <a href="#projects" className="btn-primary">
-                See My Work
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </a>
-              <a href="#contact" className="btn-secondary">
-                Get in Touch
-              </a>
-            </div>
-          </div>
-          <div className="hero-photo-wrap">
-            <img
-              className="hero-photo"
-              src={`${BASE}/images/headshot/profile.png`}
-              alt="John Lemuel Culinares"
-            />
-          </div>
-        </div>
+      <section className="hero">
+        <p className="eyebrow">AI Automation Specialist · Philippines</p>
+        <h1 className="hero-h1">
+          Most of the work draining your team can run itself.
+        </h1>
+
+        <CubeCanvas />
+
+        <h2 className="hero-h2">
+          The hard part is knowing what to hand over <em>first</em>.
+        </h2>
+        <p className="hero-body">
+          Four years building the systems that do it: voice agents that answer every call, pipelines that kill the
+          retyping, reporting that makes the decision for you. I will tell you where to start.
+        </p>
+        <p className="hero-link">
+          So where do you start? <a href="#build">Scroll and find out</a>.
+        </p>
+        <a className="hero-cue" href="#build" aria-label="Scroll to what I build">
+          <span />
+        </a>
       </section>
 
-      {/* STATS STRIP */}
-      <div className="stats-strip">
-        <div className="stats-grid">
-          {stats.map((s) => (
-            <div key={s.label} className="stat-block">
-              <div className="stat-value" style={{ color: "var(--accent)" }}>{s.value}</div>
-              <div className="stat-label">{s.label}</div>
-              <div className="stat-tag">{s.sub}</div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* WHAT I BUILD */}
+      <section id="build" className="section">
+        <div className="wrap">
+          <Reveal>
+            <h2 className="h2">What I build</h2>
+            <p className="lede">Four things, concretely. Not &quot;digital transformation&quot;.</p>
+          </Reveal>
 
-      {/* ABOUT */}
-      <section id="about" className="section section-alt">
-        <div className="section-inner">
-          <div className="about-grid">
-            <div className="about-text">
-              <div className="section-eyebrow">About</div>
-              <h2>I turn business problems into AI systems that actually work.</h2>
-              <p>
-                I'm an AI Automation Specialist and Claude expert based in the Philippines. I work with founders and ops teams to replace manual workflows with AI agents, automations, and data pipelines. My focus is production output, not demos.
-              </p>
-              <p>
-                Over the past four years I've worked across AI integration, marketing operations, and customer success. Today I spend most of my time working with Claude API, building MCP servers, and wiring together systems with n8n, Python, and Supabase.
-              </p>
-              <p>
-                Every system I ship gets documented. When a project ends, the team can run it without me.
-              </p>
-              <div className="about-tags">
-                {["Philippines", "Full-Time Remote", "U.S. Hours Overlap", "English Fluent"].map((t) => (
-                  <span key={t} className="card-tag">{t}</span>
-                ))}
-              </div>
-            </div>
-            <div className="about-photo-wrap">
-              <img src={`${BASE}/images/headshot/profile.png`} alt="John Lemuel Culinares" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FEATURED PROJECTS */}
-      <section className="section">
-        <div className="section-inner">
-          <div className="section-eyebrow">Featured Work</div>
-          <h2 className="section-heading">Systems built for real clients</h2>
-          <p className="section-sub">Three projects that represent the kind of work I do: data-heavy, AI-powered, and built to run in production.</p>
-          <div className="featured-grid">
-            {featured.map((p) => (
-              <div key={p.title} className="proj-card">
-                <CardImage img={p.img} alt={p.title} />
-                <div className="proj-body">
-                  <div className="proj-title">{p.title}</div>
-                  <div className="proj-desc">{p.desc}</div>
-                  <div className="tag-row">
-                    {p.tags.map((t) => (
-                      <span key={t} className={`tag ${p.color}`}>{t}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* IMPACT METRICS */}
-      <section className="section section-alt">
-        <div className="section-inner">
-          <div className="section-eyebrow">Impact</div>
-          <h2 className="section-heading">Results across clients</h2>
-          <p className="section-sub">Numbers pulled directly from client deliverables and reporting.</p>
-          <div className="metrics-grid">
-            {metrics.map((m) => (
-              <div key={m.label} className="metric-card">
-                <div className="metric-number" style={{ color: "var(--accent)" }}>{m.n}</div>
-                <div className="metric-label">{m.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ALL PROJECTS */}
-      <section id="projects" className="section">
-        <div className="section-inner">
-          <div className="section-eyebrow">Projects</div>
-          <h2 className="section-heading">Everything I've built</h2>
-          <p className="section-sub">AI agents, workflow automations, web apps, and marketing campaigns.</p>
-
-          <div className="filter-bar">
-            {filterLabels.map((f) => (
-              <button
-                key={f}
-                className={`filter-btn ${filter === f ? "active" : ""}`}
-                onClick={() => setFilter(f)}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
-
-          {visibleSections.map((section) => (
-            <div key={section.label} style={{ marginBottom: "3rem" }}>
-              <h3 style={{ fontSize: "0.78rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-subtle)", marginBottom: "1.25rem" }}>
-                {section.label}
-                <span style={{ marginLeft: "0.5rem", color: "var(--accent)", background: "var(--accent-glow)", padding: "0.1rem 0.4rem", borderRadius: "4px", fontSize: "0.68rem", textTransform: "none", letterSpacing: 0 }}>
-                  {section.projects.length}
-                </span>
-              </h3>
-              <div className="projects-grid">
-                {section.projects.map((p) => (
-                  <div key={p.title} className="proj-card" onClick={() => setSelected(p)} style={{ cursor: "pointer" }}>
-                    <CardImage img={p.img} images={p.images} alt={p.title} />
-                    <div className="proj-body">
-                      <div className="proj-title">{p.title}</div>
-                      <div className="proj-desc">{p.desc}</div>
-                      <div className="tag-row">
-                        {p.tags.map((t) => (
-                          <span key={t} className={`tag ${p.color}`}>{t}</span>
-                        ))}
-                        {p.demo && (
-                          <span className="tag emerald">Live Demo ↗</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* INTERACTIVE DEMOS */}
-      <section id="demos" className="section section-alt">
-        <div className="section-inner">
-          <div className="section-eyebrow">Live Demos</div>
-          <h2 className="section-heading">Interactive demos</h2>
-          <p className="section-sub">Click any card to open a live, fully interactive demo. All data is synthetic.</p>
-
-          <div className="featured-grid" style={{ gridTemplateColumns: "repeat(2,1fr)" }}>
-            <a
-              href={`${BASE}/demos/marketing-dashboard-demo.html`}
-              target="_blank"
-              rel="noopener"
-              style={{ textDecoration: "none" }}
-            >
-              <div className="proj-card" style={{ cursor: "pointer", height: "100%" }}>
-                <div style={{ height: 140, background: "linear-gradient(135deg,#0891B2 0%,#0e7490 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontSize: "2.5rem" }}>📊</span>
-                </div>
-                <div className="proj-body">
-                  <div className="proj-title">Marketing Dashboard</div>
-                  <div className="proj-desc">Multi-channel analytics for a 187-account agency. Switch accounts, change date ranges, sort and filter campaigns, and hover the spend chart.</div>
-                  <div className="tag-row">
-                    <span className="tag cyan">Analytics</span>
-                    <span className="tag emerald">Live Demo ↗</span>
-                  </div>
-                </div>
-              </div>
-            </a>
-
-            <a
-              href={`${BASE}/demos/upwork-lead-dashboard-demo.html`}
-              target="_blank"
-              rel="noopener"
-              style={{ textDecoration: "none" }}
-            >
-              <div className="proj-card" style={{ cursor: "pointer", height: "100%" }}>
-                <div style={{ height: 140, background: "linear-gradient(135deg,#059669 0%,#047857 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontSize: "2.5rem" }}>🎯</span>
-                </div>
-                <div className="proj-body">
-                  <div className="proj-title">Upwork Lead Dashboard</div>
-                  <div className="proj-desc">Lead tracking dashboard with job filtering, proposal drafting, and pipeline management. Click around, filter jobs, and draft a proposal.</div>
-                  <div className="tag-row">
-                    <span className="tag emerald">Lead Management</span>
-                    <span className="tag emerald">Live Demo ↗</span>
-                  </div>
-                </div>
-              </div>
-            </a>
-
-            <a
-              href={`${BASE}/demos/law-firm-lead-dashboard.html`}
-              target="_blank"
-              rel="noopener"
-              style={{ textDecoration: "none" }}
-            >
-              <div className="proj-card" style={{ cursor: "pointer", height: "100%" }}>
-                <div style={{ height: 140, background: "linear-gradient(135deg,#2E3192 0%,#4150B5 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontSize: "2.5rem" }}>⚖️</span>
-                </div>
-                <div className="proj-body">
-                  <div className="proj-title">Law Firm Lead Dashboard</div>
-                  <div className="proj-desc">Full lead management system for a law firm: intake tracking, case pipeline, conversion rates, and performance charts across practice areas.</div>
-                  <div className="tag-row">
-                    <span className="tag violet">Legal Tech</span>
-                    <span className="tag emerald">Live Demo ↗</span>
-                  </div>
-                </div>
-              </div>
-            </a>
-
-            <a
-              href={`${BASE}/demos/prism-marketing-dashboard.html`}
-              target="_blank"
-              rel="noopener"
-              style={{ textDecoration: "none" }}
-            >
-              <div className="proj-card" style={{ cursor: "pointer", height: "100%" }}>
-                <div style={{ height: 140, background: "linear-gradient(135deg,#6366F1 0%,#8B5CF6 60%,#06B6D4 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontSize: "2.5rem" }}>🖥️</span>
-                </div>
-                <div className="proj-body">
-                  <div className="proj-title">Prism Marketing Dashboard</div>
-                  <div className="proj-desc">Social content generation, AI image studio, content calendar, multi-platform ad tracking, and SEO analysis in one dashboard. All tabs are fully interactive.</div>
-                  <div className="tag-row">
-                    <span className="tag violet">Social & Ads</span>
-                    <span className="tag emerald">Live Demo ↗</span>
-                  </div>
-                </div>
-              </div>
-            </a>
-
-            <a
-              href={`${BASE}/demos/cascade-land-buyers-dashboard-demo.html`}
-              target="_blank"
-              rel="noopener"
-              style={{ textDecoration: "none" }}
-            >
-              <div className="proj-card" style={{ cursor: "pointer", height: "100%" }}>
-                <div style={{ height: 140, background: "linear-gradient(135deg,#6d28d9 0%,#8b5cf6 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontSize: "2.5rem" }}>🤖</span>
-                </div>
-                <div className="proj-body">
-                  <div className="proj-title">AI Receptionist Dashboard</div>
-                  <div className="proj-desc">Real-time call monitoring, lead pipeline, and AI agent performance tracking for a land buying company. Explore live calls, transcripts, and conversion metrics.</div>
-                  <div className="tag-row">
-                    <span className="tag violet">Voice AI</span>
-                    <span className="tag emerald">Live Demo ↗</span>
-                  </div>
-                </div>
-              </div>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* EXPERIENCE */}
-      <section id="experience" className="section section-alt">
-        <div className="section-inner">
-          <div className="section-eyebrow">Experience</div>
-          <h2 className="section-heading">Work history</h2>
-          <p className="section-sub">Eight roles across AI automation, marketing, and customer operations.</p>
-
-          <div className="exp-list">
-            {experiences.map((exp, i) => (
-              <div key={i} className="exp-card">
-                <div>
-                  <div className="exp-role">{exp.role}</div>
-                  <div className="exp-company">{exp.company}</div>
-                  <ul className="exp-highlights">
-                    {exp.highlights.map((h, hi) => (
-                      <li key={hi}>{h}</li>
+          <div className="stack">
+            {BUILD.map((b, i) => (
+              <article className="stack-card" key={b.n} style={{ top: `calc(7rem + ${i * 14}px)`, zIndex: i + 1 }}>
+                <span className="stack-num">{b.n}</span>
+                <div className="stack-copy">
+                  <span className="stack-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                      {b.art === "agents" && <><path d="M12 3v3M12 18v3M4.2 7.5l2.6 1.5M17.2 15l2.6 1.5M4.2 16.5l2.6-1.5M17.2 9l2.6-1.5" /><circle cx="12" cy="12" r="4" /></>}
+                      {b.art === "software" && <><rect x="3" y="4" width="18" height="14" rx="2" /><path d="M8 21h8M12 18v3M7 9l2.5 2.5L7 14" /></>}
+                      {b.art === "integrations" && <><path d="M9 7V4M15 7V4M7 7h10v6a5 5 0 0 1-10 0z" /><path d="M12 18v3" /></>}
+                      {b.art === "data" && <><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></>}
+                    </svg>
+                  </span>
+                  <h3 className="stack-title">{b.title}</h3>
+                  <p className="stack-lead">{b.lead}</p>
+                  <p className="stack-body">{b.body}</p>
+                  <ul className="stack-points">
+                    {b.points.map((p) => (
+                      <li key={p}>{p}</li>
                     ))}
                   </ul>
                 </div>
-                <div className="exp-meta">
-                  <span className={`badge ${exp.status === "current" ? "badge-current" : "badge-prev"}`}>
-                    {exp.status === "current" ? "Current" : "Completed"}
-                  </span>
-                  <span className="exp-period">{exp.period}</span>
+                <div className="stack-art">
+                  <Art kind={b.art} />
                 </div>
-              </div>
+              </article>
             ))}
-          </div>
-
-          {/* Certifications */}
-          <h3 style={{ fontSize: "0.78rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-subtle)", marginTop: "3rem", marginBottom: "1.25rem" }}>
-            Certifications
-          </h3>
-          <div className="certs-grid">
-            <div className="cert-card">
-              <img src={`${BASE}/images/certs/certifications.png`} alt="Google Certification" />
-              <div className="cert-info">
-                <h4>Google Analytics Certification</h4>
-                <p>Google · Oct 2025 – Oct 2026</p>
-              </div>
-            </div>
-            <div className="cert-card">
-              <img src={`${BASE}/images/certs/certifications.png`} alt="Google Certification" />
-              <div className="cert-info">
-                <h4>Google Ads Search Certification</h4>
-                <p>Google · Oct 2025 – Oct 2026</p>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* SKILLS & TOOLS */}
-      <section id="skills" className="section">
-        <div className="section-inner">
-          <div className="section-eyebrow">Skills & Tools</div>
-          <h2 className="section-heading">Tech stack</h2>
-          <p className="section-sub">Tools I use in real projects, not just things I've heard of.</p>
+      {/* PROOF */}
+      <section id="proof" className="section">
+        <div className="wrap">
+          <Reveal>
+            <h2 className="h2">Proof, not promises</h2>
+            <p className="lede">Three systems running in production right now.</p>
+          </Reveal>
 
-          <div className="tools-sections">
-            {toolGroups.map((group) => (
-              <div key={group.label}>
-                <div className="tool-group-label">{group.label}</div>
-                <div className="tool-pills">
-                  {group.tools.map((t) => (
-                    <span key={t} className="tool-pill">{t}</span>
-                  ))}
+          <div className="proof-grid">
+            {PROOF.map((p, i) => (
+              <Reveal key={p.title} delay={i * 90}>
+                <article className="proof-card">
+                  <span className="proof-kicker">{p.kicker}</span>
+                  <h3 className="proof-title">{p.title}</h3>
+                  <p className="proof-body">{p.body}</p>
+                  <div className="proof-metric">
+                    <strong>{p.metric}</strong>
+                    <span>{p.metricLabel}</span>
+                  </div>
+                  {p.href && (
+                    <a className="proof-link" href={p.href} target="_blank" rel="noopener">
+                      {p.linkLabel}
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                      </svg>
+                    </a>
+                  )}
+                </article>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* HOW I DELIVER */}
+      <section id="deliver" className="section">
+        <div className="wrap">
+          <Reveal>
+            <h2 className="h2">How I deliver</h2>
+            <p className="lede">Same four steps every time.</p>
+          </Reveal>
+          <div className="deliver-grid">
+            {DELIVER.map((d, i) => (
+              <Reveal key={d.n} delay={i * 80}>
+                <div className="deliver-step">
+                  <span className="deliver-num">{d.n}</span>
+                  <h3>{d.title}</h3>
+                  <p>{d.body}</p>
                 </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* WORK CTA */}
+      <section className="section">
+        <div className="wrap">
+          <Reveal>
+            <a className="work-banner" href={`${BASE}/work/`}>
+              <div className="work-banner-copy">
+                <span className="eyebrow">The build log</span>
+                <h2>
+                  Every project, every demo, and a <em>recording of an agent</em> taking a call.
+                </h2>
+                <p>
+                  30 builds across AI agents, automation, web apps and marketing. Five dashboards you can click around
+                  in. One minute of a voice agent qualifying a seller, with the transcript.
+                </p>
+                <span className="work-banner-go">
+                  Open the build log
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </span>
               </div>
+              <div className="work-banner-art" aria-hidden="true">
+                <span className="wb-card">
+                  <b>30</b>
+                  projects
+                </span>
+                <span className="wb-card">
+                  <b>5</b>
+                  live demos
+                </span>
+                <span className="wb-card">
+                  <b>1:00</b>
+                  sample call
+                </span>
+              </div>
+            </a>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="section">
+        <div className="wrap wrap-narrow">
+          <Reveal>
+            <h2 className="h2">Questions I get asked</h2>
+          </Reveal>
+          <div className="faq">
+            {FAQ.map((f, i) => (
+              <Reveal key={f.q} delay={i * 60}>
+                <details>
+                  <summary>
+                    {f.q}
+                    <span aria-hidden="true" />
+                  </summary>
+                  <p>{f.a}</p>
+                </details>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
       {/* CONTACT */}
-      <section id="contact" className="section section-alt">
-        <div className="section-inner" style={{ textAlign: "center" }}>
-          <div className="section-eyebrow">Contact</div>
-          <h2 className="section-heading">Let's work together</h2>
-          <p className="section-sub" style={{ margin: "0 auto 2.5rem" }}>
-            I'm open to project-based and full-time remote contracts. Philippines-based with strong U.S. hours overlap.
-          </p>
-
-          <div className="contact-grid-wrap">
-            <a href="mailto:j.culinares06@gmail.com" className="contact-card">
-              <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5">
-                <rect x="2" y="4" width="20" height="16" rx="2"/>
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-              </svg>
-              <span className="cc-label">Email</span>
-              <span className="cc-value">j.culinares06@gmail.com</span>
-              <span className="cc-link">Send email</span>
-            </a>
-
-            <a href="https://wa.me/639761172117" target="_blank" rel="noopener" className="contact-card">
-              <svg viewBox="0 0 24 24" fill="var(--emerald)" stroke="none">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.557 4.112 1.528 5.836L0 24l6.29-1.496A11.952 11.952 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.963 9.963 0 0 1-5.138-1.418l-.368-.22-3.734.888.943-3.616-.24-.373A9.962 9.962 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
-              </svg>
-              <span className="cc-label">WhatsApp</span>
-              <span className="cc-value">+63 976 117 2117</span>
-              <span className="cc-link">Message me</span>
-            </a>
-
-            <a href="https://linkedin.com/in/john-lemuel-culinares" target="_blank" rel="noopener" className="contact-card">
-              <svg viewBox="0 0 24 24" fill="var(--accent)" stroke="none">
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-              </svg>
-              <span className="cc-label">LinkedIn</span>
-              <span className="cc-value">john-lemuel-culinares</span>
-              <span className="cc-link">View profile</span>
-            </a>
-
-            <a href={`${BASE}/cv.html`} target="_blank" rel="noopener" className="contact-card">
-              <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-                <polyline points="10 9 9 9 8 9"/>
-              </svg>
-              <span className="cc-label">CV / Resume</span>
-              <span className="cc-value">John Lemuel Culinares</span>
-              <span className="cc-link">View CV</span>
-            </a>
-          </div>
+      <section id="contact" className="section contact">
+        <div className="wrap wrap-narrow">
+          <Reveal>
+            <h2 className="h2 contact-h2">
+              Tell me what is <em>slowing you down</em>.
+            </h2>
+            <p className="lede center">
+              One call, no pitch. If I am not the right person for it, I will tell you that too.
+            </p>
+            <div className="contact-actions">
+              <a className="btn" href="mailto:j.culinares06@gmail.com">
+                Email John
+              </a>
+              <a className="btn ghost" href="https://wa.me/639761172117" target="_blank" rel="noopener">
+                WhatsApp
+              </a>
+              <a className="btn ghost" href={`${BASE}/cv.html`} target="_blank" rel="noopener">
+                View CV
+              </a>
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="site-footer">
-        <p>John Lemuel Culinares · AI Automation Specialist · Philippines</p>
+      <footer className="foot">
+        <span>John Lemuel Culinares</span>
+        <span>AI automation &amp; systems · Philippines, remote</span>
+        <a href="https://linkedin.com/in/john-lemuel-culinares" target="_blank" rel="noopener">
+          LinkedIn
+        </a>
       </footer>
-
-      {/* PROJECT MODAL */}
-      {selected && (
-        <div
-          style={{
-            position: "fixed", inset: 0, zIndex: 200,
-            background: "rgba(0,0,0,0.5)", backdropFilter: "blur(6px)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            padding: "1.5rem",
-          }}
-          onClick={() => setSelected(null)}
-        >
-          <div
-            style={{
-              background: "var(--surface)", borderRadius: "16px",
-              maxWidth: "560px", width: "100%", padding: "2rem",
-              boxShadow: "var(--shadow-lg)", position: "relative",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setSelected(null)}
-              style={{
-                position: "absolute", top: "1rem", right: "1rem",
-                background: "var(--surface-2)", border: "none", borderRadius: "50%",
-                width: "28px", height: "28px", cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: "1rem", color: "var(--text-muted)",
-              }}
-            >
-              &times;
-            </button>
-            <CardImage
-              img={selected.img} images={selected.images} alt={selected.title}
-              imgStyle={{ width: "100%", aspectRatio: "16/9", objectFit: "cover", borderRadius: "10px", marginBottom: "1.25rem", background: "var(--surface-2)" }}
-            />
-            <div style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text)", marginBottom: "0.65rem" }}>
-              {selected.title}
-            </div>
-            <div style={{ fontSize: "0.88rem", color: "var(--text-muted)", lineHeight: "1.7", marginBottom: "1rem" }}>
-              {selected.desc}
-            </div>
-            <div className="tag-row">
-              {selected.tags.map((t) => (
-                <span key={t} className={`tag ${selected.color}`}>{t}</span>
-              ))}
-            </div>
-            {(selected.demo || selected.casestudy) && (
-              <div style={{ display: "flex", gap: "0.65rem", marginTop: "1.25rem", flexWrap: "wrap" }}>
-                {selected.demo && (
-                  <a
-                    href={selected.demo}
-                    target="_blank"
-                    rel="noopener"
-                    className="btn-primary"
-                    style={{ fontSize: "0.82rem", padding: "0.55rem 1.1rem" }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    Interactive Demo ↗
-                  </a>
-                )}
-                {selected.casestudy && (
-                  <a
-                    href={selected.casestudy}
-                    target="_blank"
-                    rel="noopener"
-                    className="btn-secondary"
-                    style={{ fontSize: "0.82rem", padding: "0.55rem 1.1rem" }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    Case Study ↗
-                  </a>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </>
+    </main>
   );
 }

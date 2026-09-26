@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Housing Portal + Two-Way Zoho CRM Integration | John Lemuel Culinares</title>
+<meta name="description" content="Case study: a client portal built onto an existing marketing website, kept in step with Zoho CRM in both directions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #05070D;
+    --surface: #0B0F19;
+    --surface-2: #111726;
+    --text: #E7ECF5;
+    --text-muted: #9AA6BD;
+    --text-subtle: #717D96;
+    --accent: #5B96FF;
+    --accent-2: #2EE6D6;
+    --grad: linear-gradient(135deg, #6EA8FF 0%, #39D5E8 100%);
+    --border: rgba(148,170,210,0.10);
+    --border-hover: rgba(148,170,210,0.22);
+    --sans: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+  ::selection { background: rgba(91,150,255,0.35); }
+  :focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; border-radius: 6px; }
+
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 1.5rem; }
+
+  /* header */
+  .hero {
+    position: relative;
+    padding: 4.5rem 0 3rem;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: -40% -10% auto -10%;
+    height: 420px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(91,150,255,0.18), transparent 70%);
+    pointer-events: none;
+  }
+
+  .back {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 2rem;
+    transition: color 0.2s;
+  }
+
+  .back:hover { color: var(--accent-2); }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent-2);
+    margin-bottom: 1rem;
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 18px;
+    height: 1px;
+    background: var(--accent-2);
+    box-shadow: 0 0 8px var(--accent-2);
+  }
+
+  h1 {
+    position: relative;
+    font-size: clamp(1.9rem, 5vw, 3rem);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1.08;
+    text-wrap: balance;
+    margin-bottom: 1rem;
+  }
+
+  .lede {
+    position: relative;
+    font-size: 1.08rem;
+    color: var(--text-muted);
+    max-width: 620px;
+    margin-bottom: 1.75rem;
+  }
+
+  .meta-row {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+  }
+
+  .chip {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 0.28rem 0.65rem;
+    border-radius: 6px;
+    color: #8DB6FF;
+    background: rgba(91,150,255,0.1);
+    border: 1px solid rgba(91,150,255,0.25);
+  }
+
+  .chip.role {
+    color: var(--accent-2);
+    background: rgba(46,230,214,0.08);
+    border-color: rgba(46,230,214,0.28);
+  }
+
+  /* sections */
+  section { padding: 3.5rem 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+
+  h2 {
+    font-size: clamp(1.35rem, 3vw, 1.75rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+
+  h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
+
+  p { color: var(--text-muted); margin-bottom: 1rem; max-width: 68ch; }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--text); font-weight: 600; }
+
+  /* numbers */
+  .numbers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  .num {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem 1rem;
+  }
+
+  .num b {
+    display: block;
+    font-size: 1.7rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .num span {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  /* diagram */
+  .diagram {
+    margin-top: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  .diagram svg { display: block; min-width: 720px; width: 100%; height: auto; }
+
+  .caption {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    color: var(--text-subtle);
+    margin-top: 0.85rem;
+  }
+
+  /* built list */
+  .built {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+  }
+
+  .built div {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.1rem 1.2rem;
+  }
+
+  .built p { font-size: 0.88rem; margin: 0; }
+
+  /* problems */
+  .problem {
+    position: relative;
+    padding: 1.4rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 2px solid rgba(91,150,255,0.5);
+    border-radius: 12px;
+    margin-bottom: 0.85rem;
+  }
+
+  .problem h3 { font-size: 1.02rem; letter-spacing: -0.01em; margin-bottom: 0.6rem; }
+  .problem p { font-size: 0.9rem; margin-bottom: 0.5rem; }
+
+  .result {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    color: var(--accent-2);
+    background: rgba(46,230,214,0.08);
+    border: 1px solid rgba(46,230,214,0.25);
+    border-radius: 6px;
+    padding: 0.2rem 0.6rem;
+    margin-top: 0.35rem;
+  }
+
+  ul { list-style: none; max-width: 68ch; }
+
+  ul li {
+    position: relative;
+    padding-left: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  ul li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.72em;
+    width: 6px;
+    height: 1px;
+    background: var(--accent-2);
+  }
+
+  .quote {
+    background: linear-gradient(180deg, rgba(91,150,255,0.07), rgba(91,150,255,0));
+    border: 1px solid var(--border-hover);
+    border-radius: 14px;
+    padding: 1.6rem 1.75rem;
+    font-size: 1.05rem;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* footer */
+  footer {
+    padding: 2.5rem 0 3.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--grad);
+    color: #03101C;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.65rem 1.3rem;
+    border-radius: 9px;
+    text-decoration: none;
+  }
+
+  footer span { font-family: var(--mono); font-size: 0.74rem; color: var(--text-subtle); }
+
+  @media (max-width: 640px) {
+    .numbers { grid-template-columns: repeat(2, 1fr); }
+    .built { grid-template-columns: 1fr; }
+    section { padding: 2.75rem 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <a class="back" href="../">&larr; Back to portfolio</a>
+    <div class="eyebrow">Case Study</div>
+    <h1>Housing Portal and two-way Zoho CRM integration</h1>
+    <p class="lede">
+      A client portal built onto an existing marketing website, kept in step with the business's CRM in both directions.
+    </p>
+    <div class="meta-row">
+      <span class="chip role">Sole developer and integration engineer</span>
+      <span class="chip">TypeScript</span>
+      <span class="chip">React</span>
+      <span class="chip">tRPC</span>
+      <span class="chip">Drizzle ORM</span>
+      <span class="chip">MySQL</span>
+      <span class="chip">Express</span>
+      <span class="chip">Railway</span>
+      <span class="chip">Zoho CRM v8</span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>What it is</h2>
+    <p>
+      A UK property group places residential property with care providers. Their whole business already lived in Zoho CRM:
+      properties, the companies they deal with, and the deals that track each placement from first viewing to contract.
+    </p>
+    <p>
+      What they did not have was a way for their clients to see any of it. Property owners emailed details in. Care
+      providers asked what was available and waited for someone to reply. Everything that happened outside Zoho had to be
+      typed back into Zoho by hand.
+    </p>
+    <p>
+      I built them a portal, attached to their existing website, where property owners submit and track their properties
+      and care providers browse what is available, shortlist it, ask questions and request viewings. Behind it, a two-way
+      synchronisation keeps the portal and Zoho in agreement without anyone retyping anything.
+    </p>
+    <p><strong>The hard part was never the screens. It was the synchronisation.</strong></p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 960 340" role="img" aria-label="Portal writes to an outbox in the same transaction. A sync worker delivers changes to Zoho CRM and the accounting system, and CRM changes flow back to the portal. A reconciliation runs every fifteen minutes.">
+        <defs>
+          <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0 10 5 0 10z" fill="#5B96FF"/>
+          </marker>
+          <marker id="ac" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0 10 5 0 10z" fill="#2EE6D6"/>
+          </marker>
+        </defs>
+        <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+          <!-- return path -->
+          <path d="M840 92 L840 46 L120 46 L120 92" fill="none" stroke="#2EE6D6" stroke-opacity="0.65" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#ac)"/>
+          <text x="480" y="36" fill="#2EE6D6" font-size="14" text-anchor="middle">CRM changes flow back to the portal</text>
+
+          <!-- boxes -->
+          <rect x="20" y="96" width="200" height="96" rx="12" fill="#111726" stroke="#5B96FF" stroke-opacity="0.4"/>
+          <text x="40" y="132" fill="#E7ECF5" font-size="17" font-weight="600">Client portal</text>
+          <text x="40" y="158" fill="#9AA6BD" font-size="13">React, tRPC, MySQL</text>
+          <text x="40" y="178" fill="#717D96" font-size="13">28 screens</text>
+
+          <rect x="270" y="96" width="200" height="96" rx="12" fill="#111726" stroke="#94AAD2" stroke-opacity="0.25"/>
+          <text x="290" y="132" fill="#E7ECF5" font-size="17" font-weight="600">Outbox</text>
+          <text x="290" y="158" fill="#9AA6BD" font-size="13">same transaction as</text>
+          <text x="290" y="178" fill="#9AA6BD" font-size="13">the change itself</text>
+
+          <rect x="520" y="96" width="200" height="96" rx="12" fill="#111726" stroke="#94AAD2" stroke-opacity="0.25"/>
+          <text x="540" y="132" fill="#E7ECF5" font-size="17" font-weight="600">Sync worker</text>
+          <text x="540" y="158" fill="#9AA6BD" font-size="13">change detection,</text>
+          <text x="540" y="178" fill="#9AA6BD" font-size="13">retries, receipts</text>
+
+          <rect x="770" y="96" width="170" height="96" rx="12" fill="#111726" stroke="#2EE6D6" stroke-opacity="0.4"/>
+          <text x="790" y="132" fill="#E7ECF5" font-size="17" font-weight="600">Zoho CRM</text>
+          <text x="790" y="158" fill="#9AA6BD" font-size="13">properties</text>
+          <text x="790" y="178" fill="#9AA6BD" font-size="13">accounts, deals</text>
+
+          <rect x="770" y="228" width="170" height="74" rx="12" fill="#111726" stroke="#94AAD2" stroke-opacity="0.25"/>
+          <text x="790" y="260" fill="#E7ECF5" font-size="15" font-weight="600">Accounting</text>
+          <text x="790" y="284" fill="#9AA6BD" font-size="13">invoice on template</text>
+
+          <!-- arrows -->
+          <path d="M224 144 L262 144" stroke="#5B96FF" stroke-width="2" marker-end="url(#ab)"/>
+          <path d="M474 144 L512 144" stroke="#5B96FF" stroke-width="2" marker-end="url(#ab)"/>
+          <path d="M724 144 L762 144" stroke="#5B96FF" stroke-width="2" marker-end="url(#ab)"/>
+          <path d="M855 196 L855 220" stroke="#94AAD2" stroke-opacity="0.5" stroke-width="2" marker-end="url(#ab)"/>
+
+          <!-- reconciliation -->
+          <rect x="20" y="234" width="700" height="68" rx="10" fill="#0E1420" stroke="#94AAD2" stroke-opacity="0.18"/>
+          <circle cx="48" cy="262" r="5" fill="#2EE6D6"/>
+          <text x="66" y="267" fill="#E7ECF5" font-size="14">Reconciliation, every 15 minutes</text>
+          <text x="66" y="288" fill="#9AA6BD" font-size="13">drains both queues, reads deal stages back, alerts on first failure</text>
+        </g>
+      </svg>
+    </div>
+    <p class="caption">Events are written to the outbox in the same transaction as the change, so an outage cannot lose one.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>By the numbers</h2>
+    <div class="numbers">
+      <div class="num"><b>133</b><span>server modules</span></div>
+      <div class="num"><b>28</b><span>portal screens</span></div>
+      <div class="num"><b>650+</b><span>automated tests across 85 files</span></div>
+      <div class="num"><b>23</b><span>database migrations</span></div>
+      <div class="num"><b>3</b><span>external systems integrated</span></div>
+      <div class="num"><b>21</b><span>live properties and the accounts using them</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What I built</h2>
+    <div class="built">
+      <div>
+        <h3>Access and accounts</h3>
+        <p>Request access from the public site, admin approval, time-limited invitation links, activation. Two client types with different permissions. Every approval, rejection and re-invitation is recorded, and each state says plainly where it stands.</p>
+      </div>
+      <div>
+        <h3>The property register</h3>
+        <p>Owners submit a property with documents and photographs. Admins review, complete and publish it. Compliance paperwork is tracked per property, and commercial figures stay hidden unless a property is explicitly set to show them.</p>
+      </div>
+      <div>
+        <h3>Matching and notifications</h3>
+        <p>Clients save what they are looking for. When a property is published, matching clients are found and emailed automatically, rather than an administrator remembering to press a button.</p>
+      </div>
+      <div>
+        <h3>Enquiries</h3>
+        <p>Shortlisting, questions and viewing requests, each threaded so the whole exchange is kept, with the client emailed whenever somebody replies.</p>
+      </div>
+      <div>
+        <h3>Deal automation</h3>
+        <p>Each property gets one deal in the CRM's own pipeline, at the right stage, owned by the right person, linked to the property and the landlord's account. Interested providers are collected onto that deal. Closing the deal takes the property off the portal by itself.</p>
+      </div>
+      <div>
+        <h3>Invoicing</h3>
+        <p>An invoice is raised in the accounting system as soon as a billing template is chosen on a deal, without the team leaving the CRM.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>The integration work, and what it actually takes</h2>
+    <p style="margin-bottom:1.75rem">
+      Two-way sync is easy to describe and unforgiving to build. Most of the engineering below came from problems that
+      only appear against real data.
+    </p>
+
+    <div class="problem">
+      <h3>Never create a second copy of something that already exists</h3>
+      <p>The first version created a CRM property for every portal property without checking. Most already existed, so real records ended up with a short-named duplicate beside them.</p>
+      <p>I replaced it with address matching that compares the part which identifies a building: flat number, house number including ranges like 49-55 and 292/294, and the first word of the street. Postcode and street type are only compared when both records carry one, because one side often does not. An exact match links to the existing record, an unsure match is referred to a human rather than guessed, and no match creates a new record.</p>
+      <span class="result">12 duplicate pairs merged, 264 records down to 252, no duplicate addresses left</span>
+    </div>
+
+    <div class="problem">
+      <h3>Never overwrite better data with worse</h3>
+      <p>The portal knows a short version of an address and of a company name. The CRM usually holds the fuller, legal one. Sending those fields on every update quietly degraded the better record, so names are now sent when creating a record and never when updating one.</p>
+    </div>
+
+    <div class="problem">
+      <h3>Fail loudly, and keep the reason</h3>
+      <p>A rejected write used to be stored as "HTTP 400" with the API's actual explanation discarded, which turned a one minute diagnosis into a five day investigation. Every rejection now keeps the response body, redacted of secrets, and surfaces it in the admin screens and the alerts.</p>
+    </div>
+
+    <div class="problem">
+      <h3>Respect the target system's rules</h3>
+      <p>Real constraints found and handled: the API rejects a request asking for more than fifty fields, so the field list is capped and guarded by a test. Deals cannot be created through the upsert endpoint because that module has no unique field, so they are created outright. A layout can make a field mandatory even when the field metadata does not say so, so the missing value is reported by name instead of sending a request that can only be refused.</p>
+    </div>
+
+    <div class="problem">
+      <h3>Never silently delete</h3>
+      <p>Writing a multi-select field sends the entire list, so a partial read would quietly drop everyone missing from it. That write refuses to run on an incomplete read, and every write is read back and rejected if anybody who was there has gone.</p>
+    </div>
+
+    <div class="problem">
+      <h3>Handle conflict honestly</h3>
+      <p>When both sides change the same record between syncs, neither is overwritten. The record is held for review and an administrator can release it from the dashboard, taking the CRM's version.</p>
+    </div>
+
+    <div class="problem">
+      <h3>Do not set off other people's automations</h3>
+      <p>Background synchronisation suppresses the CRM's workflow rules. A record moved backwards by a sync should not re-trigger emails and assignments meant for a human doing it deliberately.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Reliability</h2>
+    <ul>
+      <li>Events are written to an outbox in the same transaction as the change that caused them, so an outage can never lose one.</li>
+      <li>Deliveries retry with backoff, and a rejection caused by bad data is not retried forever.</li>
+      <li>Receipts make every operation idempotent, so a replay cannot duplicate work.</li>
+      <li>A reconciliation runs every fifteen minutes: it drains both delivery queues, reads deal stages back, and reports failures to email and a monitoring channel on the first failure rather than every cycle.</li>
+      <li>The application refuses to start if the database is missing a migration the build expects, and applies its own migrations where the database is reachable.</li>
+      <li>Traffic stays on the previous version until the new one answers a health check. A deploy that cannot run correctly fails as a deploy, instead of taking the site down.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What it changed</h2>
+    <p>
+      Clients can see the stock, register interest and get an answer without an email thread. The team works in the CRM
+      they already know and the portal follows. Records that used to be typed twice are now typed once, and the
+      duplicates that had built up before the portal existed were found and merged as part of the work.
+    </p>
+    <div class="quote" style="margin-top:1.5rem">
+      The part I am most pleased with is not a feature. It is that the integration refuses to guess. Where the data is
+      ambiguous it says so and asks a person, rather than picking an answer and quietly corrupting a record that somebody
+      relies on.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between;width:100%">
+    <span>John Lemuel Culinares &middot; AI Automation &amp; Systems</span>
+    <a class="btn" href="../">See more work</a>
+  </div>
+</footer>
+
+</body>
+</html>
