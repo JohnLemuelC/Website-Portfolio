@@ -3,21 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>John Lemuel Culinares — CV</title>
+<title>John Lemuel Culinares | CV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --accent: #2563EB;
-    --text: #0F172A;
-    --muted: #64748B;
-    --sub: #475569;
-    --border: #E2E8F0;
-    --bg: #F8FAFC;
+    --accent: #4F46E5;
+    --text: #14121A;
+    --muted: #6B6577;
+    --sub: #46414F;
+    --border: #E4E1EC;
+    --bg: #F7F6FB;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
   }
 
   body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: var(--sans);
     font-size: 13.5px;
     color: var(--text);
     background: #fff;
@@ -43,9 +48,10 @@
   }
 
   .header h1 {
-    font-size: 26px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
     color: var(--text);
     line-height: 1.1;
     margin-bottom: 4px;
@@ -79,7 +85,7 @@
 
   .section-title {
     font-size: 9.5px;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 0.13em;
     text-transform: uppercase;
     color: var(--accent);
@@ -111,8 +117,9 @@
   }
 
   .metric-n {
-    font-size: 19px;
-    font-weight: 800;
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 600;
     color: var(--accent);
     letter-spacing: -0.03em;
     line-height: 1;
@@ -145,8 +152,10 @@
   }
 
   .exp-role {
-    font-size: 13.5px;
-    font-weight: 700;
+    font-family: var(--serif);
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     color: var(--text);
   }
 
@@ -303,10 +312,10 @@
   /* ── Print ── */
   @media print {
     body { background: #fff; font-size: 12px; }
-    .page { padding: 28px 36px; max-width: 100%; }
+    .page { padding: 0; max-width: 100%; }
     .print-bar { display: none; }
     .section { margin-bottom: 20px; }
-    @page { margin: 0; size: A4; }
+    @page { margin: 16mm 18mm; size: A4; }
   }
 </style>
 </head>
@@ -339,7 +348,7 @@
   <div class="section">
     <div class="section-title">Profile</div>
     <p class="profile">
-      I build AI systems and automation tools for remote clients — voice agents, ad analytics dashboards, n8n/Zapier pipelines, and CRM integrations. Four years in, with work across real estate, e-commerce, and marketing agencies. Recent projects include a 187-account analytics platform, three 24/7 AI receptionists, and an MER engine tracking spend across markets daily. Open to full-time remote roles and project contracts, with solid U.S. hours availability.
+      I build AI systems and automation tools for remote clients: voice agents, ad analytics dashboards, n8n/Zapier pipelines, and CRM integrations. Four years in, with work across real estate, e-commerce, and marketing agencies. Recent projects include a 187-account analytics platform, three 24/7 AI receptionists, and an MER engine tracking spend across markets daily. Open to full-time remote roles and project contracts, with solid U.S. hours availability.
     </p>
   </div>
 
@@ -395,7 +404,7 @@
         <div class="exp-period current">2025 – Present</div>
       </div>
       <ul class="exp-bullets">
-        <li>Built three AI receptionists (ACE, GRACE, SARAH) on Retell AI — real estate qualification, inbound land buying calls, and outbound pre-qualification with SMS follow-up</li>
+        <li>Built three AI receptionists (ACE, GRACE, SARAH) on Retell AI: real estate qualification, inbound land buying calls, and outbound pre-qualification with SMS follow-up</li>
         <li>GoHighLevel CRM setup: pre-qualification workflows, form builder, lead pipeline, and custom fields</li>
         <li>n8n workflows on VPS for webhook handling and cross-tool automation</li>
         <li>Automated daily reporting sent to client Slack channels</li>
@@ -412,7 +421,7 @@
       </div>
       <ul class="exp-bullets">
         <li>Central KPI Datahub pulling from LinkedIn, Meta, and Bing across 187 accounts</li>
-        <li>MCP servers for Google Ads, GA4, and Search Console — exposing live data to AI agents</li>
+        <li>MCP servers for Google Ads, GA4, and Search Console, exposing live data to AI agents</li>
         <li>5-workflow n8n blog pipeline: keyword research through WordPress publishing, no manual steps</li>
         <li>AdLlama contributions: Keyword Planner API and Ad Copy Validation (Next.js + Python)</li>
         <li>Pipedrive integrations and automated weekly Google Ads client check-ins</li>
@@ -617,6 +626,11 @@
     <div class="proj-category">Web Apps</div>
     <div class="projects-grid">
       <div class="proj-item">
+        <div class="proj-name">Housing Portal + Zoho CRM Sync</div>
+        <div class="proj-desc">Client portal for a UK property group with two-way Zoho CRM synchronisation. Address-matched deduplication, conflict holds, outbox delivery and 650+ automated tests. Sole developer.</div>
+        <div class="proj-tags"><span class="tag">TypeScript</span><span class="tag">React</span><span class="tag">tRPC</span><span class="tag">Zoho CRM</span><span class="tag">MySQL</span></div>
+      </div>
+      <div class="proj-item">
         <div class="proj-name">Marketing Dashboard</div>
         <div class="proj-desc">Analytics platform for a 187-account agency: 5 ad platforms, 3 SEO sources, 25 views, budget pacing, and AI querying.</div>
         <div class="proj-tags"><span class="tag">Next.js</span><span class="tag">BigQuery</span><span class="tag">TypeScript</span><span class="tag">Python</span></div>
@@ -709,8 +723,11 @@
           <span class="skill-pill">Python</span>
           <span class="skill-pill">TypeScript</span>
           <span class="skill-pill">Next.js</span>
+          <span class="skill-pill">React</span>
+          <span class="skill-pill">tRPC</span>
           <span class="skill-pill">Node.js</span>
           <span class="skill-pill">FastAPI</span>
+          <span class="skill-pill">MySQL</span>
           <span class="skill-pill">Supabase</span>
           <span class="skill-pill">PostgreSQL</span>
           <span class="skill-pill">Railway</span>
@@ -720,6 +737,7 @@
         <div class="skill-group-label">CRM &amp; Ops</div>
         <div class="skill-pills">
           <span class="skill-pill">GoHighLevel</span>
+          <span class="skill-pill">Zoho CRM</span>
           <span class="skill-pill">Pipedrive</span>
           <span class="skill-pill">Salesforce</span>
           <span class="skill-pill">Respond.io</span>

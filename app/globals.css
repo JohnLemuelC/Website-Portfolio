@@ -141,6 +141,9 @@ main { position: relative; z-index: 1; }
 .navpill-links a:hover { color: var(--text); }
 
 .navpill-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   padding: 0.5rem 1.05rem;
   border-radius: 12px;
   background: var(--accent);
@@ -152,6 +155,7 @@ main { position: relative; z-index: 1; }
 }
 
 .navpill-cta:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.navpill-cta svg { width: 15px; height: 15px; }
 
 .navpill-burger {
   display: none;
