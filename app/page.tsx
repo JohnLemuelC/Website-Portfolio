@@ -345,6 +345,17 @@ export default function Home() {
       <section id="contact" className="section contact">
         <div className="wrap wrap-narrow">
           <Reveal>
+            <div className="bio">
+              <img className="bio-photo" src={`${BASE}/images/headshot/john.webp`} alt="John Lemuel Culinares" />
+              <div className="bio-copy">
+                <h3>John Lemuel Culinares</h3>
+                <p>
+                  Four years building AI systems for businesses in the UK, the US and Australia, from a desk in the
+                  Philippines. Before the automation work I ran marketing and customer operations, which is why I start
+                  with your process rather than the software.
+                </p>
+              </div>
+            </div>
             <h2 className="h2 contact-h2">
               Tell me <em>where the time goes</em>.
             </h2>
