@@ -95,7 +95,8 @@ export default function CubeCanvas() {
       // a decent tilt keeps the top face visible at every rotation, so it always reads as a solid
       const ax = -0.5 + (reduced ? 0 : Math.sin(t * 0.3) * 0.07 + pointer.y * 0.18);
 
-      dissolve += (holdRef.current - dissolve) * 0.075;
+      // slow bloom on the way out, a touch quicker on the way back
+      dissolve += (holdRef.current - dissolve) * (holdRef.current > dissolve ? 0.026 : 0.055);
 
       const project = (p: V3): [number, number, number] => {
         const [x, y, z] = rot(p, ax, ay);
