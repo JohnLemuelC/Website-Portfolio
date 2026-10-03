@@ -1,4 +1,4 @@
-import WordCloud from "@/components/WordCloud";
+import GlobeStack from "@/components/GlobeStack";
 import Starfield from "@/components/Starfield";
 import Reveal from "@/components/Reveal";
 
@@ -168,7 +168,7 @@ export default function Home() {
           Most of the work draining your team can run itself.
         </h1>
 
-        <WordCloud />
+        <GlobeStack />
 
         <h2 className="hero-h2">
           Knowing which part to hand over <em>first</em> is the real problem.
