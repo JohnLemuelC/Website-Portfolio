@@ -6,8 +6,9 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const WHATSAPP = "https://wa.me/639761172117";
 
 const LINKS = [
-  { label: "The work", href: "#build" },
-  { label: "Proof", href: "#proof" },
+  { label: "About", href: "#about" },
+  { label: "Services", href: "#build" },
+  { label: "Work", href: "#work" },
   { label: "Process", href: "#deliver" },
   { label: "Questions", href: "#faq" },
   { label: "CV", href: `${BASE}/cv.html`, external: true },

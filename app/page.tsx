@@ -1,4 +1,8 @@
 import GlobeStack from "@/components/GlobeStack";
+import Marquee from "@/components/Marquee";
+import CountUp from "@/components/CountUp";
+import SelectedWork from "@/components/SelectedWork";
+import ContactForm from "@/components/ContactForm";
 import Starfield from "@/components/Starfield";
 import Reveal from "@/components/Reveal";
 
@@ -37,6 +41,22 @@ const BUILD = [
     points: ["Multi-platform ad and SEO reporting", "Scale, kill or iterate calls per ad", "Daily batch jobs and Slack digests"],
     art: "data",
   },
+];
+
+const ABOUT = [
+  { k: "Based in", v: "Philippines, working UK and US hours" },
+  { k: "Clients in", v: "the UK, the US and Australia" },
+  { k: "Who I build for", v: "Agencies, property and real estate" },
+  { k: "How I work", v: "One person, first call to handover" },
+];
+
+const STACK: { label: string; items: string }[] = [
+  { label: "Agents and models", items: "Claude API, OpenAI, MCP servers, custom GPTs" },
+  { label: "Voice", items: "Retell AI, Vapi, Twilio SMS" },
+  { label: "Automation", items: "n8n, Make, Zapier, Google Apps Script" },
+  { label: "Apps", items: "Next.js, React, TypeScript, tRPC, Python" },
+  { label: "Data", items: "Supabase, PostgreSQL, MySQL, BigQuery, Sheets" },
+  { label: "Platforms", items: "GoHighLevel, Zoho CRM, Pipedrive, Google Ads, Meta" },
 ];
 
 const PROOF: {
@@ -164,6 +184,10 @@ export default function Home() {
       {/* HERO */}
       <section className="hero">
         <p className="eyebrow">AI Automation Specialist · Philippines</p>
+        <p className="hero-status">
+          <i aria-hidden="true" />
+          Open to new projects
+        </p>
         <h1 className="hero-h1">
           Most of the work draining your team can run itself.
         </h1>
@@ -183,6 +207,44 @@ export default function Home() {
         <a className="hero-cue" href="#build" aria-label="Scroll to the next section">
           <span />
         </a>
+      </section>
+
+      <Marquee />
+
+      {/* ABOUT */}
+      <section id="about" className="section">
+        <div className="wrap">
+          <Reveal>
+            <div className="about">
+              <img className="about-photo" src={`${BASE}/images/headshot/john.webp`} alt="John Lemuel Culinares" />
+              <div className="about-copy">
+                <p className="eyebrow">About me</p>
+                <h2 className="h2">
+                  I start with your process, <em>not the software</em>.
+                </h2>
+                <p>
+                  Four years building AI systems for businesses in the UK, the US and Australia, from a desk in the
+                  Philippines. Before the automation work I ran marketing and customer operations, so I have sat on the
+                  side that has to use the thing after it is built.
+                </p>
+                <p>
+                  Most projects start the same way: a spreadsheet somebody updates by hand, a call nobody answers, or a
+                  report that takes a day to assemble. I build the system that ends it.
+                </p>
+              </div>
+            </div>
+          </Reveal>
+          <Reveal delay={90}>
+            <dl className="about-meta">
+              {ABOUT.map((a) => (
+                <div key={a.k}>
+                  <dt>{a.k}</dt>
+                  <dd>{a.v}</dd>
+                </div>
+              ))}
+            </dl>
+          </Reveal>
+        </div>
       </section>
 
       {/* SERVICES */}
@@ -224,6 +286,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* SELECTED WORK */}
+      <SelectedWork />
+
       {/* PROOF */}
       <section id="proof" className="section">
         <div className="wrap">
@@ -240,7 +305,9 @@ export default function Home() {
                   <h3 className="proof-title">{p.title}</h3>
                   <p className="proof-body">{p.body}</p>
                   <div className="proof-metric">
-                    <strong>{p.metric}</strong>
+                    <strong>
+                      <CountUp value={p.metric} />
+                    </strong>
                     <span>{p.metricLabel}</span>
                   </div>
                   {p.href && (
@@ -319,6 +386,26 @@ export default function Home() {
         </div>
       </section>
 
+      {/* STACK */}
+      <section id="stack" className="section">
+        <div className="wrap">
+          <Reveal>
+            <h2 className="h2">What I build with</h2>
+            <p className="lede">The tools in the hero, written out.</p>
+          </Reveal>
+          <div className="stack-list">
+            {STACK.map((g, i) => (
+              <Reveal key={g.label} delay={(i % 3) * 70}>
+                <div className="stack-row">
+                  <h3>{g.label}</h3>
+                  <p>{g.items}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section id="faq" className="section">
         <div className="wrap wrap-narrow">
@@ -345,17 +432,6 @@ export default function Home() {
       <section id="contact" className="section contact">
         <div className="wrap wrap-narrow">
           <Reveal>
-            <div className="bio">
-              <img className="bio-photo" src={`${BASE}/images/headshot/john.webp`} alt="John Lemuel Culinares" />
-              <div className="bio-copy">
-                <h3>John Lemuel Culinares</h3>
-                <p>
-                  Four years building AI systems for businesses in the UK, the US and Australia, from a desk in the
-                  Philippines. Before the automation work I ran marketing and customer operations, which is why I start
-                  with your process rather than the software.
-                </p>
-              </div>
-            </div>
             <h2 className="h2 contact-h2">
               Tell me <em>where the time goes</em>.
             </h2>
@@ -373,6 +449,9 @@ export default function Home() {
                 View CV
               </a>
             </div>
+          </Reveal>
+          <Reveal delay={90}>
+            <ContactForm />
           </Reveal>
         </div>
       </section>
