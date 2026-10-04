@@ -7,7 +7,8 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 // On Vercel the app keeps its server, so the form posts to our own route.
 // The GitHub Pages copy is a static export with no server, so it falls back to
 // composing a mail. BASE is only set on the Pages build, which is the tell.
-const ENDPOINT = BASE ? "" : "/api/contact";
+// trailing slash, to match trailingSlash in next.config and skip the 308 hop
+const ENDPOINT = BASE ? "" : "/api/contact/";
 
 const JOBS = [
   "A voice agent that answers calls",
