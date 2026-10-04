@@ -31,3 +31,8 @@ next-env.d.ts
 
 # Helper scripts
 copy-assets.ps1
+
+# dead hero experiments, kept locally
+components/TechField.tsx
+components/TechWeb.tsx
+components/TechLogoWeb.tsx
