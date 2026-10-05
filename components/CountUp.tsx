@@ -14,9 +14,16 @@ export default function CountUp({ value, duration = 1100 }: { value: string; dur
     const el = ref.current;
     if (!el) return;
 
-    const target = Number((value.match(/[\d,]+/)?.[0] ?? "").replace(/,/g, ""));
-    // no single number to animate, or the viewer asked for less motion
-    if (!Number.isFinite(target) || target <= 0 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    // only a lone number counts up. "24/7" and "264 to 252" hold two numbers, and
+    // animating the first of them reads as a glitch rather than a count.
+    const groups = value.match(/[\d,]+/g) ?? [];
+    const target = Number((groups[0] ?? "").replace(/,/g, ""));
+    if (
+      groups.length !== 1 ||
+      !Number.isFinite(target) ||
+      target <= 0 ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
       setShown(value);
       return;
     }

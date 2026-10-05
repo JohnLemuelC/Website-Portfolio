@@ -1,0 +1,564 @@
+/* The /alt layout: the reference portfolio's structure, in monochrome.
+   Everything is scoped under .alt so it cannot reach the main site. */
+
+.alt {
+  --ink: #f3f3f0;
+  --dim: #99a3b5;
+  --faint: #697487;
+  --line: rgba(200, 214, 240, 0.15);
+  --panel: #0c121d;
+  --ground: #05080f;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: "Archivo", system-ui, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.alt ::selection { background: rgba(243, 243, 240, 0.25); }
+
+/* the main site's furniture does not belong on this route */
+body:has(.alt) .navpill,
+body:has(.alt) .askbar,
+body:has(.alt) .starfield { display: none; }
+
+.alt-nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.6rem clamp(1.2rem, 4vw, 3rem);
+  font-size: clamp(0.8rem, 1.6vw, 1.1rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.alt-nav a { color: var(--ink); transition: opacity 0.2s; }
+.alt-nav a:hover { opacity: 0.55; }
+
+/* ---------- HERO ---------- */
+.alt-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 92vh;
+  padding: 0 clamp(1.2rem, 4vw, 3rem) 2.5rem;
+}
+.alt-wordmark {
+  margin: 0;
+  font-size: clamp(2rem, 9.1vw, 8.8rem);
+  font-weight: 700;
+  line-height: 0.86;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: linear-gradient(180deg, #ffffff 10%, #cfcfca 48%, #4a4a47 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.alt-portrait {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: min(44rem, 78vw);
+  transform: translateX(-50%);
+  /* drained of colour so it sits in a monochrome page, and faded at the hem */
+  filter: grayscale(1) contrast(1.12) brightness(0.96);
+  mask-image: linear-gradient(180deg, #000 76%, transparent 99%);
+  -webkit-mask-image: linear-gradient(180deg, #000 76%, transparent 99%);
+  pointer-events: none;
+}
+.alt-hero-foot {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: auto;
+}
+.alt-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.95rem 0.4rem 0.75rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid rgba(80, 220, 150, 0.45);
+  border-radius: 999px;
+}
+.alt-status i {
+  width: 6px;
+  height: 6px;
+  background: #4ddc96;
+  border-radius: 50%;
+}
+.alt-tagline {
+  max-width: 26ch;
+  margin: 1rem 0 0;
+  font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.alt-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.95rem 1.8rem;
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.25s, border-color 0.25s, color 0.25s;
+}
+.alt-pill svg { width: 13px; height: 13px; }
+.alt-pill:hover { background: var(--ink); border-color: var(--ink); color: var(--ground); }
+.alt-pill.sm { padding: 0.6rem 1.1rem; font-size: 0.64rem; }
+
+/* ---------- SECTIONS ---------- */
+.alt-sec {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: clamp(5rem, 12vw, 9rem) clamp(1.2rem, 4vw, 3rem);
+}
+.alt-big {
+  margin: 0;
+  font-size: clamp(2.8rem, 10.5vw, 9.5rem);
+  font-weight: 700;
+  line-height: 0.88;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  text-align: center;
+  background: linear-gradient(180deg, #ffffff 8%, #c8c8c3 50%, #4a4a47 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.alt-big.alt-left { text-align: left; }
+.alt-about-mid .alt-big { white-space: nowrap; }
+.alt-sub {
+  max-width: 44ch;
+  margin: 1.4rem 0 0;
+  font-size: 1.02rem;
+  line-height: 1.55;
+  color: var(--dim);
+}
+.alt-num {
+  display: block;
+  margin-bottom: 1.1rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--faint);
+}
+
+/* ---------- ABOUT ---------- */
+.alt-about-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 32rem;
+}
+.alt-about-mid { width: 100%; text-align: center; }
+.alt-about-copy {
+  max-width: 36rem;
+  margin: 2.2rem auto;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  line-height: 1.6;
+  color: var(--dim);
+}
+.alt-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  width: 15rem;
+  padding: 1.1rem 1.2rem 1.25rem;
+  background: linear-gradient(160deg, #141c2b, #080d15);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.6);
+}
+.alt-fact-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+}
+.alt-fact-icon svg { width: 15px; height: 15px; }
+.alt-fact-k {
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.alt-fact-v { font-size: 0.9rem; font-weight: 600; line-height: 1.4; }
+
+@media (min-width: 1000px) {
+  .alt-about-stage > :not(.alt-about-mid) { position: absolute; }
+  .alt-about-stage > :nth-child(1) { top: 0; left: 0; }
+  .alt-about-stage > :nth-child(2) { top: 2rem; right: 0; }
+  .alt-about-stage > :nth-child(3) { bottom: 1rem; left: 2rem; }
+  .alt-about-stage > :nth-child(4) { bottom: 2.5rem; right: 2rem; }
+  .alt-fact-1 { transform: rotate(-4deg); }
+  .alt-fact-2 { transform: rotate(3.5deg); }
+  .alt-fact-3 { transform: rotate(3deg); }
+  .alt-fact-4 { transform: rotate(-3deg); }
+}
+@media (max-width: 999px) {
+  .alt-about-stage { min-height: 0; gap: 1.5rem; }
+  .alt-about-stage > :not(.alt-about-mid) { width: 100%; }
+  .alt-fact { width: 100%; }
+  .alt-about-mid { order: -1; margin-bottom: 1.5rem; }
+}
+
+/* ---------- SERVICES ---------- */
+.alt-svc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 1px;
+  margin-top: 3.5rem;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+.alt-svc {
+  height: 100%;
+  padding: 2rem 1.8rem 2.2rem;
+  background: var(--ground);
+}
+.alt-svc h3 {
+  margin: 0 0 0.9rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+.alt-svc p {
+  margin: 0 0 1.4rem;
+  font-size: 0.93rem;
+  line-height: 1.6;
+  color: var(--dim);
+}
+.alt-svc-stack {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* ---------- WORK ---------- */
+.alt-work { margin: 3.5rem 0 3rem; }
+.alt-entry {
+  padding: 3rem 0;
+  border-top: 1px solid var(--line);
+}
+.alt-entry-kicker {
+  margin: 0 0 0.8rem;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.alt-entry h3 {
+  margin: 0;
+  font-size: clamp(1.9rem, 4.4vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+.alt-entry-scale {
+  margin: 0.9rem 0 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.alt-entry-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1.6rem 0 1.8rem; }
+.alt-entry-desc {
+  max-width: 62ch;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.62;
+  color: var(--dim);
+}
+.alt-entry-points {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.4rem;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.alt-entry-points li { font-size: 0.86rem; line-height: 1.55; color: var(--dim); }
+.alt-entry-points b {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* ---------- PROCESS ---------- */
+.alt-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 2.5rem;
+  margin-top: 3.5rem;
+}
+.alt-step h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.alt-step p { margin: 0; font-size: 0.92rem; line-height: 1.6; color: var(--dim); }
+
+/* ---------- KIT ---------- */
+.alt-kit { margin-top: 3.5rem; }
+.alt-kit-row {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: 1rem 2.5rem;
+  padding: 1.6rem 0;
+  border-top: 1px solid var(--line);
+}
+.alt-kit-row h3 {
+  margin: 0;
+  padding-top: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.alt-kit-row p { margin: 0; font-size: 1.1rem; line-height: 1.5; }
+
+/* ---------- CONTACT ---------- */
+.alt-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 3rem;
+  margin-top: 3.5rem;
+  align-items: start;
+}
+.alt-lines { margin: 0; padding: 0; list-style: none; }
+.alt-lines li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.5rem;
+  padding: 1.2rem 0;
+  border-top: 1px solid var(--line);
+}
+.alt-lines span {
+  flex: 0 0 7rem;
+  padding-top: 0.25rem;
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.alt-lines a, .alt-lines em { font-size: 1.02rem; font-style: normal; }
+.alt-lines a { border-bottom: 1px solid var(--line); }
+.alt-lines a:hover { border-color: var(--ink); }
+
+/* the shared form, restyled for this page */
+.alt .cform {
+  margin: 0;
+  background: var(--panel);
+  border-color: var(--line);
+  border-radius: 18px;
+}
+.alt .cform h3 { font-family: inherit; font-size: 1.05rem; font-weight: 700; text-transform: uppercase; }
+.alt .cform label span { font-family: inherit; letter-spacing: 0.15em; }
+.alt .cform .btn {
+  padding: 0.85rem 1.7rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ground);
+  background: var(--ink);
+  border: 0;
+  border-radius: 999px;
+}
+
+.alt-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 2rem clamp(1.2rem, 4vw, 3rem) 3rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+  border-top: 1px solid var(--line);
+}
+.alt-foot a:hover { color: var(--ink); }
+
+/* the marquee is shared, so its accent is neutralised here */
+.alt .marquee-track i { background: var(--faint); }
+
+/* ---------- THE GLOBE ---------- */
+.alt-globe {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(3rem, 7vw, 6rem) clamp(1.2rem, 4vw, 3rem) clamp(4rem, 8vw, 7rem);
+}
+.alt-globe-kicker {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 2.4rem;
+  font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink);
+  /* the globe glows behind it, so it needs its own ground */
+  text-shadow: 0 1px 14px rgba(5, 8, 15, 0.95), 0 0 4px rgba(5, 8, 15, 0.9);
+}
+.alt-globe .cube-slot { height: min(440px, 52vh); }
+.alt-globe .hero-hint {
+  font-size: clamp(0.8rem, 1.4vw, 0.95rem);
+  letter-spacing: 0.18em;
+  color: var(--dim);
+}
+
+/* ---------- SERVICE ICONS ---------- */
+.alt-svc-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 1.4rem;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  transition: background 0.25s, color 0.25s;
+}
+.alt-svc-icon svg { width: 18px; height: 18px; }
+.alt-svc:hover .alt-svc-icon { background: var(--ink); color: var(--ground); }
+
+/* ---------- WORK THUMBNAILS ---------- */
+.alt-entry { position: relative; }
+.alt-shot {
+  position: relative;
+  display: block;
+  float: right;
+  width: min(26rem, 38%);
+  margin: 0 0 1.5rem 2.5rem;
+  padding: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.alt-shot img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top center;
+  opacity: 0.78;
+  transition: opacity 0.3s, transform 0.5s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+.alt-shot:hover img { opacity: 1; transform: scale(1.03); }
+.alt-shot-go {
+  position: absolute;
+  left: 50%;
+  bottom: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ground);
+  background: var(--ink);
+  border-radius: 999px;
+  transform: translate(-50%, 0.6rem);
+  opacity: 0;
+  transition: opacity 0.25s, transform 0.25s;
+}
+.alt-shot-go svg { width: 11px; height: 11px; }
+.alt-shot:hover .alt-shot-go,
+.alt-shot:focus-visible .alt-shot-go { opacity: 1; transform: translate(-50%, 0); }
+@media (max-width: 760px) {
+  .alt-shot { float: none; width: 100%; margin: 0 0 1.5rem; }
+}
+
+/* ---------- TOOL WALL ---------- */
+.alt-wall-sec { padding-top: 0; }
+.alt-wall {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+.alt-wall-cell {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  background: var(--ground);
+  transition: background 0.3s;
+}
+.alt-wall-cell img {
+  width: 30%;
+  min-width: 26px;
+  /* the marks are single-colour black, so inverting is what makes them legible */
+  filter: invert(1);
+  opacity: 0.42;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.alt-wall-cell:hover { background: var(--panel); }
+.alt-wall-cell:hover img { opacity: 1; transform: scale(1.12); }
+
+/* ---------- MOTION ---------- */
+.alt-status i {
+  box-shadow: 0 0 0 0 rgba(77, 220, 150, 0.65);
+  animation: alt-ping 2.6s ease-out infinite;
+}
+@keyframes alt-ping {
+  70% { box-shadow: 0 0 0 7px rgba(77, 220, 150, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(77, 220, 150, 0); }
+}
+.alt-pill svg { transition: transform 0.25s; }
+.alt-pill:hover svg { transform: translate(2px, -2px); }
+.alt-entry h3 { transition: opacity 0.25s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .alt-status i { animation: none; }
+  .alt-shot img, .alt-pill svg, .alt-wall-cell img { transition: none; }
+}
+
+/* The globe is shared with the main site, where it is brass. On this page that
+   would be the only warm thing on a cold layout, so it is shifted to steel.
+   Delete this rule to get the gold one back. */
+.alt-globe .cube-canvas {
+  filter: hue-rotate(178deg) saturate(0.7) brightness(1.08);
+}

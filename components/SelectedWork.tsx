@@ -14,10 +14,13 @@ export default function SelectedWork() {
     <section id="work" className="section">
       <div className="wrap">
         <Reveal>
-          <h2 className="h2">Selected work</h2>
-          <p className="lede">
-            Six, written up in full: the problem, what I built, and the part that nearly did not work.
-          </p>
+          <header className="sec-head">
+            <span className="sec-n">02</span>
+            <h2 className="sec-h">Selected work</h2>
+            <p className="sec-lede">
+              Six, written up in full: the problem, what I built, and the part that nearly did not work.
+            </p>
+          </header>
         </Reveal>
 
         <div className="sw-list">

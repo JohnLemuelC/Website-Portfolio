@@ -14,12 +14,15 @@ export type CaseStudy = {
   hardPart: string;
   result: string;
   scale?: string;
+  /** a real screenshot, not a logo, where one exists */
+  thumb?: string;
   live?: { href: string; label: string };
 };
 
 export const CASE_STUDIES: CaseStudy[] = [
   {
     key: "Housing Portal + Zoho CRM Sync",
+    thumb: "/images/projects/housing-portal.svg",
     kicker: "Client project · Portal and CRM integration",
     client: "A UK property group",
     platform: "Web, on their existing site",
@@ -51,6 +54,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     key: "Prism Marketing Dashboard",
+    thumb: "/images/demos/prism.webp",
     kicker: "Client project · Reporting warehouse",
     client: "A 187-account marketing agency",
     platform: "Web",
@@ -82,6 +86,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     key: "Grace Inbound AI Receptionist",
+    thumb: "/images/demos/ai-receptionist.webp",
     kicker: "Client project · Voice AI",
     client: "A land buying company",
     platform: "Phone, inbound and outbound",
@@ -113,6 +118,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     key: "Google Ads MCP Server",
+    thumb: "/images/projects/Google Ads MCP Server.png",
     kicker: "Own product · Open source",
     client: "My own, published open source",
     platform: "Any MCP client (Claude, ChatGPT)",
@@ -143,6 +149,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     key: "Pipedrive to Google Ads",
+    thumb: "/images/projects/n8n-workflows.png",
     kicker: "Client project · Attribution",
     client: "A B2B agency client",
     platform: "n8n workflow",
@@ -173,6 +180,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     key: "Copy Chief AI",
+    thumb: "/images/projects/copy-chief.png",
     kicker: "Client project · AI evaluation",
     client: "A direct response marketing team",
     platform: "Web",

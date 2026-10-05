@@ -8,9 +8,9 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 // where each mark ends up once the globe opens out
 const LOGOS = [
   // Row 1, the AI and automation layer
-  { file: "anthropic", name: "Claude", color: "#F2EFE8", x: -0.97, y: -0.40, z: 0.20, s: 1.25 },
-  { file: "openai", name: "OpenAI", color: "#EDEAF4", x: -0.645, y: -0.40, z: -0.24, s: 1.1 },
-  { file: "modelcontextprotocol", name: "MCP", color: "#E9E5F2", x: -0.32, y: -0.40, z: 0.12, s: 1.0 },
+  { file: "anthropic", name: "Claude", color: "#F6F0E4", x: -0.97, y: -0.40, z: 0.20, s: 1.25 },
+  { file: "openai", name: "OpenAI", color: "#F3EDE1", x: -0.645, y: -0.40, z: -0.24, s: 1.1 },
+  { file: "modelcontextprotocol", name: "MCP", color: "#EFE8DA", x: -0.32, y: -0.40, z: 0.12, s: 1.0 },
   { file: "n8n", name: "n8n", color: "#EA4B71", x: 0.005, y: -0.40, z: -0.18, s: 1.1 },
   { file: "make", name: "Make", color: "#9D5BFF", x: 0.33, y: -0.40, z: 0.26, s: 1.0 },
   { file: "zapier", name: "Zapier", color: "#FF6A33", x: 0.655, y: -0.40, z: -0.12, s: 0.95 },
@@ -20,9 +20,9 @@ const LOGOS = [
   { file: "python", name: "Python", color: "#4B8BBE", x: -0.97, y: -0.135, z: -0.16, s: 1.05 },
   { file: "typescript", name: "TypeScript", color: "#3178C6", x: -0.645, y: -0.135, z: 0.24, s: 0.95 },
   { file: "react", name: "React", color: "#61DAFB", x: -0.32, y: -0.135, z: -0.28, s: 1.15 },
-  { file: "nextdotjs", name: "Next.js", color: "#F2EFE8", x: 0.005, y: -0.135, z: 0.18, s: 0.95 },
+  { file: "nextdotjs", name: "Next.js", color: "#F6F0E4", x: 0.005, y: -0.135, z: 0.18, s: 0.95 },
   { file: "trpc", name: "tRPC", color: "#39A7D4", x: 0.33, y: -0.135, z: -0.10, s: 0.9 },
-  { file: "railway", name: "Railway", color: "#E7E4F0", x: 0.655, y: -0.135, z: 0.28, s: 0.9 },
+  { file: "railway", name: "Railway", color: "#EDE6D8", x: 0.655, y: -0.135, z: 0.28, s: 0.9 },
   { file: "supabase", name: "Supabase", color: "#3FCF8E", x: 0.98, y: -0.135, z: -0.20, s: 1.0 },
 
   // Row 3, where the data sits. staggered against the rows above and below
@@ -39,7 +39,7 @@ const LOGOS = [
   { file: "meta", name: "Meta Ads", color: "#2E9BFF", x: -0.16, y: 0.40, z: -0.12, s: 1.0 },
   { file: "linkedin", name: "LinkedIn Ads", color: "#2D8FE0", x: 0.165, y: 0.40, z: 0.18, s: 0.9 },
   { file: "zoho", name: "Zoho CRM", color: "#E8474B", x: 0.49, y: 0.40, z: -0.26, s: 0.9 },
-  { file: "slack", name: "Slack", color: "#ECE6EE", x: 0.815, y: 0.40, z: 0.10, s: 0.95 },
+  { file: "slack", name: "Slack", color: "#F0EADC", x: 0.815, y: 0.40, z: 0.10, s: 0.95 },
 ];
 
 const RASTER = 256;
@@ -257,12 +257,13 @@ export default function GlobeStack() {
     const px: number[] = [];
     const py: number[] = [];
     const pd: number[] = [];
+    // brass, not blue. far dots sit back in bronze, near ones come up to bone.
     const shades = [
-      "rgba(96,140,235,0.55)",
-      "rgba(118,168,250,0.72)",
-      "rgba(152,202,255,0.86)",
-      "rgba(196,228,255,0.96)",
-      "rgba(238,248,255,1)",
+      "rgba(150,112,52,0.58)",
+      "rgba(186,146,74,0.74)",
+      "rgba(216,180,110,0.88)",
+      "rgba(238,214,163,0.97)",
+      "rgba(250,243,228,1)",
     ];
     const buckets: number[][] = [[], [], [], [], []];
 
@@ -298,8 +299,8 @@ export default function GlobeStack() {
       const gy = cy - R * 0.15;
       if (globeAlpha > 0.01) {
         const halo = ctx.createRadialGradient(cx, gy, R * 0.86, cx, gy, R * 1.62);
-        halo.addColorStop(0, `rgba(78,148,255,${(0.42 * globeAlpha).toFixed(3)})`);
-        halo.addColorStop(0.3, `rgba(86,132,252,${(0.17 * globeAlpha).toFixed(3)})`);
+        halo.addColorStop(0, `rgba(201,160,78,${(0.4 * globeAlpha).toFixed(3)})`);
+        halo.addColorStop(0.3, `rgba(170,128,60,${(0.16 * globeAlpha).toFixed(3)})`);
         halo.addColorStop(1, "rgba(5,7,13,0)");
         ctx.fillStyle = halo;
         ctx.beginPath();
@@ -308,9 +309,9 @@ export default function GlobeStack() {
 
         // the body of it, lit from the upper left
         const body = ctx.createRadialGradient(cx - R * 0.34, gy - R * 0.38, R * 0.1, cx, gy, R);
-        body.addColorStop(0, `rgba(26,48,98,${(0.95 * globeAlpha).toFixed(3)})`);
-        body.addColorStop(0.55, `rgba(13,24,56,${(0.92 * globeAlpha).toFixed(3)})`);
-        body.addColorStop(1, `rgba(6,10,26,${(0.86 * globeAlpha).toFixed(3)})`);
+        body.addColorStop(0, `rgba(58,46,28,${(0.95 * globeAlpha).toFixed(3)})`);
+        body.addColorStop(0.55, `rgba(30,26,22,${(0.93 * globeAlpha).toFixed(3)})`);
+        body.addColorStop(1, `rgba(10,12,18,${(0.9 * globeAlpha).toFixed(3)})`);
         ctx.fillStyle = body;
         ctx.beginPath();
         ctx.arc(cx, gy, R, 0, Math.PI * 2);
@@ -318,9 +319,9 @@ export default function GlobeStack() {
 
         // bright limb, so the sphere has an edge to read against
         const rim = ctx.createRadialGradient(cx, gy, R * 0.88, cx, gy, R * 1.04);
-        rim.addColorStop(0, "rgba(96,164,255,0)");
-        rim.addColorStop(0.72, `rgba(124,186,255,${(0.5 * globeAlpha).toFixed(3)})`);
-        rim.addColorStop(1, "rgba(150,200,255,0)");
+        rim.addColorStop(0, "rgba(214,176,106,0)");
+        rim.addColorStop(0.72, `rgba(228,196,134,${(0.55 * globeAlpha).toFixed(3)})`);
+        rim.addColorStop(1, "rgba(240,214,164,0)");
         ctx.fillStyle = rim;
         ctx.beginPath();
         ctx.arc(cx, gy, R * 1.04, 0, Math.PI * 2);
@@ -362,7 +363,7 @@ export default function GlobeStack() {
           if (a <= 0.01) continue;
           const rr = R * (1.02 + i * 0.07);
           const rot = t * (0.12 + i * 0.05) * (i % 2 ? -1 : 1);
-          ctx.strokeStyle = `rgba(142,186,255,${a.toFixed(3)})`;
+          ctx.strokeStyle = `rgba(206,170,104,${a.toFixed(3)})`;
           ctx.beginPath();
           ctx.ellipse(cx, gy, rr, rr * (0.26 + i * 0.07), rot, 0, Math.PI * 2);
           ctx.stroke();
@@ -398,7 +399,7 @@ export default function GlobeStack() {
           const d = pd[i];
           const r = nodes[i].r * d * (dot * 1.15);
           const a = ease * d * 0.8;
-          ctx.fillStyle = `rgba(236,234,248,${a.toFixed(3)})`;
+          ctx.fillStyle = `rgba(243,238,228,${a.toFixed(3)})`;
           ctx.beginPath();
           ctx.arc(px[i], py[i], r, 0, Math.PI * 2);
           ctx.fill();
@@ -424,8 +425,8 @@ export default function GlobeStack() {
           if (a <= 0.02) continue;
 
           const g = ctx.createRadialGradient(o.sx, o.sy, 0, o.sx, o.sy, size * 0.95);
-          g.addColorStop(0, `rgba(150,160,230,${(0.18 * depth * ease).toFixed(3)})`);
-          g.addColorStop(1, "rgba(150,160,230,0)");
+          g.addColorStop(0, `rgba(200,168,104,${(0.18 * depth * ease).toFixed(3)})`);
+          g.addColorStop(1, "rgba(200,168,104,0)");
           ctx.fillStyle = g;
           ctx.beginPath();
           ctx.arc(o.sx, o.sy, size * 0.95, 0, Math.PI * 2);
