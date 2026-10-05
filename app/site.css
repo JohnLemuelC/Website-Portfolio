@@ -4,7 +4,7 @@
 .alt {
   --ink: #f3f3f0;
   --dim: #99a3b5;
-  --faint: #697487;
+  --faint: #8793a8;
   --line: rgba(200, 214, 240, 0.15);
   --panel: #0c121d;
   --ground: #05080f;
@@ -23,7 +23,9 @@ body:has(.alt) .starfield { display: none; }
 
 .alt-nav {
   display: flex;
-  justify-content: space-between;
+  /* grouped rather than stretched edge to edge, which left huge gaps on a wide screen */
+  justify-content: flex-start;
+  gap: clamp(1.4rem, 3vw, 3rem);
   padding: 1.6rem clamp(1.2rem, 4vw, 3rem);
   font-size: clamp(0.8rem, 1.6vw, 1.1rem);
   font-weight: 600;
@@ -38,79 +40,102 @@ body:has(.alt) .starfield { display: none; }
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 92vh;
-  padding: 0 clamp(1.2rem, 4vw, 3rem) 2.5rem;
+  min-height: calc(100vh - 5.2rem);
+  padding: 0 clamp(1.2rem, 4vw, 3rem) 1.6rem;
 }
 .alt-wordmark {
   position: relative;
   z-index: 2;
   margin: 0;
-  padding-top: 0.5rem;
-  font-family: "Anton", "Archivo", system-ui, sans-serif;
-  font-size: clamp(2.6rem, 11.6vw, 11rem);
-  font-weight: 400;
-  line-height: 0.92;
-  letter-spacing: 0.005em;
+  font-family: "Archivo", system-ui, sans-serif;
+  font-size: clamp(2rem, 9.1vw, 8.8rem);
+  font-weight: 700;
+  line-height: 0.86;
+  letter-spacing: -0.035em;
   text-transform: uppercase;
   white-space: nowrap;
-  /* hollow: the stroke is the letterform, there is no fill */
+  padding-bottom: 0.1em;
+  background: linear-gradient(180deg, #ffffff 10%, #cfcfca 48%, #4a4a47 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
-  -webkit-text-stroke: clamp(1px, 0.16vw, 2.2px) rgba(243, 243, 240, 0.9);
-  background: none;
-  -webkit-background-clip: border-box;
-  background-clip: border-box;
+  -webkit-text-stroke: 0;
 }
 
-/* the portrait lives below the name now, never across it */
+/* the portrait lives below the name now, never across it.
+   the portrait and the statement are a row, so the words sit against
+   the shoulder rather than floating at the far edge of the screen. */
 .alt-hero-mid {
+  /* the photo is the anchor, dead centre of the viewport, and the statement
+     hangs off its right edge. half-photo is derived from its own caps:
+     width = height x 0.733, so half-width = 0.367 x whatever bounds the height. */
+  /* equal side columns put the photo dead centre; the statement takes the
+     right one. being real grid items, neither can overflow upward in silence. */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: end;
+  column-gap: clamp(1rem, 2.5vw, 2.4rem);
   position: relative;
   flex: 1 1 auto;
   min-height: 0;
+  /* the pair is allowed to rise into the wordmark. partial overlap is fine,
+     it just must not swallow the surname. */
+  margin-top: -7vh;
 }
-.alt-hero-side {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 1.6rem;
-  margin: 0;
-  text-align: right;
-  transform: translateY(-50%);
-}
-.alt-hero-side dt {
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--faint);
-}
-.alt-hero-side dd {
-  margin: 0.35rem 0 0;
-  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-
 .alt-portrait {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
+  grid-column: 2;
+  justify-self: center;
   width: auto;
-  max-width: min(40rem, 70vw);
-  height: 100%;
+  /* height:100% against an auto-height parent falls back to the intrinsic
+     size, which pushed the footer off screen. bound it to the viewport. */
+  height: auto;
+  max-height: 64vh;
+  max-width: min(40rem, 40vw);
   object-fit: contain;
   object-position: bottom center;
-  transform: translateX(-50%);
   /* drained of colour so it sits in a monochrome page, and faded at the hem */
   filter: grayscale(1) contrast(1.12) brightness(0.96);
   mask-image: linear-gradient(180deg, #000 76%, transparent 99%);
   -webkit-mask-image: linear-gradient(180deg, #000 76%, transparent 99%);
   pointer-events: none;
 }
+.alt-hero-side {
+  /* pinned to the photo's right edge, sharing its baseline */
+  grid-column: 3;
+  margin: 0;
+  text-align: left;
+  /* the type is sized against this column, not the viewport, so a narrow
+     column can never force an extra wrap and blow the height out */
+  container-type: inline-size;
+}
+.alt-hero-side p {
+  margin: 0;
+  font-family: "Archivo", system-ui, sans-serif;
+  /* the vh term is what keeps the block from outgrowing the portrait
+     beside it, which a width-only clamp cannot do on a short window */
+  font-size: max(1.2rem, min(7rem, 21cqw, 8.3vh));
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.alt-hero-side p em {
+  font-style: normal;
+  color: var(--faint);
+}
+/* the double rule under it, from the sketch */
+.alt-hero-side span {
+  display: block;
+  flex: 0 0 auto;
+  width: 9rem;
+  height: 0;
+  margin: 1.5rem auto 0 0;
+  padding-top: 5px;
+  border-top: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+
 .alt-hero-foot {
   position: relative;
   z-index: 1;
@@ -601,13 +626,6 @@ body:has(.alt) .starfield { display: none; }
   .alt-shot img, .alt-pill svg, .alt-wall-cell img { transition: none; }
 }
 
-/* The globe is shared with the main site, where it is brass. On this page that
-   would be the only warm thing on a cold layout, so it is shifted to steel.
-   Delete this rule to get the gold one back. */
-.alt-globe .cube-canvas {
-  filter: hue-rotate(178deg) saturate(0.7) brightness(1.08);
-}
-
 /* ---------- ASKJOHN, in this layout's clothes ---------- */
 body:has(.alt) .ask-form,
 body:has(.alt) .ask-panel {
@@ -746,15 +764,61 @@ body:has(.alt) .case-card-go::after,
 body:has(.alt) .case-nav button:hover { color: #f3f3f0; }
 
 @media (max-width: 860px) {
-  .alt-hero-side {
-    position: static;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-top: 1.5rem;
-    text-align: left;
-    transform: none;
+  .alt-hero-mid { display: flex; flex-direction: column; align-items: center; min-height: 0; }
+  .alt-portrait { height: auto; max-width: 62vw; max-height: 17rem; }
+  .alt-hero-side { width: 100%; margin-top: 1.2rem; }
+  .alt-hero-mid { margin-top: 0; }
+  /* a phone scrolls anyway, so the hero sizes to its content rather than
+     forcing a screen height the stacked layout cannot fit into */
+  .alt-hero { min-height: auto; padding-bottom: 1.2rem; }
+  /* stacked, the column is the full screen width, so the container sizing
+     has to be capped or eight lines run off the bottom */
+  .alt-hero-side p { font-size: max(1.05rem, min(1.95rem, 10cqw)); }
+  .alt-hero-side span { margin-top: 1rem; width: 6rem; }
+}
+
+/* ---------- TAP TARGETS ----------
+   Links were 19 to 27px tall on a phone. WCAG 2.2 wants 24 minimum and
+   the platform guidance is 44, so these get padding rather than more type. */
+@media (max-width: 560px) {
+  .alt-nav {
+    flex-wrap: wrap;
+    gap: 0.2rem 1rem;
+    justify-content: flex-start;
   }
-  .alt-hero-mid { min-height: 22rem; }
-  .alt-portrait { max-width: 86vw; }
+  .alt-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.1rem;
+  }
+  .alt-lines a,
+  .alt-lines em {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .alt-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  .alt-foot a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .alt .work-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+  }
+}
+
+/* On a short window the wordmark and the footer eat a bigger share of the
+   screen, so the pair has to come down or the footer drops below the fold. */
+@media (max-height: 780px) and (min-width: 861px) {
+  .alt-portrait { max-height: 56vh; }
+  .alt-hero-side p { font-size: max(1.2rem, min(7rem, 21cqw, 7.3vh)); }
 }

@@ -259,11 +259,11 @@ export default function GlobeStack() {
     const pd: number[] = [];
     // brass, not blue. far dots sit back in bronze, near ones come up to bone.
     const shades = [
-      "rgba(150,112,52,0.58)",
-      "rgba(186,146,74,0.74)",
-      "rgba(216,180,110,0.88)",
-      "rgba(238,214,163,0.97)",
-      "rgba(250,243,228,1)",
+      "rgba(72,96,140,0.58)",
+      "rgba(104,136,186,0.74)",
+      "rgba(150,182,226,0.9)",
+      "rgba(198,222,250,0.97)",
+      "rgba(238,246,255,1)",
     ];
     const buckets: number[][] = [[], [], [], [], []];
 
@@ -299,8 +299,8 @@ export default function GlobeStack() {
       const gy = cy - R * 0.15;
       if (globeAlpha > 0.01) {
         const halo = ctx.createRadialGradient(cx, gy, R * 0.86, cx, gy, R * 1.62);
-        halo.addColorStop(0, `rgba(201,160,78,${(0.4 * globeAlpha).toFixed(3)})`);
-        halo.addColorStop(0.3, `rgba(170,128,60,${(0.16 * globeAlpha).toFixed(3)})`);
+        halo.addColorStop(0, `rgba(96,140,210,${(0.42 * globeAlpha).toFixed(3)})`);
+        halo.addColorStop(0.3, `rgba(80,112,176,${(0.17 * globeAlpha).toFixed(3)})`);
         halo.addColorStop(1, "rgba(5,7,13,0)");
         ctx.fillStyle = halo;
         ctx.beginPath();
@@ -309,9 +309,9 @@ export default function GlobeStack() {
 
         // the body of it, lit from the upper left
         const body = ctx.createRadialGradient(cx - R * 0.34, gy - R * 0.38, R * 0.1, cx, gy, R);
-        body.addColorStop(0, `rgba(58,46,28,${(0.95 * globeAlpha).toFixed(3)})`);
-        body.addColorStop(0.55, `rgba(30,26,22,${(0.93 * globeAlpha).toFixed(3)})`);
-        body.addColorStop(1, `rgba(10,12,18,${(0.9 * globeAlpha).toFixed(3)})`);
+        body.addColorStop(0, `rgba(26,38,62,${(0.95 * globeAlpha).toFixed(3)})`);
+        body.addColorStop(0.55, `rgba(14,22,40,${(0.93 * globeAlpha).toFixed(3)})`);
+        body.addColorStop(1, `rgba(6,9,16,${(0.9 * globeAlpha).toFixed(3)})`);
         ctx.fillStyle = body;
         ctx.beginPath();
         ctx.arc(cx, gy, R, 0, Math.PI * 2);
@@ -319,9 +319,9 @@ export default function GlobeStack() {
 
         // bright limb, so the sphere has an edge to read against
         const rim = ctx.createRadialGradient(cx, gy, R * 0.88, cx, gy, R * 1.04);
-        rim.addColorStop(0, "rgba(214,176,106,0)");
-        rim.addColorStop(0.72, `rgba(228,196,134,${(0.55 * globeAlpha).toFixed(3)})`);
-        rim.addColorStop(1, "rgba(240,214,164,0)");
+        rim.addColorStop(0, "rgba(130,170,228,0)");
+        rim.addColorStop(0.72, `rgba(156,192,240,${(0.55 * globeAlpha).toFixed(3)})`);
+        rim.addColorStop(1, "rgba(180,208,248,0)");
         ctx.fillStyle = rim;
         ctx.beginPath();
         ctx.arc(cx, gy, R * 1.04, 0, Math.PI * 2);
@@ -363,7 +363,7 @@ export default function GlobeStack() {
           if (a <= 0.01) continue;
           const rr = R * (1.02 + i * 0.07);
           const rot = t * (0.12 + i * 0.05) * (i % 2 ? -1 : 1);
-          ctx.strokeStyle = `rgba(206,170,104,${a.toFixed(3)})`;
+          ctx.strokeStyle = `rgba(138,174,224,${a.toFixed(3)})`;
           ctx.beginPath();
           ctx.ellipse(cx, gy, rr, rr * (0.26 + i * 0.07), rot, 0, Math.PI * 2);
           ctx.stroke();
@@ -425,8 +425,8 @@ export default function GlobeStack() {
           if (a <= 0.02) continue;
 
           const g = ctx.createRadialGradient(o.sx, o.sy, 0, o.sx, o.sy, size * 0.95);
-          g.addColorStop(0, `rgba(200,168,104,${(0.18 * depth * ease).toFixed(3)})`);
-          g.addColorStop(1, "rgba(200,168,104,0)");
+          g.addColorStop(0, `rgba(150,180,224,${(0.18 * depth * ease).toFixed(3)})`);
+          g.addColorStop(1, "rgba(150,180,224,0)");
           ctx.fillStyle = g;
           ctx.beginPath();
           ctx.arc(o.sx, o.sy, size * 0.95, 0, Math.PI * 2);

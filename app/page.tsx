@@ -102,24 +102,23 @@ export default function Home() {
         <h1 className="alt-wordmark">John Culinares</h1>
         <div className="alt-hero-mid">
           <img className="alt-portrait" src={`${BASE}/images/headshot/john-cutout.webp`} alt="John Lemuel Culinares" />
-          <dl className="alt-hero-side">
-            <div>
-              <dt>Building since</dt>
-              <dd>2022</dd>
-            </div>
-            <div>
-              <dt>Shipped</dt>
-              <dd>30 projects</dd>
-            </div>
-            <div>
-              <dt>Clients in</dt>
-              <dd>UK · US · AU</dd>
-            </div>
-            <div>
-              <dt>Works</dt>
-              <dd>UK and US hours</dd>
-            </div>
-          </dl>
+          <div className="alt-hero-side">
+            <p>
+              {/* broken by hand so the block is a fixed eight lines. a predictable
+                  line count is what lets the type be sized to match the photo. */}
+              Most<br />
+              of the<br />
+              work<br />
+              draining<br />
+              your<br />
+              team<br />
+              <em>
+                can run<br />
+                itself.
+              </em>
+            </p>
+            <span aria-hidden="true" />
+          </div>
         </div>
         <div className="alt-hero-foot">
           <div>
@@ -127,9 +126,7 @@ export default function Home() {
               <i aria-hidden="true" />
               Open to new projects
             </span>
-            <p className="alt-tagline">
-              An AI automation specialist building the systems that take repetitive work off your team
-            </p>
+            <p className="alt-tagline">AI automation specialist · Philippines</p>
           </div>
           <a className="alt-pill" href="#contact">
             Contact me <Arrow />
