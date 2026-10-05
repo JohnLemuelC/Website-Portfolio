@@ -42,23 +42,68 @@ body:has(.alt) .starfield { display: none; }
   padding: 0 clamp(1.2rem, 4vw, 3rem) 2.5rem;
 }
 .alt-wordmark {
+  position: relative;
+  z-index: 2;
   margin: 0;
-  font-size: clamp(2rem, 9.1vw, 8.8rem);
-  font-weight: 700;
-  line-height: 0.86;
-  letter-spacing: -0.035em;
+  padding-top: 0.5rem;
+  font-family: "Anton", "Archivo", system-ui, sans-serif;
+  font-size: clamp(2.6rem, 11.6vw, 11rem);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: 0.005em;
   text-transform: uppercase;
   white-space: nowrap;
-  background: linear-gradient(180deg, #ffffff 10%, #cfcfca 48%, #4a4a47 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
+  /* hollow: the stroke is the letterform, there is no fill */
   color: transparent;
+  -webkit-text-stroke: clamp(1px, 0.16vw, 2.2px) rgba(243, 243, 240, 0.9);
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
 }
+
+/* the portrait lives below the name now, never across it */
+.alt-hero-mid {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.alt-hero-side {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  margin: 0;
+  text-align: right;
+  transform: translateY(-50%);
+}
+.alt-hero-side dt {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.alt-hero-side dd {
+  margin: 0.35rem 0 0;
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
 .alt-portrait {
   position: absolute;
   left: 50%;
   bottom: 0;
-  width: min(44rem, 78vw);
+  width: auto;
+  max-width: min(40rem, 70vw);
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
   transform: translateX(-50%);
   /* drained of colour so it sits in a monochrome page, and faded at the hem */
   filter: grayscale(1) contrast(1.12) brightness(0.96);
@@ -699,3 +744,17 @@ body:has(.alt) .case-body h3 { color: var(--ink, #f3f3f0); }
 body:has(.alt) .case-count b { color: #f3f3f0; }
 body:has(.alt) .case-card-go::after,
 body:has(.alt) .case-nav button:hover { color: #f3f3f0; }
+
+@media (max-width: 860px) {
+  .alt-hero-side {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+    text-align: left;
+    transform: none;
+  }
+  .alt-hero-mid { min-height: 22rem; }
+  .alt-portrait { max-width: 86vw; }
+}

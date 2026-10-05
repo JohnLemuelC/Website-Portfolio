@@ -100,7 +100,27 @@ export default function Home() {
       {/* HERO */}
       <section className="alt-hero">
         <h1 className="alt-wordmark">John Culinares</h1>
-        <img className="alt-portrait" src={`${BASE}/images/headshot/john-cutout.webp`} alt="John Lemuel Culinares" />
+        <div className="alt-hero-mid">
+          <img className="alt-portrait" src={`${BASE}/images/headshot/john-cutout.webp`} alt="John Lemuel Culinares" />
+          <dl className="alt-hero-side">
+            <div>
+              <dt>Building since</dt>
+              <dd>2022</dd>
+            </div>
+            <div>
+              <dt>Shipped</dt>
+              <dd>30 projects</dd>
+            </div>
+            <div>
+              <dt>Clients in</dt>
+              <dd>UK · US · AU</dd>
+            </div>
+            <div>
+              <dt>Works</dt>
+              <dd>UK and US hours</dd>
+            </div>
+          </dl>
+        </div>
         <div className="alt-hero-foot">
           <div>
             <span className="alt-status">
