@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./site.css";
 import NavPill from "@/components/NavPill";
 import AskBar from "@/components/AskBar";
 

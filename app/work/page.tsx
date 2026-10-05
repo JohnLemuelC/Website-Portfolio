@@ -22,7 +22,7 @@ export default function Work() {
   const sections = filter === "All" ? projectSections : projectSections.filter((s) => s.label === filter);
 
   return (
-    <main className="work">
+    <main className="alt work">
       <header className="work-head">
         <div className="wrap">
           <a className="work-back" href={`${BASE}/`}>

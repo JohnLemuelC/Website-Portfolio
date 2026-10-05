@@ -16,9 +16,9 @@
 }
 .alt ::selection { background: rgba(243, 243, 240, 0.25); }
 
-/* the main site's furniture does not belong on this route */
+/* this layout brings its own nav and ground, so the old furniture goes.
+   AskJohn stays, restyled below, because nothing else on the page does its job. */
 body:has(.alt) .navpill,
-body:has(.alt) .askbar,
 body:has(.alt) .starfield { display: none; }
 
 .alt-nav {
@@ -562,3 +562,140 @@ body:has(.alt) .starfield { display: none; }
 .alt-globe .cube-canvas {
   filter: hue-rotate(178deg) saturate(0.7) brightness(1.08);
 }
+
+/* ---------- ASKJOHN, in this layout's clothes ---------- */
+body:has(.alt) .ask-form,
+body:has(.alt) .ask-panel {
+  font-family: "Archivo", system-ui, sans-serif;
+  background: #0b1018;
+  border-color: rgba(200, 214, 240, 0.16);
+}
+body:has(.alt) .ask-name {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+body:has(.alt) .ask-dot { background: #4ddc96; }
+body:has(.alt) .ask-form input { color: #f3f3f0; }
+body:has(.alt) .ask-form input::placeholder { color: #697487; }
+body:has(.alt) .ask-form button {
+  color: #05080f;
+  background: #f3f3f0;
+}
+body:has(.alt) .ask-note,
+body:has(.alt) .ask-empty { color: #697487; }
+body:has(.alt) .ask-msg.a { color: #c6cedb; }
+body:has(.alt) .ask-suggest button {
+  font-family: inherit;
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #99a3b5;
+  border-color: rgba(200, 214, 240, 0.16);
+}
+body:has(.alt) .ask-suggest button:hover { color: #f3f3f0; border-color: #f3f3f0; }
+
+/* ---------- /work, carried over to this layout ---------- */
+.alt.work { padding-bottom: 0; }
+.alt .work-head { padding-top: 3rem; }
+.alt .work-h1,
+.alt .h2 {
+  font-family: "Archivo", system-ui, sans-serif;
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #ffffff 8%, #c8c8c3 50%, #4a4a47 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.alt .work-h1 { font-size: clamp(2.6rem, 8vw, 6.5rem); }
+.alt .h2 { font-size: clamp(2rem, 5vw, 3.4rem); }
+.alt .eyebrow,
+.alt .work-group-label,
+.alt .work-back {
+  font-family: "Archivo", system-ui, sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.alt .lede { color: var(--dim); }
+
+/* cards lose the rounded-box look to match the rest */
+.alt .work-card,
+.alt .demo-card,
+body:has(.alt) .case-card {
+  background: var(--panel);
+  border-color: var(--line);
+  border-radius: 14px;
+}
+.alt .work-card:hover,
+.alt .demo-card:hover,
+body:has(.alt) .case-card:hover {
+  background: #111826;
+  border-color: rgba(200, 214, 240, 0.34);
+}
+.alt .work-name,
+.alt .demo-title,
+body:has(.alt) .case-card-title {
+  font-family: "Archivo", system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.alt .work-scale,
+body:has(.alt) .case-card-scale {
+  font-family: "Archivo", system-ui, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+body:has(.alt) .case-card-n {
+  font-family: "Archivo", system-ui, sans-serif;
+  font-weight: 700;
+  color: rgba(200, 214, 240, 0.25);
+}
+.alt .work-filters button {
+  font-family: "Archivo", system-ui, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-color: var(--line);
+}
+.alt .work-filters button.on { color: var(--ground); background: var(--ink); border-color: var(--ink); }
+.alt .work-flags em { font-family: "Archivo", system-ui, sans-serif; letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* the case study drawer, same treatment */
+body:has(.alt) .case-panel { background: #080c14; border-color: var(--line); }
+body:has(.alt) .case-body > h2 {
+  font-family: "Archivo", system-ui, sans-serif;
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+body:has(.alt) .case-body h3,
+body:has(.alt) .case-count,
+body:has(.alt) .case-meta dt,
+body:has(.alt) .case-next span {
+  font-family: "Archivo", system-ui, sans-serif;
+  letter-spacing: 0.17em;
+  color: var(--faint);
+}
+body:has(.alt) .case-body h3 { color: var(--ink); }
+body:has(.alt) .case-scale { font-family: "Archivo", system-ui, sans-serif; color: var(--dim); }
+body:has(.alt) .case-hard { background: rgba(200, 214, 240, 0.05); border-left-color: var(--ink); }
+body:has(.alt) .case-features li { background: #080c14; }
+body:has(.alt) .case-next b { font-family: "Archivo", system-ui, sans-serif; font-weight: 700; text-transform: uppercase; }
+
+/* the drawer's section labels still carried the old accent */
+body:has(.alt) .case-body h3 { color: var(--ink, #f3f3f0); }
+body:has(.alt) .case-count b { color: #f3f3f0; }
+body:has(.alt) .case-card-go::after,
+body:has(.alt) .case-nav button:hover { color: #f3f3f0; }
