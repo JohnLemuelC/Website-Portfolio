@@ -3,6 +3,7 @@ import "./globals.css";
 import "./site.css";
 import NavPill from "@/components/NavPill";
 import AskBar from "@/components/AskBar";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "John Culinares | AI Automation & Systems Builder",
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NavPill />
         {children}
         <AskBar />
+        <Analytics />
       </body>
     </html>
   );
