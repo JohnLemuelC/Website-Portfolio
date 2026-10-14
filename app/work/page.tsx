@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Reveal from "@/components/Reveal";
 import VoiceSample from "@/components/VoiceSample";
+import CallAgents from "@/components/CallAgents";
 import CaseSheet from "@/components/CaseSheet";
 import { projectSections, demos, type Project } from "./data";
 import { CASE_STUDIES } from "./casestudies";
@@ -71,9 +72,15 @@ export default function Work() {
         <div className="wrap">
           <Reveal>
             <h2 className="h2">Hear one working</h2>
-            <p className="lede">A minute of an outbound qualification call for a land acquisition client.</p>
+            <p className="lede">
+              Three AI receptionists are live for a land acquisition client. One of them closed a deal on a cold
+              outbound call.
+            </p>
           </Reveal>
-          <Reveal delay={80}>
+          <Reveal delay={60}>
+            <CallAgents />
+          </Reveal>
+          <Reveal delay={120}>
             <VoiceSample />
           </Reveal>
         </div>

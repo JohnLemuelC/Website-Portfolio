@@ -86,7 +86,7 @@ export default function VoiceSample() {
   return (
     <div className="vs">
       <div className="vs-head">
-        <span className="vs-tag">Sample call</span>
+        <span className="vs-tag">Demo recording</span>
         <span className="vs-meta">Outbound seller qualification · Retell AI</span>
       </div>
 
@@ -138,6 +138,11 @@ export default function VoiceSample() {
       <p className="vs-caption">
         The agent verifies the property, checks whether it is owned outright, asks what the seller wants for it, and books
         the callback. No human on the line.
+      </p>
+      <p className="vs-disclaimer">
+        This is a demo recording, not a real customer call, and it runs a cut-down version of the agent. The live agents
+        handle interruptions, objections and far more of the conversation than this shows. Call the numbers above to hear
+        the full thing.
       </p>
 
       <button className="vs-toggle" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
