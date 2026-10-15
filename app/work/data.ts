@@ -171,7 +171,7 @@ export const projectSections: { label: string; projects: Project[] }[] = [
         desc: "Client portal built onto a UK property group's existing site, kept in step with Zoho CRM in both directions. Owners submit properties, care providers shortlist and request viewings, and records stop being typed twice. 650+ automated tests.",
         scale: "650+ tests, 264 records to 252",
         tags: ["TypeScript", "React", "tRPC", "Zoho CRM", "MySQL", "Railway"],
-        img: `${BASE}/images/projects/housing-portal.svg`,
+        img: `${BASE}/images/projects/housing-portal.webp`,
         color: "cyan",
         casestudy: `${BASE}/demos/housing-portal-casestudy.html`,
       },

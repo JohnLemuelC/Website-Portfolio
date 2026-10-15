@@ -22,7 +22,7 @@ export type CaseStudy = {
 export const CASE_STUDIES: CaseStudy[] = [
   {
     key: "Housing Portal + Zoho CRM Sync",
-    thumb: "/images/projects/housing-portal.svg",
+    thumb: "/images/projects/housing-portal.webp",
     kicker: "Client project · Portal and CRM integration",
     client: "A UK property group",
     platform: "Web, on their existing site",
