@@ -7,7 +7,7 @@ export type Project = {
   scale?: string;
   tags: string[];
   img: string;
-  images?: string[];
+  images?: (string | { src: string; caption?: string })[];
   color: string;
   demo?: string;
   casestudy?: string;
@@ -23,7 +23,7 @@ export const projectSections: { label: string; projects: Project[] }[] = [
         desc: "5-workflow system: keyword research to WordPress publishing, fully automated.",
         scale: "5 workflows, research to published",
         tags: ["N8N", "OpenAI", "WordPress"],
-        img: `${BASE}/images/projects/n8n-workflows.png`,
+        img: `${BASE}/images/projects/n8n-blog-pipeline.webp`,
         color: "emerald",
       },
       {
@@ -35,18 +35,18 @@ export const projectSections: { label: string; projects: Project[] }[] = [
         color: "amber",
       },
       {
-        title: "FB Lead Capture Pipeline",
-        desc: "Facebook Lead Ads to Google Sheets with automated email notifications.",
-        tags: ["Zapier", "Facebook", "Sheets"],
+        title: "Lead Routing Pipelines",
+        desc: "Four Zapier pipelines that stop a lead sitting in one system while somebody is waiting in another. Ad platforms into sheets and CRMs, pipeline stages into bookings, and alerts the moment a form lands.",
+        scale: "4 pipelines, zero manual handoffs",
+        tags: ["Zapier", "LinkedIn", "Facebook", "HubSpot", "Zoom"],
         img: `${BASE}/images/projects/zapier-facebook-sheets-email.png`,
+        images: [
+          { src: `${BASE}/images/projects/zapier-facebook-sheets-email.png`, caption: "Facebook Lead Ads into Google Sheets, with an email notification so nobody waits on a report." },
+          { src: `${BASE}/images/projects/zapier-linkedin-hubspot.png`, caption: "LinkedIn Lead Gen Forms routed into HubSpot, creating the engagement record automatically." },
+          { src: `${BASE}/images/projects/zapier-leadconnector-zoom.png`, caption: "A CRM pipeline stage change registering the contact for a Zoom session, with no typing." },
+          { src: `${BASE}/images/projects/zapier-linkedin-email.png`, caption: "Instant email alert the moment a LinkedIn Lead Gen Form is submitted." },
+        ],
         color: "violet",
-      },
-      {
-        title: "LinkedIn Ads to HubSpot",
-        desc: "Routes LinkedIn leads and creates HubSpot engagement records automatically.",
-        tags: ["Zapier", "LinkedIn", "HubSpot"],
-        img: `${BASE}/images/projects/zapier-linkedin-hubspot.png`,
-        color: "rose",
       },
       {
         title: "Customer.io Email Automation",
@@ -57,26 +57,24 @@ export const projectSections: { label: string; projects: Project[] }[] = [
         color: "violet",
       },
       {
-        title: "Pipeline to Webinar Registration",
-        desc: "Auto-registers contacts for Zoom when they reach a pipeline stage.",
-        tags: ["Zapier", "CRM", "Zoom"],
-        img: `${BASE}/images/projects/zapier-leadconnector-zoom.png`,
-        color: "cyan",
-      },
-      {
         title: "Pipedrive to Google Ads",
         desc: "n8n workflow mapping Pipedrive deal stages to Google Ads offline conversion events.",
         scale: "3 deal stages mapped to conversions",
         tags: ["n8n", "Pipedrive", "Google Ads"],
-        img: `${BASE}/images/projects/n8n-workflows.png`,
+        img: `${BASE}/images/projects/pipedrive-google-ads.webp`,
         color: "emerald",
       },
       {
-        title: "LinkedIn Lead Alert",
-        desc: "Instant email notifications for new LinkedIn Lead Gen Form responses.",
-        tags: ["Zapier", "LinkedIn", "Email"],
-        img: `${BASE}/images/projects/zapier-linkedin-email.png`,
-        color: "cyan",
+        title: "Outbound Call Cadence",
+        desc: "The n8n workflow that drives an AI voice agent's calling schedule. Checks the lead's local calling window, places the call, then branches on the outcome: no answer goes to retry, voicemail drops a message, no contact after the last attempt falls back to SMS. Every attempt is written back to the CRM.",
+        scale: "Multi-day cadence, retries and SMS fallback",
+        tags: ["n8n", "Retell AI", "Twilio", "CRM"],
+        img: `${BASE}/images/projects/n8n-call-cadence.webp`,
+        images: [
+          { src: `${BASE}/images/projects/n8n-call-cadence.webp`, caption: "Day 0 of the cadence: legal calling window, four attempts five minutes apart, any answered call ends the branch." },
+          { src: `${BASE}/images/projects/sarah-n8n-cadence.webp`, caption: "The same workflow on the n8n canvas, trigger through to the day 1 schedule." },
+        ],
+        color: "violet",
       },
     ],
   },
@@ -136,8 +134,8 @@ export const projectSections: { label: string; projects: Project[] }[] = [
         tags: ["Retell AI", "Voice AI", "Outbound", "SMS"],
         img: `${BASE}/images/projects/sarah-leads.webp`,
         images: [
-          `${BASE}/images/projects/sarah-leads.webp`,
-          `${BASE}/images/projects/sarah-n8n-cadence.webp`,
+          { src: `${BASE}/images/projects/sarah-leads.webp`, caption: "SARAH's lead view: 809 leads through the funnel, each in its own timezone." },
+          { src: `${BASE}/images/projects/sarah-n8n-cadence.webp`, caption: "The n8n cadence behind it: calling window checks, retries, voicemail and SMS fallback." },
         ],
         color: "violet",
         audio: `${BASE}/audio/ai-receptionist-sample.mp3`,

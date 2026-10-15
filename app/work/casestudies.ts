@@ -149,7 +149,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     key: "Pipedrive to Google Ads",
-    thumb: "/images/projects/n8n-workflows.png",
+    thumb: "/images/projects/pipedrive-google-ads.webp",
     kicker: "Client project · Attribution",
     client: "A B2B agency client",
     platform: "n8n workflow",

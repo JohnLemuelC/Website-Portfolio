@@ -192,9 +192,16 @@ export default function Work() {
             </button>
             {(open.images?.length ?? 0) > 1 ? (
               <div className="sheet-gallery">
-                {open.images!.map((src) => (
-                  <img key={src} src={src} alt="" loading="lazy" />
-                ))}
+                {open.images!.map((item) => {
+                  const src = typeof item === "string" ? item : item.src;
+                  const caption = typeof item === "string" ? undefined : item.caption;
+                  return (
+                    <figure key={src}>
+                      <img src={src} alt="" loading="lazy" />
+                      {caption && <figcaption>{caption}</figcaption>}
+                    </figure>
+                  );
+                })}
               </div>
             ) : (
               <img className="sheet-shot" src={open.img} alt="" />

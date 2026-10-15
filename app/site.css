@@ -1028,3 +1028,11 @@ body:has(.alt) .case-nav button:hover { color: #f3f3f0; }
   border-radius: 12px;
   background: var(--panel);
 }
+
+.sheet-gallery figure { margin: 0; }
+.sheet-gallery figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--faint);
+}

@@ -7,9 +7,12 @@ import ContactForm from "@/components/ContactForm";
 import CaseSheet from "@/components/CaseSheet";
 import Reveal from "@/components/Reveal";
 import { CASE_STUDIES } from "@/app/work/casestudies";
+import { projectSections } from "@/app/work/data";
 import { BUILD, ABOUT, STACK, DELIVER } from "./content";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
+const PROJECT_COUNT = projectSections.reduce((n, s) => n + s.projects.length, 0);
 const WHATSAPP = "https://wa.me/639761172117";
 
 const NAV = [
@@ -243,7 +246,8 @@ export default function Home() {
             <span className="alt-bigcta-kicker">The build log</span>
             <span className="alt-bigcta-h">Everything else</span>
             <span className="alt-bigcta-sub">
-              30 projects, five dashboards you can click around in, and a recorded call from one of the voice agents.
+              {PROJECT_COUNT} projects, five dashboards you can click around in, and a recorded call from one of
+              the voice agents.
             </span>
           </span>
           <span className="alt-bigcta-go" aria-hidden="true">
