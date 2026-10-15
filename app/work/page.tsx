@@ -190,7 +190,15 @@ export default function Work() {
             <button className="sheet-close" onClick={() => setOpen(null)} aria-label="Close">
               ×
             </button>
-            <img className="sheet-shot" src={open.img} alt="" />
+            {(open.images?.length ?? 0) > 1 ? (
+              <div className="sheet-gallery">
+                {open.images!.map((src) => (
+                  <img key={src} src={src} alt="" loading="lazy" />
+                ))}
+              </div>
+            ) : (
+              <img className="sheet-shot" src={open.img} alt="" />
+            )}
             <h3>{open.title}</h3>
             <p>{open.desc}</p>
             <div className="work-tags">

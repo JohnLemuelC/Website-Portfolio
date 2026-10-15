@@ -134,7 +134,11 @@ export const projectSections: { label: string; projects: Project[] }[] = [
         desc: "Outbound AI calling agent for a land buying company. SARAH proactively pre-qualifies seller leads via automated calls and follows up with SMS to keep every lead engaged.",
         scale: "Outbound calls with SMS follow-up",
         tags: ["Retell AI", "Voice AI", "Outbound", "SMS"],
-        img: `${BASE}/images/projects/Sarah.png`,
+        img: `${BASE}/images/projects/sarah-leads.webp`,
+        images: [
+          `${BASE}/images/projects/sarah-leads.webp`,
+          `${BASE}/images/projects/sarah-n8n-cadence.webp`,
+        ],
         color: "violet",
         audio: `${BASE}/audio/ai-receptionist-sample.mp3`,
       },

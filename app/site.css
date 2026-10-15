@@ -1013,3 +1013,18 @@ body:has(.alt) .case-nav button:hover { color: #f3f3f0; }
   .alt-bigcta { flex-direction: column; align-items: flex-start; }
   .alt-bigcta-go { width: 54px; }
 }
+
+/* a project with more than one screenshot shows all of them, not just the first */
+.sheet-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-bottom: 1.4rem;
+}
+.sheet-gallery img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}
