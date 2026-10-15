@@ -946,3 +946,70 @@ body:has(.alt) .case-nav button:hover { color: #f3f3f0; }
   .ca { grid-template-columns: 1fr; }
   .ca-result { max-width: 22rem; margin: 0 auto; }
 }
+
+/* ---------- THE BUILD LOG CTA ----------
+   Was a small outline pill lost under the work list. It is the only route
+   to 30 projects and the demos, so it gets the weight of a section. */
+.alt-bigcta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(1.2rem, 3vw, 2.5rem);
+  width: 100%;
+  margin-top: 3rem;
+  padding: clamp(1.8rem, 3.5vw, 2.8rem) clamp(1.6rem, 3vw, 2.6rem);
+  background: linear-gradient(140deg, #141c2b, #090e18);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  transition: border-color 0.3s, transform 0.3s, background 0.3s;
+}
+.alt-bigcta:hover {
+  border-color: rgba(200, 214, 240, 0.4);
+  background: linear-gradient(140deg, #192334, #0b111c);
+  transform: translateY(-3px);
+}
+.alt-bigcta-copy { display: block; }
+.alt-bigcta-kicker {
+  display: block;
+  margin-bottom: 0.7rem;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.alt-bigcta-h {
+  display: block;
+  font-size: clamp(1.9rem, 4.6vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.alt-bigcta-sub {
+  display: block;
+  max-width: 46ch;
+  margin-top: 0.9rem;
+  font-size: clamp(0.92rem, 1.5vw, 1.05rem);
+  line-height: 1.55;
+  color: var(--dim);
+}
+.alt-bigcta-go {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: clamp(56px, 7vw, 78px);
+  aspect-ratio: 1;
+  color: var(--ground);
+  background: var(--ink);
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+.alt-bigcta-go svg { width: 40%; height: 40%; }
+.alt-bigcta:hover .alt-bigcta-go { transform: translate(4px, -4px); }
+
+@media (max-width: 640px) {
+  .alt-bigcta { flex-direction: column; align-items: flex-start; }
+  .alt-bigcta-go { width: 54px; }
+}

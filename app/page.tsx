@@ -238,8 +238,17 @@ export default function Home() {
             </Reveal>
           ))}
         </div>
-        <a className="alt-pill" href={`${BASE}/work/`}>
-          Everything else, 30 projects <Arrow />
+        <a className="alt-bigcta" href={`${BASE}/work/`}>
+          <span className="alt-bigcta-copy">
+            <span className="alt-bigcta-kicker">The build log</span>
+            <span className="alt-bigcta-h">Everything else</span>
+            <span className="alt-bigcta-sub">
+              30 projects, five dashboards you can click around in, and a recorded call from one of the voice agents.
+            </span>
+          </span>
+          <span className="alt-bigcta-go" aria-hidden="true">
+            <Arrow />
+          </span>
         </a>
       </section>
 
