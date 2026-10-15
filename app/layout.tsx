@@ -19,6 +19,10 @@ export const metadata: Metadata = {
   },
 };
 
+// Vercel Analytics only exists on Vercel. The GitHub Pages copy is a static
+// export with no Vercel runtime, so loading it there 404s on every page view.
+const ON_VERCEL = !process.env.NEXT_PUBLIC_BASE_PATH;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -36,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NavPill />
         {children}
         <AskBar />
-        <Analytics />
+        {ON_VERCEL && <Analytics />}
         <VisitPing />
       </body>
     </html>
