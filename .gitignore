@@ -20,7 +20,10 @@ yarn-debug.log*
 yarn-error.log*
 
 # Local env files
-.env*.local
+# .env*.local alone misses a bare .env or .env.production
+.env
+.env.*
+!.env.example
 
 # Vercel
 .vercel
