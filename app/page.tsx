@@ -110,6 +110,8 @@ export default function Home() {
 
         <FlowCanvas />
 
+        <FlowCards compact />
+
         <div className="alt-hero-foot">
           <div className="alt-ident">
             <img
@@ -193,13 +195,6 @@ export default function Home() {
             </Reveal>
           ))}
         </div>
-      </section>
-
-      {/* HOW THEY RUN */}
-      <section className="alt-sec">
-        <h2 className="alt-big alt-left">How they run</h2>
-        <p className="alt-sub">Three systems in use today. Open one to see the shape of it.</p>
-        <FlowCards />
       </section>
 
       {/* WORK */}

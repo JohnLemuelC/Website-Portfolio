@@ -50,38 +50,65 @@ const LEAD: Graph = {
 const CONTENT: Graph = {
   nodes: [
     { col: 0, row: 0, rows: 1, label: "Keyword queue", icon: "bolt", hue: "#F5B544" },
-    { col: 1, row: 0, rows: 1, label: "Checks coverage", icon: "filter", hue: "#EA4B71" },
-    { col: 2, row: 0, rows: 1, label: "Drafts the piece", icon: "doc", hue: "#A78BFA" },
-    { col: 3, row: 0, rows: 1, label: "Structure + links", icon: "link", hue: "#38BDF8" },
-    { col: 4, row: 0, rows: 2, label: "Waits for a human", icon: "user", hue: "#FB923C" },
-    { col: 4, row: 1, rows: 2, label: "Sent back", icon: "retry", hue: "#F5B544" },
-    { col: 5, row: 0, rows: 1, label: "Published", icon: "upload", hue: "#4ADE80" },
+    { col: 1, row: 0, rows: 1, label: "Coverage check", icon: "filter", hue: "#EA4B71" },
+    { col: 2, row: 0, rows: 2, label: "Research", icon: "chart", hue: "#38BDF8" },
+    { col: 2, row: 1, rows: 2, label: "Competitors", icon: "link", hue: "#60A5FA" },
+    { col: 3, row: 0, rows: 1, label: "Draft", icon: "doc", hue: "#A78BFA" },
+    { col: 4, row: 0, rows: 3, label: "Structure", icon: "rows", hue: "#38BDF8" },
+    { col: 4, row: 1, rows: 3, label: "Internal links", icon: "link", hue: "#60A5FA" },
+    { col: 4, row: 2, rows: 3, label: "Images + meta", icon: "upload", hue: "#38BDF8" },
+    { col: 5, row: 0, rows: 2, label: "Approval", icon: "user", hue: "#FB923C" },
+    { col: 5, row: 1, rows: 2, label: "Rework", icon: "retry", hue: "#F5B544" },
+    { col: 6, row: 0, rows: 1, label: "Published", icon: "check", hue: "#4ADE80" },
   ],
-  edges: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 6], [4, 5], [5, 2]],
+  edges: [
+    [0, 1], [1, 2], [1, 3], [2, 4], [3, 4],
+    [4, 5], [4, 6], [4, 7],
+    [5, 8], [6, 8], [7, 8],
+    [8, 10], [8, 9], [9, 4],
+  ],
 };
 
 const SYNC: Graph = {
   nodes: [
     { col: 0, row: 0, rows: 1, label: "Record changes", icon: "bolt", hue: "#F5B544" },
-    { col: 1, row: 0, rows: 1, label: "Stamp its origin", icon: "shield", hue: "#A78BFA" },
-    { col: 2, row: 0, rows: 1, label: "Match + dedupe", icon: "rows", hue: "#38BDF8" },
-    { col: 3, row: 0, rows: 1, label: "Conflict?", icon: "filter", hue: "#EA4B71" },
-    { col: 4, row: 0, rows: 2, label: "Held for review", icon: "user", hue: "#FB923C" },
-    { col: 4, row: 1, rows: 2, label: "Writes across", icon: "upload", hue: "#60A5FA" },
-    { col: 5, row: 0, rows: 1, label: "Both in step", icon: "check", hue: "#4ADE80" },
+    { col: 1, row: 0, rows: 1, label: "Stamp origin", icon: "shield", hue: "#A78BFA" },
+    { col: 2, row: 0, rows: 2, label: "Echo check", icon: "filter", hue: "#EA4B71" },
+    { col: 2, row: 1, rows: 2, label: "Normalise", icon: "rows", hue: "#38BDF8" },
+    { col: 3, row: 0, rows: 1, label: "Match + dedupe", icon: "rows", hue: "#38BDF8" },
+    { col: 4, row: 0, rows: 1, label: "Conflict?", icon: "filter", hue: "#EA4B71" },
+    { col: 5, row: 0, rows: 3, label: "Held for review", icon: "user", hue: "#FB923C" },
+    { col: 5, row: 1, rows: 3, label: "Writes across", icon: "upload", hue: "#60A5FA" },
+    { col: 5, row: 2, rows: 3, label: "Retry", icon: "retry", hue: "#F5B544" },
+    { col: 6, row: 0, rows: 1, label: "Both in step", icon: "check", hue: "#4ADE80" },
   ],
-  edges: [[0, 1], [1, 2], [2, 3], [3, 4], [3, 5], [4, 6], [5, 6]],
+  edges: [
+    [0, 1], [1, 2], [2, 3], [3, 4], [4, 5],
+    [5, 6], [5, 7],
+    [7, 8], [8, 7],
+    [6, 9], [7, 9],
+  ],
 };
 
 const ATTRIB: Graph = {
   nodes: [
     { col: 0, row: 0, rows: 1, label: "Deal moves stage", icon: "bolt", hue: "#F5B544" },
     { col: 1, row: 0, rows: 1, label: "Finds the click", icon: "link", hue: "#A78BFA" },
-    { col: 2, row: 0, rows: 1, label: "Attaches value", icon: "chart", hue: "#38BDF8" },
-    { col: 3, row: 0, rows: 1, label: "Uploads conversion", icon: "upload", hue: "#60A5FA" },
-    { col: 4, row: 0, rows: 1, label: "Bids on revenue", icon: "check", hue: "#4ADE80" },
+    { col: 2, row: 0, rows: 1, label: "Age check", icon: "filter", hue: "#EA4B71" },
+    { col: 3, row: 0, rows: 2, label: "Maps to action", icon: "chart", hue: "#38BDF8" },
+    { col: 3, row: 1, rows: 2, label: "Logged only", icon: "doc", hue: "#FB923C" },
+    { col: 4, row: 0, rows: 1, label: "Attaches value", icon: "chart", hue: "#60A5FA" },
+    { col: 5, row: 0, rows: 2, label: "Uploads", icon: "upload", hue: "#60A5FA" },
+    { col: 5, row: 1, rows: 2, label: "Retry upload", icon: "retry", hue: "#F5B544" },
+    { col: 6, row: 0, rows: 1, label: "Bids on revenue", icon: "check", hue: "#4ADE80" },
   ],
-  edges: [[0, 1], [1, 2], [2, 3], [3, 4]],
+  edges: [
+    [0, 1], [1, 2],
+    [2, 3], [2, 4],
+    [3, 5], [5, 6],
+    [6, 7], [7, 6],
+    [6, 8], [4, 8],
+  ],
 };
 
 export const HERO_FLOW = LEAD;

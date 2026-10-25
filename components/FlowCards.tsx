@@ -50,12 +50,12 @@ function Sheet({ flow, onClose }: { flow: Flow; onClose: () => void }) {
   );
 }
 
-export default function FlowCards() {
+export default function FlowCards({ compact = false }: { compact?: boolean }) {
   const [open, setOpen] = useState<Flow | null>(null);
 
   return (
     <>
-      <div className="flow-grid">
+      <div className={compact ? "flow-grid flow-grid--hero" : "flow-grid"}>
         {FLOWS.map((f) => (
           <button
             key={f.key}
@@ -70,9 +70,11 @@ export default function FlowCards() {
             <span className="flow-card-body">
               <span className="flow-card-title">{f.title}</span>
               <span className="flow-card-blurb">{f.blurb}</span>
-              <span className="flow-card-more">
-                See how it runs <Arrow />
-              </span>
+              {!compact && (
+                <span className="flow-card-more">
+                  See how it runs <Arrow />
+                </span>
+              )}
             </span>
           </button>
         ))}

@@ -101,7 +101,7 @@ body:has(.alt) .starfield { display: none; }
   display: block;
   width: 100%;
   flex: 1 1 0;
-  min-height: clamp(210px, 30vh, 380px);
+  min-height: clamp(168px, 24vh, 300px);
   margin: clamp(0.4rem, 1.5vh, 1.2rem) 0 clamp(0.4rem, 1.5vh, 1.2rem);
   pointer-events: none;
 }
@@ -1247,4 +1247,29 @@ body:has(.alt) .case-nav button:hover { color: #f3f3f0; }
 
 @media (max-width: 640px) {
   .flow-sheet-canvas { height: 300px; }
+}
+
+/* the same cards, compressed to sit inside the hero */
+.flow-grid--hero {
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.6rem, 1.1vw, 1rem);
+  margin-top: clamp(0.5rem, 1.4vh, 1rem);
+}
+.flow-grid--hero .flow-card-art { height: clamp(66px, 8.4vh, 96px); }
+.flow-grid--hero .flow-card-body {
+  gap: 0.22rem;
+  padding: clamp(0.6rem, 1vw, 0.85rem) clamp(0.7rem, 1.1vw, 1rem);
+}
+.flow-grid--hero .flow-card-title { font-size: 0.95rem; }
+.flow-grid--hero .flow-card-blurb {
+  font-size: 0.82rem;
+  line-height: 1.42;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+@media (max-width: 760px) {
+  .flow-grid--hero { grid-template-columns: 1fr; }
+  .flow-grid--hero .flow-card-blurb { -webkit-line-clamp: 1; }
 }

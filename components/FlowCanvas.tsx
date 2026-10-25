@@ -65,7 +65,9 @@ export default function FlowCanvas({
         ctx.font = font(fs);
         const cw: number[] = [];
         NODES.forEach((n) => {
-          const need = ch * 0.42 * 2 + ch * 0.46 + ch * 0.3 + ctx.measureText(n.label).width;
+          const need = dense
+            ? ch * 1.12
+            : ch * 0.42 * 2 + ch * 0.46 + ch * 0.3 + ctx.measureText(n.label).width;
           cw[n.col] = Math.max(cw[n.col] || 0, need);
         });
         return cw;
@@ -357,12 +359,15 @@ export default function FlowCanvas({
           ctx.restore();
         }
 
-        const padX = b.h * 0.42;
-        const is = b.h * 0.23;
-        icon(n.icon, b.x + padX + is, cy, is, 0.78 + hot * 0.22, n.hue);
-
-        ctx.fillStyle = `rgba(222,232,248,${0.84 + hot * 0.16})`;
-        ctx.fillText(n.label, b.x + padX + is * 2 + b.h * 0.3, cy + 0.5);
+        if (dense) {
+          icon(n.icon, b.x + b.w / 2, cy, b.h * 0.26, 0.82 + hot * 0.18, n.hue);
+        } else {
+          const padX = b.h * 0.42;
+          const is = b.h * 0.23;
+          icon(n.icon, b.x + padX + is, cy, is, 0.78 + hot * 0.22, n.hue);
+          ctx.fillStyle = `rgba(222,232,248,${0.84 + hot * 0.16})`;
+          ctx.fillText(n.label, b.x + padX + is * 2 + b.h * 0.3, cy + 0.5);
+        }
       }
 
       if (!reduced) {
