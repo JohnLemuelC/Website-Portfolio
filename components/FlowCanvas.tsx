@@ -5,25 +5,26 @@ import { useEffect, useRef } from "react";
 /**
  * The hero: one of my automations, running.
  *
- * A lead arrives, n8n qualifies it, work fans out across a voice agent, an
- * enrichment pass and an SMS follow-up, then converges and lands in the CRM.
- * Every step is labelled because the point is that it is a real workflow, not
- * an abstract graphic.
+ * Labels live inside the cards, the way every real workflow tool draws them,
+ * so there is never a question of which label belongs to which step. Columns
+ * share a width, cards share a height, connectors meet card edges square on.
  *
  * Deliberately not another sphere. GlobeStack already owns that further down.
  */
 
-type Kind = "trigger" | "filter" | "agent" | "data" | "msg" | "cal" | "loop" | "out";
+type Icon = "bolt" | "filter" | "wave" | "rows" | "chat" | "date" | "retry" | "check";
 
-const NODES: { x: number; y: number; label: string; kind: Kind }[] = [
-  { x: 0.045, y: 0.5, label: "New lead", kind: "trigger" },
-  { x: 0.215, y: 0.5, label: "n8n qualifies", kind: "filter" },
-  { x: 0.44, y: 0.16, label: "AI voice call", kind: "agent" },
-  { x: 0.44, y: 0.5, label: "Enrich + dedupe", kind: "data" },
-  { x: 0.44, y: 0.84, label: "SMS follow-up", kind: "msg" },
-  { x: 0.675, y: 0.3, label: "Books appointment", kind: "cal" },
-  { x: 0.675, y: 0.7, label: "Retry cadence", kind: "loop" },
-  { x: 0.9, y: 0.5, label: "CRM updated", kind: "out" },
+type Spec = { col: number; row: number; rows: number; label: string; icon: Icon; accent?: boolean };
+
+const NODES: Spec[] = [
+  { col: 0, row: 0, rows: 1, label: "New lead", icon: "bolt", accent: true },
+  { col: 1, row: 0, rows: 1, label: "n8n qualifies", icon: "filter" },
+  { col: 2, row: 0, rows: 3, label: "AI voice call", icon: "wave" },
+  { col: 2, row: 1, rows: 3, label: "Enrich + dedupe", icon: "rows" },
+  { col: 2, row: 2, rows: 3, label: "SMS follow-up", icon: "chat" },
+  { col: 3, row: 0, rows: 2, label: "Books appointment", icon: "date" },
+  { col: 3, row: 1, rows: 2, label: "Retry cadence", icon: "retry" },
+  { col: 4, row: 0, rows: 1, label: "CRM updated", icon: "check", accent: true },
 ];
 
 const EDGES: [number, number][] = [
@@ -33,6 +34,7 @@ const EDGES: [number, number][] = [
   [5, 7], [6, 7],
 ];
 
+type Box = { x: number; y: number; w: number; h: number };
 type Pulse = { edge: number; t: number; speed: number };
 
 export default function FlowCanvas() {
@@ -46,7 +48,8 @@ export default function FlowCanvas() {
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    let w = 0, h = 0, dpr = 1;
+    let w = 0, h = 0, dpr = 1, fs = 13, ch = 46;
+    let boxes: Box[] = [];
     const heat = NODES.map(() => 0);
     const out: number[][] = NODES.map(() => []);
     EDGES.forEach(([a], i) => out[a].push(i));
@@ -56,6 +59,38 @@ export default function FlowCanvas() {
     let running = true;
     let raf = 0;
 
+    const font = (size: number) => `500 ${size}px Archivo, system-ui, sans-serif`;
+
+    const layout = () => {
+      fs = Math.max(11, Math.min(14, w * 0.0097));
+      ch = Math.max(40, Math.min(54, h * 0.098));
+      const padX = ch * 0.42;
+      const iconW = ch * 0.46;
+      const gap = ch * 0.3;
+
+      ctx.font = font(fs);
+      // one width per column, so the grid reads as a grid
+      const colW: number[] = [];
+      NODES.forEach((n) => {
+        const need = padX * 2 + iconW + gap + ctx.measureText(n.label).width;
+        colW[n.col] = Math.max(colW[n.col] || 0, need);
+      });
+
+      const cols = colW.length;
+      const total = colW.reduce((a, b) => a + b, 0);
+      const free = Math.max(0, w - total);
+      const lane = free / (cols - 1 + 1.2); // a little breathing room at the ends
+      let x = lane * 0.6;
+      const colX: number[] = [];
+      for (let c = 0; c < cols; c++) { colX[c] = x; x += colW[c] + lane; }
+
+      boxes = NODES.map((n) => {
+        const band = h / n.rows;
+        const y = band * (n.row + 0.5);
+        return { x: colX[n.col], y: y - ch / 2, w: colW[n.col], h: ch };
+      });
+    };
+
     const size = () => {
       const b = cv.getBoundingClientRect();
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -64,103 +99,89 @@ export default function FlowCanvas() {
       cv.width = Math.round(w * dpr);
       cv.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      layout();
     };
 
-    // inset so end nodes and their labels never clip
-    const PX = 0.045, PY = 0.14;
-    const px = (i: number) => (PX + NODES[i].x * (1 - PX * 2)) * w;
-    const py = (i: number) => (PY + NODES[i].y * (1 - PY * 2)) * h;
-    const unit = () => Math.max(13, Math.min(w * 0.021, h * 0.1));
+    const right = (i: number) => ({ x: boxes[i].x + boxes[i].w, y: boxes[i].y + boxes[i].h / 2 });
+    const left = (i: number) => ({ x: boxes[i].x, y: boxes[i].y + boxes[i].h / 2 });
 
     const curve = (e: number) => {
-      const [a, b] = EDGES[e];
-      const x1 = px(a), y1 = py(a), x2 = px(b), y2 = py(b);
-      const dx = (x2 - x1) * 0.45;
-      return { x1, y1, x2, y2, c1x: x1 + dx, c1y: y1, c2x: x2 - dx, c2y: y2 };
+      const a = right(EDGES[e][0]), b = left(EDGES[e][1]);
+      const dx = Math.max(26, (b.x - a.x) * 0.5);
+      return { x1: a.x, y1: a.y, c1x: a.x + dx, c1y: a.y, c2x: b.x - dx, c2y: b.y, x2: b.x, y2: b.y };
     };
 
     const at = (e: number, t: number) => {
-      const c = curve(e);
-      const u = 1 - t;
+      const c = curve(e), u = 1 - t;
       return {
         x: u * u * u * c.x1 + 3 * u * u * t * c.c1x + 3 * u * t * t * c.c2x + t * t * t * c.x2,
         y: u * u * u * c.y1 + 3 * u * u * t * c.c1y + 3 * u * t * t * c.c2y + t * t * t * c.y2,
       };
     };
 
-    const glyph = (kind: Kind, x: number, y: number, s: number, a: number) => {
-      ctx.strokeStyle = `rgba(214,228,250,${a})`;
-      ctx.fillStyle = `rgba(214,228,250,${a})`;
-      ctx.lineWidth = 1.5;
+    // icons built only from lines, arcs and rects, so they stay crisp at any size
+    const icon = (kind: Icon, cx: number, cy: number, s: number, a: number) => {
+      ctx.strokeStyle = `rgba(166,196,242,${a})`;
+      ctx.fillStyle = `rgba(166,196,242,${a})`;
+      ctx.lineWidth = Math.max(1.3, s * 0.11);
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
       ctx.beginPath();
-      const q = s * 0.4;
       switch (kind) {
-        case "trigger": // a bolt
-          ctx.moveTo(x + q * 0.35, y - q); ctx.lineTo(x - q * 0.35, y + q * 0.1);
-          ctx.lineTo(x + q * 0.1, y + q * 0.1); ctx.lineTo(x - q * 0.3, y + q);
+        case "bolt":
+          ctx.moveTo(cx + s * 0.3, cy - s); ctx.lineTo(cx - s * 0.34, cy + s * 0.06);
+          ctx.lineTo(cx + s * 0.06, cy + s * 0.06); ctx.lineTo(cx - s * 0.26, cy + s);
           ctx.stroke(); return;
-        case "filter": // funnel
-          ctx.moveTo(x - q, y - q * 0.8); ctx.lineTo(x + q, y - q * 0.8);
-          ctx.lineTo(x + q * 0.2, y + q * 0.1); ctx.lineTo(x + q * 0.2, y + q);
-          ctx.lineTo(x - q * 0.2, y + q * 0.65); ctx.lineTo(x - q * 0.2, y + q * 0.1);
-          ctx.closePath(); ctx.stroke(); return;
-        case "agent": // handset
-          ctx.moveTo(x - q * 0.75, y - q * 0.55);
-          ctx.quadraticCurveTo(x - q * 0.1, y + q * 0.95, x + q * 0.8, y + q * 0.5);
-          ctx.lineTo(x + q * 0.3, y - q * 0.05);
-          ctx.lineTo(x - q * 0.2, y - q * 1.0);
-          ctx.closePath(); ctx.stroke(); return;
-        case "data": // stack
-          ctx.ellipse(x, y - q * 0.6, q * 0.85, q * 0.3, 0, 0, Math.PI * 2); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(x - q * 0.85, y - q * 0.6);
-          ctx.lineTo(x - q * 0.85, y + q * 0.55);
-          ctx.quadraticCurveTo(x, y + q * 1.1, x + q * 0.85, y + q * 0.55);
-          ctx.lineTo(x + q * 0.85, y - q * 0.6); ctx.stroke(); return;
-        case "msg": // bubble
-          ctx.roundRect(x - q * 0.9, y - q * 0.8, q * 1.8, q * 1.3, q * 0.4);
-          ctx.moveTo(x - q * 0.3, y + q * 0.5); ctx.lineTo(x - q * 0.5, y + q);
-          ctx.lineTo(x + q * 0.05, y + q * 0.5); ctx.stroke(); return;
-        case "cal": // calendar
-          ctx.roundRect(x - q * 0.85, y - q * 0.7, q * 1.7, q * 1.5, q * 0.25);
-          ctx.moveTo(x - q * 0.85, y - q * 0.2); ctx.lineTo(x + q * 0.85, y - q * 0.2);
-          ctx.moveTo(x - q * 0.4, y - q * 1.0); ctx.lineTo(x - q * 0.4, y - q * 0.55);
-          ctx.moveTo(x + q * 0.4, y - q * 1.0); ctx.lineTo(x + q * 0.4, y - q * 0.55);
+        case "filter": // three bars narrowing
+          ctx.moveTo(cx - s, cy - s * 0.55); ctx.lineTo(cx + s, cy - s * 0.55);
+          ctx.moveTo(cx - s * 0.6, cy); ctx.lineTo(cx + s * 0.6, cy);
+          ctx.moveTo(cx - s * 0.22, cy + s * 0.55); ctx.lineTo(cx + s * 0.22, cy + s * 0.55);
           ctx.stroke(); return;
-        case "loop": // circular arrow
-          ctx.arc(x, y, q * 0.8, Math.PI * 0.35, Math.PI * 1.85); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(x + q * 0.25, y - q * 0.95);
-          ctx.lineTo(x + q * 0.75, y - q * 0.62); ctx.lineTo(x + q * 0.2, y - q * 0.3);
+        case "wave": // five bars, a waveform
+          [0.42, 0.78, 1, 0.66, 0.34].forEach((v, k) => {
+            const bx = cx + (k - 2) * s * 0.44;
+            ctx.moveTo(bx, cy - s * v); ctx.lineTo(bx, cy + s * v);
+          });
           ctx.stroke(); return;
-        default: // out: tick
-          ctx.moveTo(x - q * 0.7, y); ctx.lineTo(x - q * 0.15, y + q * 0.6);
-          ctx.lineTo(x + q * 0.75, y - q * 0.6); ctx.stroke(); return;
+        case "rows": // stacked records
+          [-0.58, 0, 0.58].forEach((o, k) => {
+            ctx.moveTo(cx - s, cy + s * o);
+            ctx.lineTo(cx + s * (k === 2 ? 0.3 : 1), cy + s * o);
+          });
+          ctx.stroke(); return;
+        case "chat":
+          ctx.roundRect(cx - s, cy - s * 0.82, s * 2, s * 1.4, s * 0.38);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(cx - s * 0.34, cy + s * 0.58); ctx.lineTo(cx - s * 0.5, cy + s);
+          ctx.lineTo(cx + s * 0.02, cy + s * 0.58);
+          ctx.stroke(); return;
+        case "date":
+          ctx.roundRect(cx - s, cy - s * 0.74, s * 2, s * 1.66, s * 0.26);
+          ctx.moveTo(cx - s, cy - s * 0.2); ctx.lineTo(cx + s, cy - s * 0.2);
+          ctx.moveTo(cx - s * 0.46, cy - s * 1.0); ctx.lineTo(cx - s * 0.46, cy - s * 0.52);
+          ctx.moveTo(cx + s * 0.46, cy - s * 1.0); ctx.lineTo(cx + s * 0.46, cy - s * 0.52);
+          ctx.stroke(); return;
+        case "retry":
+          ctx.arc(cx, cy, s * 0.8, Math.PI * 0.42, Math.PI * 1.78);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(cx + s * 0.1, cy - s * 0.96); ctx.lineTo(cx + s * 0.72, cy - s * 0.66);
+          ctx.lineTo(cx + s * 0.16, cy - s * 0.24);
+          ctx.stroke(); return;
+        default:
+          ctx.moveTo(cx - s * 0.78, cy + s * 0.06);
+          ctx.lineTo(cx - s * 0.18, cy + s * 0.66);
+          ctx.lineTo(cx + s * 0.82, cy - s * 0.7);
+          ctx.stroke(); return;
       }
-    };
-
-    const label = (i: number, x: number, y: number, s: number, hot: number) => {
-      const fs = Math.max(10, Math.min(13.5, w * 0.0098));
-      ctx.font = `500 ${fs}px Archivo, system-ui, sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "top";
-      const words = NODES[i].label.split(" ");
-      const lines: string[] = [];
-      let line = "";
-      const max = Math.max(80, w * 0.115);
-      for (const word of words) {
-        const test = line ? line + " " + word : word;
-        if (ctx.measureText(test).width > max && line) { lines.push(line); line = word; }
-        else line = test;
-      }
-      if (line) lines.push(line);
-      ctx.fillStyle = `rgba(174,190,214,${0.72 + hot * 0.28})`;
-      lines.forEach((l, k) => ctx.fillText(l, x, y + s * 2.05 + k * (fs * 1.25)));
     };
 
     const frame = (dt: number) => {
       ctx.clearRect(0, 0, w, h);
 
-      const halo = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.max(w, h) * 0.5);
-      halo.addColorStop(0, "rgba(96,128,186,0.1)");
+      const halo = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.max(w, h) * 0.52);
+      halo.addColorStop(0, "rgba(96,128,186,0.09)");
       halo.addColorStop(1, "rgba(96,128,186,0)");
       ctx.fillStyle = halo;
       ctx.fillRect(0, 0, w, h);
@@ -171,8 +192,8 @@ export default function FlowCanvas() {
         ctx.beginPath();
         ctx.moveTo(c.x1, c.y1);
         ctx.bezierCurveTo(c.c1x, c.c1y, c.c2x, c.c2y, c.x2, c.y2);
-        ctx.strokeStyle = "rgba(140,160,192,0.28)";
-        ctx.lineWidth = 1.25;
+        ctx.strokeStyle = "rgba(142,164,198,0.26)";
+        ctx.lineWidth = 1.2;
         ctx.stroke();
       }
 
@@ -184,50 +205,58 @@ export default function FlowCanvas() {
           if (t1 <= 0 && t0 <= 0) break;
           const a = at(p.edge, t0), b = at(p.edge, t1);
           ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = `rgba(230,240,255,${0.8 * (1 - k / steps)})`;
-          ctx.lineWidth = 2.4 * (1 - k / steps) + 0.5;
+          ctx.strokeStyle = `rgba(228,240,255,${0.8 * (1 - k / steps)})`;
+          ctx.lineWidth = 2.2 * (1 - k / steps) + 0.5;
           ctx.stroke();
         }
-        const head = at(p.edge, p.t);
+        const hd = at(p.edge, p.t);
         ctx.save();
-        ctx.shadowColor = "rgba(190,214,255,0.9)";
-        ctx.shadowBlur = unit() * 1.6;
+        ctx.shadowColor = "rgba(180,208,255,0.9)";
+        ctx.shadowBlur = 11;
         ctx.beginPath();
-        ctx.arc(head.x, head.y, Math.max(3, unit() * 0.21), 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(246,249,255,1)";
+        ctx.arc(hd.x, hd.y, 3.4, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(246,250,255,1)";
         ctx.fill();
         ctx.restore();
       }
 
-      for (let i = 0; i < NODES.length; i++) {
-        const x = px(i), y = py(i), s = unit(), hot = heat[i];
+      ctx.font = font(fs);
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
 
-        if (hot > 0.01) {
-          ctx.beginPath();
-          ctx.arc(x, y, s * (1.55 + (1 - hot) * 1.5), 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(214,228,248,${0.45 * hot})`;
-          ctx.lineWidth = 1.4;
-          ctx.stroke();
-        }
+      for (let i = 0; i < NODES.length; i++) {
+        const b = boxes[i];
+        if (!b) continue;
+        const hot = heat[i];
+        const n = NODES[i];
+        const cy = b.y + b.h / 2;
+        const r = b.h * 0.28;
 
         ctx.beginPath();
-        ctx.roundRect(x - s, y - s, s * 2, s * 2, s * 0.46);
-        ctx.fillStyle = "#0C121D";
+        ctx.roundRect(b.x, b.y, b.w, b.h, r);
+        ctx.fillStyle = "#0B1120";
         ctx.fill();
-        ctx.strokeStyle = `rgba(164,184,214,${0.48 + hot * 0.5})`;
-        ctx.lineWidth = 1.4;
+        ctx.strokeStyle = n.accent
+          ? `rgba(150,186,244,${0.46 + hot * 0.48})`
+          : `rgba(150,172,206,${0.3 + hot * 0.6})`;
+        ctx.lineWidth = 1.3;
         ctx.stroke();
+
         if (hot > 0.01) {
           ctx.save();
-          ctx.shadowColor = `rgba(170,200,250,${0.85 * hot})`;
-          ctx.shadowBlur = s * 2.2 * hot;
-          ctx.strokeStyle = `rgba(226,238,255,${0.9 * hot})`;
+          ctx.shadowColor = `rgba(150,190,255,${0.9 * hot})`;
+          ctx.shadowBlur = 16 * hot;
+          ctx.strokeStyle = `rgba(224,238,255,${0.85 * hot})`;
           ctx.stroke();
           ctx.restore();
         }
 
-        glyph(NODES[i].kind, x, y, s, 0.6 + hot * 0.4);
-        label(i, x, y, s, hot);
+        const padX = b.h * 0.42;
+        const is = b.h * 0.23;
+        icon(n.icon, b.x + padX + is, cy, is, 0.62 + hot * 0.38);
+
+        ctx.fillStyle = `rgba(222,232,248,${0.84 + hot * 0.16})`;
+        ctx.fillText(n.label, b.x + padX + is * 2 + b.h * 0.3, cy + 0.5);
       }
 
       if (!reduced) {
@@ -264,17 +293,14 @@ export default function FlowCanvas() {
       if (running && !reduced) raf = requestAnimationFrame(loop);
     };
 
-    const start = () => {
-      size();
-      heat[0] = 0.6;
-      pulses.push({ edge: 0, t: 0.45, speed: 0.4 });
-      frame(0);
-      if (!reduced) raf = requestAnimationFrame(loop);
-    };
+    size();
+    heat[0] = 0.6;
+    pulses.push({ edge: 0, t: 0.45, speed: 0.4 });
+    frame(0);
+    if (!reduced) raf = requestAnimationFrame(loop);
 
-    // labels need the webfont, otherwise the first paint measures the fallback
-    if (document.fonts?.ready) document.fonts.ready.then(() => { size(); frame(0); });
-    start();
+    // card widths are measured from text, so remeasure once the webfont lands
+    if (document.fonts?.ready) document.fonts.ready.then(() => { layout(); frame(0); });
 
     const ro = new ResizeObserver(() => { size(); frame(0); });
     ro.observe(cv);
