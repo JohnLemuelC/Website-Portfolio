@@ -103,38 +103,33 @@ export default function Home() {
 
       {/* HERO */}
       <section className="alt-hero">
-        <h1 className="alt-wordmark">John Culinares</h1>
-        <div className="alt-hero-mid">
-          <FlowCanvas />
-          <div className="alt-hero-side">
-            <p>
-              {/* broken by hand so the block is a fixed eight lines. a predictable
-                  line count is what lets the type be sized to match the photo. */}
-              Most<br />
-              of the<br />
-              work<br />
-              draining<br />
-              your<br />
-              team<br />
-              <em>
-                can run<br />
-                itself.
-              </em>
-            </p>
-            <span aria-hidden="true" />
-          </div>
-        </div>
+        <p className="alt-lede">
+          Most of the work draining your team <em>can run itself.</em>
+        </p>
+
+        <FlowCanvas />
+
         <div className="alt-hero-foot">
-          <div>
+          <div className="alt-ident">
+            <img
+              className="alt-avatar"
+              src={`${BASE}/images/headshot/john-cutout.webp`}
+              alt="John Lemuel Culinares"
+            />
+            <div>
+              <h1 className="alt-wordmark">John Culinares</h1>
+              <p className="alt-tagline">AI automation specialist · Philippines</p>
+            </div>
+          </div>
+          <div className="alt-ident-end">
             <span className="alt-status">
               <i aria-hidden="true" />
               Open to new projects
             </span>
-            <p className="alt-tagline">AI automation specialist · Philippines</p>
+            <a className="alt-pill" href="#contact">
+              Contact me <Arrow />
+            </a>
           </div>
-          <a className="alt-pill" href="#contact">
-            Contact me <Arrow />
-          </a>
         </div>
       </section>
 

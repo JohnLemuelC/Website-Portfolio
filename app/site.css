@@ -48,18 +48,16 @@ body:has(.alt) .starfield { display: none; }
   z-index: 2;
   margin: 0;
   font-family: "Archivo", system-ui, sans-serif;
-  font-size: clamp(2rem, 9.1vw, 8.8rem);
+  font-size: clamp(1.15rem, 1.9vw, 1.7rem);
   font-weight: 700;
-  line-height: 0.86;
-  letter-spacing: -0.035em;
+  line-height: 1.05;
+  letter-spacing: -0.012em;
   text-transform: uppercase;
   white-space: nowrap;
-  padding-bottom: 0.1em;
-  background: linear-gradient(180deg, #ffffff 10%, #cfcfca 48%, #4a4a47 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-stroke: 0;
+  color: var(--ink);
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
 }
 
 /* the portrait lives below the name now, never across it.
@@ -100,18 +98,12 @@ body:has(.alt) .starfield { display: none; }
   pointer-events: none;
 }
 .alt-flow {
-  /* takes the slot the portrait used to hold, so the three column hero and the
-     statement sizing are untouched. a workflow reads better tall than wide. */
-  grid-column: 2;
-  justify-self: center;
-  width: min(38rem, 40vw);
-  height: 64vh;
-  max-height: 64vh;
   display: block;
+  width: 100%;
+  flex: 1 1 0;
+  min-height: clamp(210px, 30vh, 380px);
+  margin: clamp(0.4rem, 1.5vh, 1.2rem) 0 clamp(0.4rem, 1.5vh, 1.2rem);
   pointer-events: none;
-  /* same hem fade the portrait had, so it sits into the page rather than on it */
-  mask-image: linear-gradient(180deg, transparent 0.5%, #000 9%, #000 88%, transparent 100%);
-  -webkit-mask-image: linear-gradient(180deg, transparent 0.5%, #000 9%, #000 88%, transparent 100%);
 }
 
 .alt-hero-side {
@@ -151,11 +143,50 @@ body:has(.alt) .starfield { display: none; }
   border-bottom: 2px solid var(--ink);
 }
 
+.alt-lede {
+  position: relative;
+  z-index: 2;
+  margin: clamp(0.8rem, 3vh, 2.2rem) 0 0;
+  max-width: 26ch;
+  font-family: "Archivo", system-ui, sans-serif;
+  font-size: clamp(1.9rem, 4.4vw, 3.9rem);
+  font-weight: 700;
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.alt-lede em {
+  font-style: normal;
+  color: #8fa3c4;
+}
+.alt-ident {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.alt-avatar {
+  width: clamp(44px, 4.4vw, 62px);
+  height: clamp(44px, 4.4vw, 62px);
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: 50% 18%;
+  background: #0C121D;
+  border: 1px solid rgba(190, 206, 232, 0.22);
+  filter: grayscale(1) contrast(1.08);
+  flex: none;
+}
+.alt-ident-end {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.7rem, 1.6vw, 1.4rem);
+}
+
 .alt-hero-foot {
   position: relative;
   z-index: 1;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 2rem;
   margin-top: auto;
@@ -781,7 +812,9 @@ body:has(.alt) .case-nav button:hover { color: #f3f3f0; }
 @media (max-width: 860px) {
   .alt-hero-mid { display: flex; flex-direction: column; align-items: center; min-height: 0; }
   .alt-portrait { height: auto; max-width: 62vw; max-height: 17rem; }
-  .alt-flow { width: 78vw; height: 38vh; max-height: 38vh; }
+  .alt-flow { width: 100%; min-height: 46vh; margin: 1rem 0; }
+  .alt-lede { font-size: clamp(1.9rem, 10vw, 3rem); max-width: 14ch; }
+  .alt-hero-foot { flex-direction: column; align-items: flex-start; gap: 1rem; }
   .alt-hero-side { width: 100%; margin-top: 1.2rem; }
   .alt-hero-mid { margin-top: 0; }
   /* a phone scrolls anyway, so the hero sizes to its content rather than
