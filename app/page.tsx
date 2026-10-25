@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Marquee from "@/components/Marquee";
 import GlobeStack from "@/components/GlobeStack";
+import FlowCanvas from "@/components/FlowCanvas";
 import ContactForm from "@/components/ContactForm";
 import CaseSheet from "@/components/CaseSheet";
 import Reveal from "@/components/Reveal";
@@ -104,7 +105,7 @@ export default function Home() {
       <section className="alt-hero">
         <h1 className="alt-wordmark">John Culinares</h1>
         <div className="alt-hero-mid">
-          <img className="alt-portrait" src={`${BASE}/images/headshot/john-cutout.webp`} alt="John Lemuel Culinares" />
+          <FlowCanvas />
           <div className="alt-hero-side">
             <p>
               {/* broken by hand so the block is a fixed eight lines. a predictable
