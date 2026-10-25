@@ -1,64 +1,45 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { HERO_FLOW, type Graph, type Icon } from "./flowGraphs";
 
 /**
- * The hero: one of my automations, running.
+ * Draws a workflow and runs work through it.
  *
- * Labels live inside the cards, the way every real workflow tool draws them,
- * so there is never a question of which label belongs to which step. Columns
- * share a width, cards share a height, connectors meet card edges square on.
- *
- * Deliberately not another sphere. GlobeStack already owns that further down.
+ * Labels live inside the cards, the way every real workflow tool draws them.
+ * Columns share a width, cards share a height, connectors meet card edges.
+ * A hop that does not land clearly to the right is a loop, drawn down the
+ * left so it never crosses the forward wires.
  */
 
-type Icon = "bolt" | "filter" | "wave" | "rows" | "chat" | "date" | "retry" | "check";
-
-type Spec = { col: number; row: number; rows: number; label: string; icon: Icon; hue: string };
-
-// one colour per kind of step, the way a workflow tool colours its nodes.
-// it is decoration and legend at the same time.
 const rgba = (hex: string, a: number) => {
   const n = parseInt(hex.slice(1), 16);
   return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
 };
 
-const NODES: Spec[] = [
-  { col: 0, row: 0, rows: 1, label: "New lead", icon: "bolt", hue: "#F5B544" },
-  { col: 1, row: 0, rows: 1, label: "Enrich + dedupe", icon: "rows", hue: "#38BDF8" },
-  { col: 2, row: 0, rows: 1, label: "n8n qualifies", icon: "filter", hue: "#EA4B71" },
-  { col: 3, row: 0, rows: 2, label: "AI voice call", icon: "wave", hue: "#A78BFA" },
-  { col: 3, row: 1, rows: 2, label: "Retry cadence", icon: "retry", hue: "#FB923C" },
-  { col: 4, row: 0, rows: 2, label: "Books appointment", icon: "date", hue: "#60A5FA" },
-  { col: 4, row: 1, rows: 2, label: "SMS fallback", icon: "chat", hue: "#34D399" },
-  { col: 5, row: 0, rows: 1, label: "CRM updated", icon: "check", hue: "#4ADE80" },
-];
-
-// 3 -> 4 -> 3 is the retry loop. a cadence that cannot send work back to the
-// call it just failed is not a cadence, and that is the first thing anyone who
-// has built one looks for.
-const EDGES: [number, number][] = [
-  [0, 1], [1, 2], [2, 3],
-  [3, 5],          // answered, book it
-  [3, 4],          // no answer, into the cadence
-  [4, 3],          // loop back and try again
-  [4, 6],          // attempts spent, drop to SMS
-  [5, 7], [6, 7],
-];
-
 type Box = { x: number; y: number; w: number; h: number };
 type Pulse = { edge: number; t: number; speed: number; hops: number };
 
-export default function FlowCanvas() {
+export default function FlowCanvas({
+  graph = HERO_FLOW,
+  dense = false,
+  live = true,
+}: {
+  graph?: Graph;
+  dense?: boolean;
+  live?: boolean;
+}) {
   const ref = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
+    const NODES = graph.nodes;
+    const EDGES = graph.edges;
     const cv = ref.current;
     if (!cv) return;
     const ctx = cv.getContext("2d");
     if (!ctx) return;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches || !live;
 
     let w = 0, h = 0, dpr = 1, fs = 13, ch = 46;
     let boxes: Box[] = [];
@@ -76,19 +57,31 @@ export default function FlowCanvas() {
     const font = (size: number) => `500 ${size}px Archivo, system-ui, sans-serif`;
 
     const layout = () => {
-      fs = Math.max(11, Math.min(14, w * 0.0097));
-      ch = Math.max(40, Math.min(54, h * 0.098));
-      const padX = ch * 0.42;
-      const iconW = ch * 0.46;
-      const gap = ch * 0.3;
+      fs = dense ? Math.max(8.5, Math.min(11, w * 0.0225)) : Math.max(11, Math.min(14, w * 0.0097));
+      ch = dense ? Math.max(24, Math.min(34, h * 0.17)) : Math.max(40, Math.min(54, h * 0.098));
 
-      ctx.font = font(fs);
       // one width per column, so the grid reads as a grid
-      const colW: number[] = [];
-      NODES.forEach((n) => {
-        const need = padX * 2 + iconW + gap + ctx.measureText(n.label).width;
-        colW[n.col] = Math.max(colW[n.col] || 0, need);
-      });
+      const measure = () => {
+        ctx.font = font(fs);
+        const cw: number[] = [];
+        NODES.forEach((n) => {
+          const need = ch * 0.42 * 2 + ch * 0.46 + ch * 0.3 + ctx.measureText(n.label).width;
+          cw[n.col] = Math.max(cw[n.col] || 0, need);
+        });
+        return cw;
+      };
+
+      let colW = measure();
+      // a six column graph will not fit a card, so shrink the whole thing to
+      // the space there is rather than letting it run off the edge
+      const minLane = ch * 0.46;
+      const natural = colW.reduce((a, b) => a + b, 0) + minLane * (colW.length - 1);
+      if (natural > w) {
+        const k = w / natural;
+        fs *= k;
+        ch *= k;
+        colW = measure();
+      }
 
       const cols = colW.length;
       const total = colW.reduce((a, b) => a + b, 0);
@@ -214,6 +207,50 @@ export default function FlowCanvas() {
           ctx.beginPath();
           ctx.moveTo(cx + s * 0.1, cy - s * 0.96); ctx.lineTo(cx + s * 0.72, cy - s * 0.66);
           ctx.lineTo(cx + s * 0.16, cy - s * 0.24);
+          ctx.stroke(); return;
+        case "doc":
+          ctx.moveTo(cx + s * 0.22, cy - s);
+          ctx.lineTo(cx - s * 0.8, cy - s); ctx.lineTo(cx - s * 0.8, cy + s);
+          ctx.lineTo(cx + s * 0.8, cy + s); ctx.lineTo(cx + s * 0.8, cy - s * 0.38);
+          ctx.closePath();
+          ctx.moveTo(cx + s * 0.22, cy - s); ctx.lineTo(cx + s * 0.8, cy - s * 0.38);
+          ctx.moveTo(cx - s * 0.44, cy + s * 0.14); ctx.lineTo(cx + s * 0.4, cy + s * 0.14);
+          ctx.moveTo(cx - s * 0.44, cy + s * 0.56); ctx.lineTo(cx + s * 0.1, cy + s * 0.56);
+          ctx.stroke(); return;
+        case "user":
+          ctx.arc(cx, cy - s * 0.38, s * 0.42, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(cx - s * 0.82, cy + s);
+          ctx.quadraticCurveTo(cx, cy + s * 0.08, cx + s * 0.82, cy + s);
+          ctx.stroke(); return;
+        case "upload":
+          ctx.moveTo(cx, cy + s * 0.78); ctx.lineTo(cx, cy - s * 0.82);
+          ctx.moveTo(cx - s * 0.5, cy - s * 0.3); ctx.lineTo(cx, cy - s * 0.86);
+          ctx.lineTo(cx + s * 0.5, cy - s * 0.3);
+          ctx.moveTo(cx - s * 0.86, cy + s); ctx.lineTo(cx + s * 0.86, cy + s);
+          ctx.stroke(); return;
+        case "chart":
+          [[-0.62, 0.3], [0, 0.72], [0.62, 1.1]].forEach(([o, hgt]) => {
+            ctx.moveTo(cx + s * o, cy + s * 0.84);
+            ctx.lineTo(cx + s * o, cy + s * (0.84 - hgt));
+          });
+          ctx.stroke(); return;
+        case "link":
+          ctx.arc(cx - s * 0.38, cy, s * 0.52, Math.PI * 0.55, Math.PI * 1.45);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(cx + s * 0.38, cy, s * 0.52, Math.PI * 1.55, Math.PI * 0.45);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(cx - s * 0.34, cy); ctx.lineTo(cx + s * 0.34, cy);
+          ctx.stroke(); return;
+        case "shield":
+          ctx.moveTo(cx, cy - s);
+          ctx.lineTo(cx + s * 0.8, cy - s * 0.58);
+          ctx.quadraticCurveTo(cx + s * 0.8, cy + s * 0.56, cx, cy + s);
+          ctx.quadraticCurveTo(cx - s * 0.8, cy + s * 0.56, cx - s * 0.8, cy - s * 0.58);
+          ctx.closePath();
           ctx.stroke(); return;
         default:
           ctx.moveTo(cx - s * 0.78, cy + s * 0.06);
@@ -393,7 +430,7 @@ export default function FlowCanvas() {
     io.observe(cv);
 
     return () => { running = false; cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); };
-  }, []);
+  }, [graph, dense, live]);
 
   return <canvas ref={ref} className="alt-flow" aria-hidden="true" />;
 }

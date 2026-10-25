@@ -4,6 +4,7 @@ import { useState } from "react";
 import Marquee from "@/components/Marquee";
 import GlobeStack from "@/components/GlobeStack";
 import FlowCanvas from "@/components/FlowCanvas";
+import FlowCards from "@/components/FlowCards";
 import ContactForm from "@/components/ContactForm";
 import CaseSheet from "@/components/CaseSheet";
 import Reveal from "@/components/Reveal";
@@ -192,6 +193,13 @@ export default function Home() {
             </Reveal>
           ))}
         </div>
+      </section>
+
+      {/* HOW THEY RUN */}
+      <section className="alt-sec">
+        <h2 className="alt-big alt-left">How they run</h2>
+        <p className="alt-sub">Three systems in use today. Open one to see the shape of it.</p>
+        <FlowCards />
       </section>
 
       {/* WORK */}
