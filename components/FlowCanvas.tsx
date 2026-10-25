@@ -14,17 +14,24 @@ import { useEffect, useRef } from "react";
 
 type Icon = "bolt" | "filter" | "wave" | "rows" | "chat" | "date" | "retry" | "check";
 
-type Spec = { col: number; row: number; rows: number; label: string; icon: Icon; accent?: boolean };
+type Spec = { col: number; row: number; rows: number; label: string; icon: Icon; hue: string };
+
+// one colour per kind of step, the way a workflow tool colours its nodes.
+// it is decoration and legend at the same time.
+const rgba = (hex: string, a: number) => {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+};
 
 const NODES: Spec[] = [
-  { col: 0, row: 0, rows: 1, label: "New lead", icon: "bolt", accent: true },
-  { col: 1, row: 0, rows: 1, label: "n8n qualifies", icon: "filter" },
-  { col: 2, row: 0, rows: 3, label: "AI voice call", icon: "wave" },
-  { col: 2, row: 1, rows: 3, label: "Enrich + dedupe", icon: "rows" },
-  { col: 2, row: 2, rows: 3, label: "SMS follow-up", icon: "chat" },
-  { col: 3, row: 0, rows: 2, label: "Books appointment", icon: "date" },
-  { col: 3, row: 1, rows: 2, label: "Retry cadence", icon: "retry" },
-  { col: 4, row: 0, rows: 1, label: "CRM updated", icon: "check", accent: true },
+  { col: 0, row: 0, rows: 1, label: "New lead", icon: "bolt", hue: "#F5B544" },
+  { col: 1, row: 0, rows: 1, label: "n8n qualifies", icon: "filter", hue: "#EA4B71" },
+  { col: 2, row: 0, rows: 3, label: "AI voice call", icon: "wave", hue: "#A78BFA" },
+  { col: 2, row: 1, rows: 3, label: "Enrich + dedupe", icon: "rows", hue: "#38BDF8" },
+  { col: 2, row: 2, rows: 3, label: "SMS follow-up", icon: "chat", hue: "#34D399" },
+  { col: 3, row: 0, rows: 2, label: "Books appointment", icon: "date", hue: "#60A5FA" },
+  { col: 3, row: 1, rows: 2, label: "Retry cadence", icon: "retry", hue: "#FB923C" },
+  { col: 4, row: 0, rows: 1, label: "CRM updated", icon: "check", hue: "#4ADE80" },
 ];
 
 const EDGES: [number, number][] = [
@@ -55,6 +62,8 @@ export default function FlowCanvas() {
     EDGES.forEach(([a], i) => out[a].push(i));
 
     let pulses: Pulse[] = [];
+    let grid: CanvasPattern | null = null;
+    let clock = 0;
     let spawn = 0;
     let running = true;
     let raf = 0;
@@ -91,6 +100,26 @@ export default function FlowCanvas() {
       });
     };
 
+    const makeGrid = () => {
+      const step = 26;
+      const tile = document.createElement("canvas");
+      tile.width = Math.round(step * dpr);
+      tile.height = Math.round(step * dpr);
+      const t = tile.getContext("2d");
+      if (!t) return;
+      t.scale(dpr, dpr);
+      t.fillStyle = "rgba(146,172,214,0.14)";
+      t.beginPath();
+      t.arc(step / 2, step / 2, 1.1, 0, Math.PI * 2);
+      t.fill();
+      const pat = ctx.createPattern(tile, "repeat");
+      if (pat) {
+        // the pattern is in device pixels, the context is in css pixels
+        pat.setTransform(new DOMMatrix([1 / dpr, 0, 0, 1 / dpr, 0, 0]));
+        grid = pat;
+      }
+    };
+
     const size = () => {
       const b = cv.getBoundingClientRect();
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -99,6 +128,7 @@ export default function FlowCanvas() {
       cv.width = Math.round(w * dpr);
       cv.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      makeGrid();
       layout();
     };
 
@@ -120,9 +150,9 @@ export default function FlowCanvas() {
     };
 
     // icons built only from lines, arcs and rects, so they stay crisp at any size
-    const icon = (kind: Icon, cx: number, cy: number, s: number, a: number) => {
-      ctx.strokeStyle = `rgba(166,196,242,${a})`;
-      ctx.fillStyle = `rgba(166,196,242,${a})`;
+    const icon = (kind: Icon, cx: number, cy: number, s: number, a: number, hue: string) => {
+      ctx.strokeStyle = rgba(hue, a);
+      ctx.fillStyle = rgba(hue, a);
       ctx.lineWidth = Math.max(1.3, s * 0.11);
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
@@ -180,11 +210,34 @@ export default function FlowCanvas() {
     const frame = (dt: number) => {
       ctx.clearRect(0, 0, w, h);
 
-      const halo = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.max(w, h) * 0.52);
-      halo.addColorStop(0, "rgba(96,128,186,0.09)");
-      halo.addColorStop(1, "rgba(96,128,186,0)");
-      ctx.fillStyle = halo;
-      ctx.fillRect(0, 0, w, h);
+      // drifting colour fields, the modern-tech wash behind everything
+      const aurora = (cx: number, cy: number, rad: number, hex: string, a: number) => {
+        const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
+        g.addColorStop(0, rgba(hex, a));
+        g.addColorStop(1, rgba(hex, 0));
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, w, h);
+      };
+      const R = Math.max(w, h);
+      aurora(w * (0.24 + Math.sin(clock * 0.09) * 0.05), h * (0.3 + Math.cos(clock * 0.07) * 0.12), R * 0.42, "#6D5BF0", 0.17);
+      aurora(w * (0.7 + Math.cos(clock * 0.06) * 0.06), h * (0.72 + Math.sin(clock * 0.08) * 0.1), R * 0.4, "#0FA5C9", 0.15);
+      aurora(w * (0.5 + Math.sin(clock * 0.05) * 0.08), h * 0.5, R * 0.3, "#2563C9", 0.1);
+
+      // the builder canvas the flow sits on
+      if (grid) {
+        ctx.save();
+        const fade = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, R * 0.6);
+        fade.addColorStop(0, "rgba(0,0,0,1)");
+        fade.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.globalCompositeOperation = "source-over";
+        ctx.fillStyle = grid;
+        ctx.fillRect(0, 0, w, h);
+        // feather the grid out at the edges so it has no hard border
+        ctx.globalCompositeOperation = "destination-in";
+        ctx.fillStyle = fade;
+        ctx.fillRect(0, 0, w, h);
+        ctx.restore();
+      }
 
       ctx.lineCap = "round";
       for (let i = 0; i < EDGES.length; i++) {
@@ -192,12 +245,13 @@ export default function FlowCanvas() {
         ctx.beginPath();
         ctx.moveTo(c.x1, c.y1);
         ctx.bezierCurveTo(c.c1x, c.c1y, c.c2x, c.c2y, c.x2, c.y2);
-        ctx.strokeStyle = "rgba(142,164,198,0.26)";
+        ctx.strokeStyle = rgba(NODES[EDGES[i][0]].hue, 0.3);
         ctx.lineWidth = 1.2;
         ctx.stroke();
       }
 
       for (const p of pulses) {
+        const hue = NODES[EDGES[p.edge][0]].hue;
         const steps = 10;
         for (let k = 0; k < steps; k++) {
           const t0 = Math.max(0, p.t - k * 0.015);
@@ -205,17 +259,17 @@ export default function FlowCanvas() {
           if (t1 <= 0 && t0 <= 0) break;
           const a = at(p.edge, t0), b = at(p.edge, t1);
           ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = `rgba(228,240,255,${0.8 * (1 - k / steps)})`;
+          ctx.strokeStyle = rgba(hue, 0.92 * (1 - k / steps));
           ctx.lineWidth = 2.2 * (1 - k / steps) + 0.5;
           ctx.stroke();
         }
         const hd = at(p.edge, p.t);
         ctx.save();
-        ctx.shadowColor = "rgba(180,208,255,0.9)";
-        ctx.shadowBlur = 11;
+        ctx.shadowColor = rgba(hue, 0.95);
+        ctx.shadowBlur = 14;
         ctx.beginPath();
-        ctx.arc(hd.x, hd.y, 3.4, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(246,250,255,1)";
+        ctx.arc(hd.x, hd.y, 3.6, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(252,253,255,1)";
         ctx.fill();
         ctx.restore();
       }
@@ -236,30 +290,30 @@ export default function FlowCanvas() {
         ctx.roundRect(b.x, b.y, b.w, b.h, r);
         ctx.fillStyle = "#0B1120";
         ctx.fill();
-        ctx.strokeStyle = n.accent
-          ? `rgba(150,186,244,${0.46 + hot * 0.48})`
-          : `rgba(150,172,206,${0.3 + hot * 0.6})`;
+        ctx.strokeStyle = rgba(n.hue, 0.34 + hot * 0.56);
         ctx.lineWidth = 1.3;
         ctx.stroke();
 
         if (hot > 0.01) {
           ctx.save();
-          ctx.shadowColor = `rgba(150,190,255,${0.9 * hot})`;
-          ctx.shadowBlur = 16 * hot;
-          ctx.strokeStyle = `rgba(224,238,255,${0.85 * hot})`;
+          ctx.shadowColor = rgba(n.hue, 0.95 * hot);
+          ctx.shadowBlur = 20 * hot;
+          ctx.strokeStyle = rgba(n.hue, 0.9 * hot);
+          ctx.lineWidth = 1.6;
           ctx.stroke();
           ctx.restore();
         }
 
         const padX = b.h * 0.42;
         const is = b.h * 0.23;
-        icon(n.icon, b.x + padX + is, cy, is, 0.62 + hot * 0.38);
+        icon(n.icon, b.x + padX + is, cy, is, 0.78 + hot * 0.22, n.hue);
 
         ctx.fillStyle = `rgba(222,232,248,${0.84 + hot * 0.16})`;
         ctx.fillText(n.label, b.x + padX + is * 2 + b.h * 0.3, cy + 0.5);
       }
 
       if (!reduced) {
+        clock += dt;
         for (let i = 0; i < heat.length; i++) heat[i] = Math.max(0, heat[i] - dt * 1.4);
 
         const next: Pulse[] = [];
