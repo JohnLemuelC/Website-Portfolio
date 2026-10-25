@@ -25,24 +25,29 @@ const rgba = (hex: string, a: number) => {
 
 const NODES: Spec[] = [
   { col: 0, row: 0, rows: 1, label: "New lead", icon: "bolt", hue: "#F5B544" },
-  { col: 1, row: 0, rows: 1, label: "n8n qualifies", icon: "filter", hue: "#EA4B71" },
-  { col: 2, row: 0, rows: 3, label: "AI voice call", icon: "wave", hue: "#A78BFA" },
-  { col: 2, row: 1, rows: 3, label: "Enrich + dedupe", icon: "rows", hue: "#38BDF8" },
-  { col: 2, row: 2, rows: 3, label: "SMS follow-up", icon: "chat", hue: "#34D399" },
-  { col: 3, row: 0, rows: 2, label: "Books appointment", icon: "date", hue: "#60A5FA" },
+  { col: 1, row: 0, rows: 1, label: "Enrich + dedupe", icon: "rows", hue: "#38BDF8" },
+  { col: 2, row: 0, rows: 1, label: "n8n qualifies", icon: "filter", hue: "#EA4B71" },
+  { col: 3, row: 0, rows: 2, label: "AI voice call", icon: "wave", hue: "#A78BFA" },
   { col: 3, row: 1, rows: 2, label: "Retry cadence", icon: "retry", hue: "#FB923C" },
-  { col: 4, row: 0, rows: 1, label: "CRM updated", icon: "check", hue: "#4ADE80" },
+  { col: 4, row: 0, rows: 2, label: "Books appointment", icon: "date", hue: "#60A5FA" },
+  { col: 4, row: 1, rows: 2, label: "SMS fallback", icon: "chat", hue: "#34D399" },
+  { col: 5, row: 0, rows: 1, label: "CRM updated", icon: "check", hue: "#4ADE80" },
 ];
 
+// 3 -> 4 -> 3 is the retry loop. a cadence that cannot send work back to the
+// call it just failed is not a cadence, and that is the first thing anyone who
+// has built one looks for.
 const EDGES: [number, number][] = [
-  [0, 1],
-  [1, 2], [1, 3], [1, 4],
-  [2, 5], [3, 5], [3, 6], [4, 6],
+  [0, 1], [1, 2], [2, 3],
+  [3, 5],          // answered, book it
+  [3, 4],          // no answer, into the cadence
+  [4, 3],          // loop back and try again
+  [4, 6],          // attempts spent, drop to SMS
   [5, 7], [6, 7],
 ];
 
 type Box = { x: number; y: number; w: number; h: number };
-type Pulse = { edge: number; t: number; speed: number };
+type Pulse = { edge: number; t: number; speed: number; hops: number };
 
 export default function FlowCanvas() {
   const ref = useRef<HTMLCanvasElement | null>(null);
@@ -136,7 +141,18 @@ export default function FlowCanvas() {
     const left = (i: number) => ({ x: boxes[i].x, y: boxes[i].y + boxes[i].h / 2 });
 
     const curve = (e: number) => {
-      const a = right(EDGES[e][0]), b = left(EDGES[e][1]);
+      const [i, j] = EDGES[e];
+      // anything not landing clearly to the right is a loop back, including a
+      // jump between two cards sharing a column
+      const back = boxes[j].x < boxes[i].x + boxes[i].w - 1;
+      if (back) {
+        // returns down the left side, clear of the forward wires on the right
+        const a = { x: boxes[i].x, y: boxes[i].y + boxes[i].h * 0.5 };
+        const b = { x: boxes[j].x, y: boxes[j].y + boxes[j].h * 0.5 };
+        const bulge = Math.max(52, boxes[i].w * 0.34);
+        return { x1: a.x, y1: a.y, c1x: a.x - bulge, c1y: a.y, c2x: b.x - bulge, c2y: b.y, x2: b.x, y2: b.y };
+      }
+      const a = right(i), b = left(j);
       const dx = Math.max(26, (b.x - a.x) * 0.5);
       return { x1: a.x, y1: a.y, c1x: a.x + dx, c1y: a.y, c2x: b.x - dx, c2y: b.y, x2: b.x, y2: b.y };
     };
@@ -322,10 +338,15 @@ export default function FlowCanvas() {
           if (p.t < 1) { next.push(p); continue; }
           const target = EDGES[p.edge][1];
           heat[target] = 1;
-          const outs = out[target];
+          let outs = out[target];
           if (outs.length) {
+            // after a few attempts, stop looping and take the exit
+            if (p.hops > 7) {
+              const fwd = outs.filter((e) => EDGES[e][1] !== EDGES[p.edge][0]);
+              if (fwd.length) outs = fwd;
+            }
             const pick = outs[(Math.random() * outs.length) | 0];
-            next.push({ edge: pick, t: 0, speed: 0.36 + Math.random() * 0.2 });
+            next.push({ edge: pick, t: 0, speed: 0.36 + Math.random() * 0.2, hops: p.hops + 1 });
           }
         }
         pulses = next;
@@ -334,7 +355,7 @@ export default function FlowCanvas() {
         if (spawn <= 0 && pulses.length < 6) {
           spawn = 1.1 + Math.random() * 0.8;
           heat[0] = 1;
-          pulses.push({ edge: 0, t: 0, speed: 0.36 + Math.random() * 0.2 });
+          pulses.push({ edge: 0, t: 0, speed: 0.36 + Math.random() * 0.2, hops: 0 });
         }
       }
     };
@@ -349,7 +370,7 @@ export default function FlowCanvas() {
 
     size();
     heat[0] = 0.6;
-    pulses.push({ edge: 0, t: 0.45, speed: 0.4 });
+    pulses.push({ edge: 0, t: 0.45, speed: 0.4, hops: 0 });
     frame(0);
     if (!reduced) raf = requestAnimationFrame(loop);
 
